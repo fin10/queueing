@@ -1,0 +1,28 @@
+{
+  "name": "queueing",
+  "main": "./src/index.ts",
+  "author": "fender64@gmail.com",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "debug": "node -r ts-node/register . | bunyan"
+  },
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.1",
+    "@types/bunyan": "^1.8.6",
+    "@types/express": "^4.17.9",
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
+    "eslint": "^7.14.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.2.0",
+    "eslint-plugin-react": "^7.21.5",
+    "prettier": "^2.2.1",
+    "ts-node": "^9.1.0",
+    "typescript": "^4.1.2"
+  },
+  "dependencies": {
+    "bunyan": "^1.8.14",
+    "express": "^4.17.1"
+  }
+}
