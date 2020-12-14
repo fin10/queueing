@@ -3,10 +3,10 @@ import { Document } from 'mongoose';
 
 export type NoteDocument = Note & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Note {
   @Prop({ required: true })
-  contents?: string;
+  title?: string;
 }
 
 export const NoteSchema = SchemaFactory.createForClass(Note);

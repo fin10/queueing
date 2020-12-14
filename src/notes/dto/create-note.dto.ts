@@ -1,3 +1,3 @@
 export class CreateNoteDto {
-  readonly contents?: number;
+  readonly title?: string;
 }
