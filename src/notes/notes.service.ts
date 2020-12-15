@@ -14,6 +14,6 @@ export class NotesService {
   }
 
   async getNotes(): Promise<Note[]> {
-    return this.model.find();
+    return this.model.find().lean();
   }
 }

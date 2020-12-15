@@ -13,7 +13,9 @@ describe('NotesService', () => {
         {
           provide: getModelToken(Note.name),
           useValue: {
-            find: jest.fn().mockResolvedValue([]),
+            find: jest.fn(() => ({
+              lean: () => [],
+            })),
           },
         },
       ],

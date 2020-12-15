@@ -1,38 +1,47 @@
 import axios from 'axios';
-import React from 'react';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
+import { List, ListItem, ListItemText } from '@material-ui/core';
 
-export default class App extends React.Component {
-  readonly state: {
-    readonly notes: Note[];
-  } = {
-    notes: [],
-  };
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      width: '100%',
+      maxWidth: 360,
+      backgroundColor: theme.palette.background.paper,
+    },
+  }),
+);
 
-  async componentDidMount(): Promise<void> {
-    try {
-      const res = await axios.get<Note[]>('/api/notes');
-      console.log(res);
-      this.setState({ notes: res.data });
-    } catch (err) {
-      console.error(err);
-    }
+const fetchNotes = async (update: React.Dispatch<React.SetStateAction<Note[]>>) => {
+  try {
+    const res = await axios.get<Note[]>('/api/notes');
+    update(res.data);
+  } catch (err) {
+    console.error(err);
   }
+};
 
-  render(): React.ReactElement {
-    const { notes = [] } = this.state;
+export default (): React.ReactElement => {
+  const [notes, updateNotes] = useState<Note[]>([]);
+  const classes = useStyles();
 
-    return (
-      <fast-design-system-provider use-defaults>
-        <fast-card>
-          <h2>Queueing</h2>
-          <ul>
-            {notes.map((note) => (
-              <li key={note._id}>{note.title}</li>
-            ))}
-          </ul>
-        </fast-card>
-      </fast-design-system-provider>
-    );
-  }
-}
+  useEffect(() => {
+    fetchNotes(updateNotes);
+  }, []);
+
+  return (
+    <div className={classes.root}>
+      <h2>Queueing</h2>
+      <List>
+        {notes.map((note) => {
+          return (
+            <ListItem key={note._id}>
+              <ListItemText primary={note.title} />
+            </ListItem>
+          );
+        })}
+      </List>
+    </div>
+  );
+};
