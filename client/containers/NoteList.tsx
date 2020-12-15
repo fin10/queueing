@@ -48,7 +48,7 @@ const NoteList = (): React.ReactElement => {
           );
         })}
       </List>
-      <Fab className={classes.fab} color="primary" aria-label="create">
+      <Fab className={classes.fab} color="primary" aria-label="create" href="/new">
         <CreateIcon />
       </Fab>
     </div>

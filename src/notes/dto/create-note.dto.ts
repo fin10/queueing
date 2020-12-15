@@ -1,3 +1,7 @@
+import { IsNotEmpty, IsString } from 'class-validator';
+
 export class CreateNoteDto {
-  readonly title?: string;
+  @IsString()
+  @IsNotEmpty()
+  readonly title!: string;
 }
