@@ -59,6 +59,7 @@
     "eslint": "^7.12.1",
     "eslint-config-prettier": "7.0.0",
     "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.21.5",
     "husky": "^5.0.4",
     "jest": "^26.6.3",
     "lodash-es": "^4.17.15",
