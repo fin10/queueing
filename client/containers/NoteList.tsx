@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { List, ListItem, ListItemText, Fab } from '@material-ui/core';
 import { Create as CreateIcon } from '@material-ui/icons';
@@ -46,12 +47,12 @@ const NoteList = (): React.ReactElement => {
       <h2>Queueing</h2>
       <List>
         {notes.map((note) => (
-          <ListItem key={note._id}>
+          <ListItem key={note._id} button component={Link} to={`/notes/${note._id}`}>
             <ListItemText primary={note.title} />
           </ListItem>
         ))}
       </List>
-      <Fab className={classes.fab} color="primary" aria-label="create" href="/new">
+      <Fab className={classes.fab} color="primary" aria-label="create" href="/notes/new">
         <CreateIcon />
       </Fab>
     </div>

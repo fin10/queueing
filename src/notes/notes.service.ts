@@ -13,6 +13,10 @@ export class NotesService {
     return note.save();
   }
 
+  async getNote(id: string): Promise<Note | null> {
+    return this.model.findById(id).lean();
+  }
+
   async getNotes(): Promise<Note[]> {
     return this.model.find().lean();
   }
