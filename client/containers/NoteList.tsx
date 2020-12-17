@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { List, ListItem, ListItemText, Fab } from '@material-ui/core';
 import { Create as CreateIcon } from '@material-ui/icons';
+import { Note } from '../types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
