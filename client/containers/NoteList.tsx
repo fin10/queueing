@@ -9,45 +9,47 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: '100%',
-      maxWidth: 360,
       backgroundColor: theme.palette.background.paper,
     },
     fab: {
       position: 'absolute',
-      right: 16,
-      bottom: 16,
+      right: 0,
+      bottom: 0,
+      margin: theme.spacing(2),
     },
   }),
 );
-
-const fetchNotes = async (update: React.Dispatch<React.SetStateAction<Note[]>>) => {
-  try {
-    const res = await axios.get<Note[]>('/api/notes');
-    update(res.data);
-  } catch (err) {
-    console.error(err);
-  }
-};
 
 const NoteList = (): React.ReactElement => {
   const [notes, updateNotes] = useState<Note[]>([]);
   const classes = useStyles();
 
+  const fetchNotes = async () => {
+    try {
+      const res = await axios.get<Note[]>('/api/notes');
+      updateNotes(res.data);
+    } catch (err) {
+      if (err.response) {
+        console.error(err.response.data);
+      } else {
+        console.error(err);
+      }
+    }
+  };
+
   useEffect(() => {
-    fetchNotes(updateNotes);
+    fetchNotes();
   }, []);
 
   return (
     <div className={classes.root}>
       <h2>Queueing</h2>
       <List>
-        {notes.map((note) => {
-          return (
-            <ListItem key={note._id}>
-              <ListItemText primary={note.title} />
-            </ListItem>
-          );
-        })}
+        {notes.map((note) => (
+          <ListItem key={note._id}>
+            <ListItemText primary={note.title} />
+          </ListItem>
+        ))}
       </List>
       <Fab className={classes.fab} color="primary" aria-label="create" href="/new">
         <CreateIcon />

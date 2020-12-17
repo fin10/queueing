@@ -20,7 +20,7 @@ const NewNote = (): React.ReactElement => {
     updateContents(event.target.value);
   };
 
-  const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
@@ -33,18 +33,20 @@ const NewNote = (): React.ReactElement => {
 
   return (
     <div>
-      <TextField
-        className={classes.contents}
-        id="contents"
-        label="Contents"
-        multiline
-        rows={10}
-        onChange={handleChange}
-        value={contents}
-      />
-      <Button className={classes.submit} variant="contained" color="primary" onClick={handleSubmit}>
-        Submit
-      </Button>
+      <form onSubmit={handleSubmit}>
+        <TextField
+          className={classes.contents}
+          id="contents"
+          label="Contents"
+          multiline
+          rows={10}
+          onChange={handleChange}
+          value={contents}
+        />
+        <Button className={classes.submit} variant="contained" color="primary" type="submit">
+          Submit
+        </Button>
+      </form>
     </div>
   );
 };
