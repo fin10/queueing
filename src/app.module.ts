@@ -2,8 +2,6 @@ import path from 'path';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { NotesModule } from './notes/notes.module';
 import { ConfigKey, QueueingConfigService } from './queueing-config/queueing-config.service';
 import { QueueingConfigModule } from './queueing-config/queueing-config.module';
@@ -22,7 +20,6 @@ import { QueueingConfigModule } from './queueing-config/queueing-config.module';
     }),
     NotesModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, QueueingConfigService],
+  providers: [QueueingConfigService],
 })
 export class AppModule {}
