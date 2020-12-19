@@ -28,7 +28,7 @@ const Note = (): React.ReactElement => {
     <div>
       {note && (
         <div>
-          <p>{note.body}</p>
+          <pre>{note.body}</pre>
         </div>
       )}
     </div>

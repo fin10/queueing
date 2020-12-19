@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -66,8 +67,12 @@ export class NotesService {
   }
 
   private extractTitle(body: string): string {
-    const [title] = body.split('\n');
-    return title;
+    const title = _.chain(body.split('\n'))
+      .map((line) => line.trim())
+      .first()
+      .value();
+
+    return title || body;
   }
 
   private async removeNote(id: string) {
