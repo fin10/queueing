@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class NoteBodyService {
@@ -11,9 +11,7 @@ export class NoteBodyService {
     return key;
   }
 
-  get(key: string): string {
-    const body = this.bodies[key];
-    if (!body) throw new NotFoundException(`${key} not found.`);
-    return body;
+  get(key: string): string | null {
+    return this.bodies[key];
   }
 }

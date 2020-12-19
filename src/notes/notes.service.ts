@@ -31,7 +31,10 @@ export class NotesService {
     if (!rawNote) throw new NotFoundException(`${id} not found.`);
 
     const body = this.bodyStore.get(rawNote.bodyKey);
-    if (!body) throw new NotFoundException(`${id} has been expired.`);
+    if (!body) {
+      this.removeNote(id);
+      throw new NotFoundException(`${id} has been expired.`);
+    }
 
     return {
       id: rawNote._id,
@@ -45,16 +48,29 @@ export class NotesService {
   async getNotes(): Promise<Note[]> {
     const rawNotes = await this.model.find().lean();
 
-    return rawNotes.map((rawNote) => ({
-      id: rawNote._id,
-      title: rawNote.title,
-      created: rawNote.createdAt,
-      updated: rawNote.updatedAt,
-    }));
+    return rawNotes
+      .filter((rawNote) => {
+        const body = this.bodyStore.get(rawNote.bodyKey);
+        if (body) return true;
+
+        console.info(`${rawNote._id}: body has been evicted.`);
+        this.removeNote(rawNote._id);
+        return false;
+      })
+      .map((rawNote) => ({
+        id: rawNote._id,
+        title: rawNote.title,
+        created: rawNote.createdAt,
+        updated: rawNote.updatedAt,
+      }));
   }
 
   private extractTitle(body: string): string {
     const [title] = body.split('\n');
     return title;
+  }
+
+  private async removeNote(id: string) {
+    return this.model.deleteOne({ _id: id }).exec();
   }
 }
