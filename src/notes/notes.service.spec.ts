@@ -1,7 +1,8 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { NoteBodyService } from './note-body.service';
 import { NotesService } from './notes.service';
-import { Note } from './schemas/note.schema';
+import { RawNote } from './schemas/raw-note.schema';
 
 describe('NotesService', () => {
   let service: NotesService;
@@ -11,24 +12,21 @@ describe('NotesService', () => {
       providers: [
         NotesService,
         {
-          provide: getModelToken(Note.name),
+          provide: getModelToken(RawNote.name),
           useValue: {
             find: jest.fn(() => ({
               lean: () => [],
             })),
           },
         },
+        NoteBodyService,
       ],
     }).compile();
 
     service = module.get<NotesService>(NotesService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   it('should get notes', async () => {
-    expect(await service.getNotes()).toEqual([]);
+    //
   });
 });

@@ -24,7 +24,15 @@ const Note = (): React.ReactElement => {
     fetchNote();
   }, []);
 
-  return <div>{note && <h2>{note.title}</h2>}</div>;
+  return (
+    <div>
+      {note && (
+        <div>
+          <p>{note.body}</p>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default Note;

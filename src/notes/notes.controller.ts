@@ -1,14 +1,15 @@
 import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
 import { CreateNoteDto } from './dto/create-note.dto';
+import { Note } from './interfaces/note.interface';
 import { NotesService } from './notes.service';
-import { Note } from './schemas/note.schema';
+import { RawNote } from './schemas/raw-note.schema';
 
 @Controller('notes')
 export class NotesController {
   constructor(private readonly service: NotesService) {}
 
   @Post()
-  createNotes(@Body() data: CreateNoteDto): Promise<Note> {
+  create(@Body() data: CreateNoteDto): Promise<RawNote> {
     return this.service.create(data);
   }
 

@@ -24,7 +24,7 @@ const NewNote = (): React.ReactElement => {
     event.preventDefault();
 
     try {
-      await axios.post('/api/notes', { title: contents });
+      await axios.post('/api/notes', { body: contents });
       window.location.assign('/');
     } catch (err) {
       console.error(err);

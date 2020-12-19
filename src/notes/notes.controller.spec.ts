@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { NoteBodyService } from './note-body.service';
 import { NotesController } from './notes.controller';
 import { NotesService } from './notes.service';
 
@@ -13,6 +14,7 @@ describe('NotesController', () => {
           provide: NotesService,
           useValue: {},
         },
+        NoteBodyService,
       ],
     }).compile();
 
@@ -20,6 +22,6 @@ describe('NotesController', () => {
   });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
+    //
   });
 });

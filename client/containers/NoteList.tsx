@@ -47,7 +47,7 @@ const NoteList = (): React.ReactElement => {
       <h2>Queueing</h2>
       <List>
         {notes.map((note) => (
-          <ListItem key={note._id} button component={Link} to={`/notes/${note._id}`}>
+          <ListItem key={note.id} button component={Link} to={`/notes/${note.id}`}>
             <ListItemText primary={note.title} />
           </ListItem>
         ))}
