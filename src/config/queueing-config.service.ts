@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { plainToClass } from 'class-transformer';
 import { IsEnum, IsNumber, IsNotEmpty, IsString, validateSync } from 'class-validator';
@@ -29,11 +29,15 @@ export enum ConfigKey {
 
 @Injectable()
 export class QueueingConfigService {
+  private readonly logger = new Logger(QueueingConfigService.name);
+
   constructor(private readonly config: ConfigService) {}
 
   get<T>(key: ConfigKey): T {
     const value = this.config.get<T>(key);
     if (!value) throw new InternalServerErrorException(`${key} is not defined.`);
+
+    this.logger.debug(`${key}: ${value}`);
 
     return value;
   }
