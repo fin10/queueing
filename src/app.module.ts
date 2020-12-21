@@ -5,6 +5,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { NotesModule } from './notes/notes.module';
 import { ConfigKey, QueueingConfigService } from './queueing-config/queueing-config.service';
 import { QueueingConfigModule } from './queueing-config/queueing-config.module';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { QueueingConfigModule } from './queueing-config/queueing-config.module';
       useFactory: (config: QueueingConfigService) => ({ uri: config.get<string>(ConfigKey.MONGODB_URI) }),
     }),
     NotesModule,
+    LoggerModule,
   ],
-  providers: [],
 })
 export class AppModule {}

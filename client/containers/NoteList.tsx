@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { List, ListItem, ListItemText, Fab } from '@material-ui/core';
 import { Create as CreateIcon } from '@material-ui/icons';
+import { Logger } from '../utils/Logger';
 import { Note } from '../types';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -30,11 +31,7 @@ const NoteList = (): React.ReactElement => {
       const res = await axios.get<Note[]>('/api/notes');
       updateNotes(res.data);
     } catch (err) {
-      if (err.response) {
-        console.error(err.response.data);
-      } else {
-        console.error(err);
-      }
+      Logger.error(err);
     }
   };
 

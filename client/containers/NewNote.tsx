@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { TextField, Button } from '@material-ui/core';
+import { Logger } from '../utils/Logger';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -27,7 +28,7 @@ const NewNote = (): React.ReactElement => {
       await axios.post('/api/notes', { body: contents });
       window.location.assign('/');
     } catch (err) {
-      console.error(err);
+      Logger.error(err);
     }
   };
 
