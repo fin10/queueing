@@ -3,8 +3,8 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { NotesModule } from './notes/notes.module';
-import { ConfigKey, QueueingConfigService } from './queueing-config/queueing-config.service';
-import { QueueingConfigModule } from './queueing-config/queueing-config.module';
+import { ConfigKey, QueueingConfigService } from './config/queueing-config.service';
+import { QueueingConfigModule } from './config/queueing-config.module';
 import { LoggerModule } from './logger/logger.module';
 
 @Module({

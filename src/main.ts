@@ -2,7 +2,7 @@ import { InternalServerErrorException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { QueueingLogger } from './logger/queueing-logger.service';
-import { ConfigKey, QueueingConfigService } from './queueing-config/queueing-config.service';
+import { ConfigKey, QueueingConfigService } from './config/queueing-config.service';
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
