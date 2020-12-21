@@ -20,6 +20,6 @@ import { QueueingConfigModule } from './queueing-config/queueing-config.module';
     }),
     NotesModule,
   ],
-  providers: [QueueingConfigService],
+  providers: [],
 })
 export class AppModule {}

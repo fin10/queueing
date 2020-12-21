@@ -5,6 +5,6 @@ import { QueueingConfigService, validate } from './queueing-config.service';
 @Module({
   imports: [ConfigModule.forRoot({ validate })],
   providers: [ConfigService, QueueingConfigService],
-  exports: [ConfigService, QueueingConfigService],
+  exports: [QueueingConfigService],
 })
 export class QueueingConfigModule {}
