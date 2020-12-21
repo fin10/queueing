@@ -2,14 +2,13 @@ import { BadRequestException, Body, Controller, Get, NotFoundException, Param, P
 import { CreateNoteDto } from './dto/create-note.dto';
 import { Note } from './interfaces/note.interface';
 import { NotesService } from './notes.service';
-import { RawNote } from './schemas/raw-note.schema';
 
 @Controller('notes')
 export class NotesController {
   constructor(private readonly service: NotesService) {}
 
   @Post()
-  create(@Body() data: CreateNoteDto): Promise<RawNote> {
+  create(@Body() data: CreateNoteDto): Promise<string> {
     return this.service.create(data);
   }
 

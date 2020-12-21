@@ -11,6 +11,7 @@ export class RawNote {
   @Prop({ required: true })
   readonly bodyKey!: string;
 
+  readonly _id!: string;
   readonly createdAt!: Date;
   readonly updatedAt!: Date;
 }

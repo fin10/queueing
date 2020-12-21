@@ -1,41 +1,28 @@
 import _ from 'underscore';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { NoteBodyService } from './note-body.service';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { Note } from './interfaces/note.interface';
-import { RawNote, RawNoteDocument } from './schemas/raw-note.schema';
+import { NoteModel } from '../database/note.model';
 
 @Injectable()
 export class NotesService {
   private readonly logger = new Logger(NotesService.name);
 
-  constructor(
-    @InjectModel(RawNote.name)
-    private model: Model<RawNoteDocument>,
-    private readonly bodyStore: NoteBodyService,
-  ) {}
+  constructor(private readonly noteModel: NoteModel, private readonly bodyStore: NoteBodyService) {}
 
-  async create(data: CreateNoteDto): Promise<RawNote> {
+  async create(data: CreateNoteDto): Promise<string> {
     const title = this.extractTitle(data.body);
     const bodyKey = this.bodyStore.put(data.body);
-
-    const note = new this.model({
-      title,
-      bodyKey,
-    });
-
-    return note.save();
+    return this.noteModel.create(title, bodyKey);
   }
 
   async getNote(id: string): Promise<Note | null> {
-    const rawNote = await this.model.findById(id).lean();
-    if (!rawNote) throw new NotFoundException(`${id} not found.`);
+    const rawNote = await this.noteModel.getNote(id);
 
     const body = this.bodyStore.get(rawNote.bodyKey);
     if (!body) {
-      this.removeNote(id);
+      this.noteModel.remove(id);
       throw new NotFoundException(`${id} has been expired.`);
     }
 
@@ -49,7 +36,7 @@ export class NotesService {
   }
 
   async getNotes(): Promise<Note[]> {
-    const rawNotes = await this.model.find().lean();
+    const rawNotes = await this.noteModel.getNotes();
 
     return rawNotes
       .filter((rawNote) => {
@@ -57,7 +44,7 @@ export class NotesService {
         if (body) return true;
 
         this.logger.verbose(`${rawNote._id}: body has been evicted.`);
-        this.removeNote(rawNote._id);
+        this.noteModel.remove(rawNote._id);
         return false;
       })
       .map((rawNote) => ({
@@ -75,9 +62,5 @@ export class NotesService {
       .value();
 
     return title || body;
-  }
-
-  private async removeNote(id: string) {
-    return this.model.deleteOne({ _id: id }).exec();
   }
 }
