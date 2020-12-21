@@ -1,11 +1,16 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { NoteModel } from './note.model';
-import { RawNote, RawNoteSchema } from './schemas/raw-note.schema';
+import { QueueingConfigModule } from 'src/config/queueing-config.module';
+import { QueueingConfigService, ConfigKey } from 'src/config/queueing-config.service';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: RawNote.name, schema: RawNoteSchema }])],
-  providers: [NoteModel],
-  exports: [NoteModel],
+  imports: [
+    QueueingConfigModule,
+    MongooseModule.forRootAsync({
+      imports: [QueueingConfigModule],
+      inject: [QueueingConfigService],
+      useFactory: (config: QueueingConfigService) => ({ uri: config.get<string>(ConfigKey.MONGODB_URI) }),
+    }),
+  ],
 })
 export class DatabaseModule {}

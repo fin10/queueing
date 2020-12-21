@@ -3,7 +3,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { NoteBodyService } from './note-body.service';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { Note } from './interfaces/note.interface';
-import { NoteModel } from '../database/note.model';
+import { NoteModel } from '../database/note-model.service';
 
 @Injectable()
 export class NotesService {

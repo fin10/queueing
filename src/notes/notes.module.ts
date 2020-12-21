@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { NoteBodyService } from './note-body.service';
 import { NotesController } from './notes.controller';
 import { NotesService } from './notes.service';
-import { DatabaseModule } from 'src/database/database.module';
+import { NoteModelModule } from 'src/database/note-model.module';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [NoteModelModule],
   controllers: [NotesController],
   providers: [NotesService, NoteBodyService],
 })
