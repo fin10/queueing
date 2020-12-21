@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { NoteBodyService } from './note-body.service';
@@ -9,6 +9,8 @@ import { RawNote, RawNoteDocument } from './schemas/raw-note.schema';
 
 @Injectable()
 export class NotesService {
+  private readonly logger = new Logger(NotesService.name);
+
   constructor(
     @InjectModel(RawNote.name)
     private model: Model<RawNoteDocument>,
@@ -54,7 +56,7 @@ export class NotesService {
         const body = this.bodyStore.get(rawNote.bodyKey);
         if (body) return true;
 
-        console.info(`${rawNote._id}: body has been evicted.`);
+        this.logger.verbose(`${rawNote._id}: body has been evicted.`);
         this.removeNote(rawNote._id);
         return false;
       })

@@ -15,7 +15,7 @@ const bootstrap = async () => {
   if (!port) throw new InternalServerErrorException('port is not defined.');
 
   await app.listen(port, () => {
-    logger.log(`Service listening on ${port}`);
+    logger.verbose(`Service listening on ${port}`);
   });
 };
 
