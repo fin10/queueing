@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import async from 'async';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { NoteBodyService } from './note-body.service';
 import { CreateNoteDto } from './dto/create-note.dto';
@@ -13,14 +14,14 @@ export class NotesService {
 
   async create(data: CreateNoteDto): Promise<string> {
     const title = this.extractTitle(data.body);
-    const bodyKey = this.bodyStore.put(data.body);
+    const bodyKey = await this.bodyStore.put(data.body);
     return this.noteModel.create(title, bodyKey);
   }
 
   async getNote(id: string): Promise<Note | null> {
     const rawNote = await this.noteModel.getNote(id);
 
-    const body = this.bodyStore.get(rawNote.bodyKey);
+    const body = await this.bodyStore.get(rawNote.bodyKey);
     if (!body) {
       this.noteModel.remove(id);
       throw new NotFoundException(`${id} has been expired.`);
@@ -38,21 +39,21 @@ export class NotesService {
   async getNotes(): Promise<Note[]> {
     const rawNotes = await this.noteModel.getNotes();
 
-    return rawNotes
-      .filter((rawNote) => {
-        const body = this.bodyStore.get(rawNote.bodyKey);
-        if (body) return true;
+    const validNotes = await async.filter(rawNotes, async (rawNote) => {
+      const body = await this.bodyStore.get(rawNote.bodyKey);
+      if (body) return true;
 
-        this.logger.verbose(`${rawNote._id}: body has been evicted.`);
-        this.noteModel.remove(rawNote._id);
-        return false;
-      })
-      .map((rawNote) => ({
-        id: rawNote._id,
-        title: rawNote.title,
-        created: rawNote.createdAt,
-        updated: rawNote.updatedAt,
-      }));
+      this.logger.verbose(`${rawNote._id}: body has been evicted.`);
+      this.noteModel.remove(rawNote._id);
+      return false;
+    });
+
+    return validNotes.map((rawNote) => ({
+      id: rawNote._id,
+      title: rawNote.title,
+      created: rawNote.createdAt,
+      updated: rawNote.updatedAt,
+    }));
   }
 
   private extractTitle(body: string): string {

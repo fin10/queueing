@@ -1,17 +1,18 @@
 import moment from 'moment';
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class NoteBodyService {
-  private readonly bodies: { [key: string]: string } = {};
+  constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
 
-  put(body: string): string {
+  async put(body: string): Promise<string> {
     const key = moment().valueOf().toString();
-    this.bodies[key] = body;
+    await this.cache.set(key, body, { ttl: moment.duration(1, 'd').asSeconds() });
     return key;
   }
 
-  get(key: string): string | null {
-    return this.bodies[key];
+  get(key: string): Promise<string | null> {
+    return this.cache.get(key);
   }
 }
