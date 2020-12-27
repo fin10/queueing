@@ -11,7 +11,7 @@ const bootstrap = async () => {
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
 
-  const port = app.get(QueueingConfigService).get<number>(ConfigKey.PORT);
+  const port = app.get(QueueingConfigService).getInteger(ConfigKey.PORT);
   if (!port) throw new InternalServerErrorException('port is not defined.');
 
   await app.listen(port, () => {

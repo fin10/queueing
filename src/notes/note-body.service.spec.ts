@@ -1,5 +1,6 @@
 import { CacheModule } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { QueueingConfigModule } from 'src/config/queueing-config.module';
 import { NoteBodyService } from './note-body.service';
 
 describe('NoteBodyService', () => {
@@ -7,7 +8,7 @@ describe('NoteBodyService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [CacheModule.register()],
+      imports: [CacheModule.register(), QueueingConfigModule],
       providers: [NoteBodyService],
     }).compile();
 

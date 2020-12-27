@@ -4,14 +4,25 @@ import { NoteBodyService } from './note-body.service';
 import { NotesController } from './notes.controller';
 import { NotesService } from './notes.service';
 import { NoteModelModule } from 'src/database/note-model.module';
+import { ConfigKey, QueueingConfigService } from 'src/config/queueing-config.service';
+import { QueueingConfigModule } from 'src/config/queueing-config.module';
 
 @Module({
   imports: [
     NoteModelModule,
-    CacheModule.register({
-      store: redisStore,
-      host: 'localhost',
-      port: 6379,
+    CacheModule.registerAsync({
+      imports: [QueueingConfigModule],
+      inject: [QueueingConfigService],
+      useFactory: (config: QueueingConfigService) => {
+        const redisEnabled = config.getBoolean(ConfigKey.REDIS_ENABLED);
+        if (!redisEnabled) return { store: 'memory' };
+
+        return {
+          store: redisStore,
+          host: config.getString(ConfigKey.REDIS_HOST),
+          port: config.getInteger(ConfigKey.REDIS_PORT),
+        };
+      },
     }),
   ],
   controllers: [NotesController],
