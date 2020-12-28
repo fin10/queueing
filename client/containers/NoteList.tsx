@@ -9,10 +9,6 @@ import { Note } from '../types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      width: '100%',
-      backgroundColor: theme.palette.background.paper,
-    },
     fab: {
       position: 'absolute',
       right: 0,
@@ -40,12 +36,11 @@ const NoteList = (): React.ReactElement => {
   }, []);
 
   return (
-    <div className={classes.root}>
-      <h2>Queueing</h2>
+    <div>
       <List>
         {notes.map((note) => (
           <ListItem key={note.id} button component={Link} to={`/notes/${note.id}`}>
-            <ListItemText primary={note.title} />
+            <ListItemText primary={note.title} secondary={note.created} />
           </ListItem>
         ))}
       </List>
