@@ -1,4 +1,4 @@
-import { createStyles, ListItem, ListItemText, makeStyles, Theme, Typography } from '@material-ui/core';
+import { Chip, createStyles, Grid, ListItem, ListItemText, makeStyles, Theme, Typography } from '@material-ui/core';
 import CommentIcon from '@material-ui/icons/Comment';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
@@ -12,11 +12,7 @@ interface PropTypes {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    title: {
-      marginBlock: theme.spacing(1),
-    },
     info: {
-      ...theme.typography.subtitle1,
       marginRight: theme.spacing(2),
       display: 'inline-flex',
       alignItems: 'center',
@@ -29,6 +25,9 @@ const useStyles = makeStyles((theme: Theme) =>
       marginRight: 6,
       borderRadius: '50%',
     },
+    user: {
+      float: 'right',
+    },
   }),
 );
 
@@ -40,21 +39,29 @@ const NoteListItem = (props: PropTypes): React.ReactElement => {
     <ListItem button component={Link} to={`/notes/${note.id}`} divider={true}>
       <ListItemText
         primary={
-          <>
-            <Typography className={classes.title}>{note.title}</Typography>
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <Typography>{note.title}</Typography>
+            </Grid>
 
-            <Typography className={classes.info}>
-              <CommentIcon className={classes.icon} /> {note.like}
-            </Typography>
+            <Grid item xs={6}>
+              <Typography variant="subtitle1" className={classes.info}>
+                <CommentIcon className={classes.icon} /> {note.like}
+              </Typography>
 
-            <Typography className={classes.info}>
-              <ThumbUpIcon className={classes.icon} /> {note.like}
-            </Typography>
+              <Typography variant="subtitle1" className={classes.info}>
+                <ThumbUpIcon className={classes.icon} /> {note.like}
+              </Typography>
 
-            <Typography className={classes.info}>
-              <ThumbDownIcon className={classes.icon} /> {note.dislike}
-            </Typography>
-          </>
+              <Typography variant="subtitle1" className={classes.info}>
+                <ThumbDownIcon className={classes.icon} /> {note.dislike}
+              </Typography>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Chip variant="outlined" size="small" label={note.user} className={classes.user} />
+            </Grid>
+          </Grid>
         }
       />
     </ListItem>

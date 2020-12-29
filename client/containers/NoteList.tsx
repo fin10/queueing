@@ -40,7 +40,7 @@ const NoteList = (): React.ReactElement => {
 
   return (
     <Paper className={classes.paper}>
-      <List dense={true}>
+      <List dense={true} disablePadding={true}>
         {notes.map((note) => (
           <React.Fragment key={note.id}>
             <NoteListItem note={note} />
