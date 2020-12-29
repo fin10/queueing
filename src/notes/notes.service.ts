@@ -33,6 +33,10 @@ export class NotesService {
       body,
       created: rawNote.createdAt,
       updated: rawNote.updatedAt,
+      children: 0,
+      like: 0,
+      dislike: 0,
+      user: 'tmp',
     };
   }
 
@@ -53,6 +57,10 @@ export class NotesService {
       title: rawNote.title,
       created: rawNote.createdAt,
       updated: rawNote.updatedAt,
+      children: 0,
+      like: 0,
+      dislike: 0,
+      user: 'tmp',
     }));
   }
 

@@ -1,14 +1,17 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { List, ListItem, ListItemText, Fab } from '@material-ui/core';
+import { List, Fab, Paper } from '@material-ui/core';
 import { Create as CreateIcon } from '@material-ui/icons';
 import { Logger } from '../utils/Logger';
 import { Note } from '../types';
+import NoteListItem from '../components/NoteListItem';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    paper: {
+      marginTop: theme.spacing(2),
+    },
     fab: {
       position: 'absolute',
       right: 0,
@@ -36,18 +39,18 @@ const NoteList = (): React.ReactElement => {
   }, []);
 
   return (
-    <div>
-      <List>
+    <Paper className={classes.paper}>
+      <List dense={true}>
         {notes.map((note) => (
-          <ListItem key={note.id} button component={Link} to={`/notes/${note.id}`}>
-            <ListItemText primary={note.title} secondary={note.created} />
-          </ListItem>
+          <React.Fragment key={note.id}>
+            <NoteListItem note={note} />
+          </React.Fragment>
         ))}
       </List>
       <Fab className={classes.fab} color="primary" aria-label="create" href="/notes/new">
         <CreateIcon />
       </Fab>
-    </div>
+    </Paper>
   );
 };
 

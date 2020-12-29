@@ -21,7 +21,7 @@ const App = (): React.ReactElement => {
   return (
     <div className={classes.root}>
       <Header />
-      <Container maxWidth="sm">
+      <Container maxWidth="md">
         <Router>
           <Switch>
             <Route path="/notes/new">
