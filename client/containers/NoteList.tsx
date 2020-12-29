@@ -9,9 +9,6 @@ import NoteListItem from '../components/NoteListItem';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    paper: {
-      marginTop: theme.spacing(2),
-    },
     fab: {
       position: 'absolute',
       right: 0,
@@ -39,7 +36,7 @@ const NoteList = (): React.ReactElement => {
   }, []);
 
   return (
-    <Paper className={classes.paper}>
+    <Paper>
       <List dense={true} disablePadding={true}>
         {notes.map((note) => (
           <React.Fragment key={note.id}>

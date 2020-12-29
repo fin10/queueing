@@ -4,7 +4,7 @@ import React from 'react';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      flexGrow: 1,
+      marginBottom: theme.spacing(2),
     },
     title: {
       flexGrow: 1,
@@ -16,7 +16,7 @@ const Header = (): React.ReactElement => {
   const classes = useStyles();
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" className={classes.root}>
       <Toolbar>
         <Typography variant="h6" align="center" className={classes.title}>
           Queueing
