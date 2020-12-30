@@ -1,10 +1,8 @@
 import { Chip, createStyles, Grid, ListItem, ListItemText, makeStyles, Theme, Typography } from '@material-ui/core';
-import CommentIcon from '@material-ui/icons/Comment';
-import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import { Link } from 'react-router-dom';
-import { Note } from '../types';
 import React from 'react';
+import { Note } from '../types';
+import { CommentAction, LikeAction, DislikeAction } from './Action';
 
 interface PropTypes {
   note: Note;
@@ -12,18 +10,8 @@ interface PropTypes {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    info: {
+    marginRight: {
       marginRight: theme.spacing(2),
-      display: 'inline-flex',
-      alignItems: 'center',
-    },
-    icon: {
-      ...theme.typography.caption,
-      backgroundColor: theme.palette.info.main,
-      color: theme.palette.info.contrastText,
-      padding: theme.spacing(0.5),
-      marginRight: 6,
-      borderRadius: '50%',
     },
     user: {
       float: 'right',
@@ -45,17 +33,15 @@ const NoteListItem = (props: PropTypes): React.ReactElement => {
             </Grid>
 
             <Grid item xs={6}>
-              <Typography variant="subtitle1" className={classes.info}>
-                <CommentIcon className={classes.icon} /> {note.like}
-              </Typography>
-
-              <Typography variant="subtitle1" className={classes.info}>
-                <ThumbUpIcon className={classes.icon} /> {note.like}
-              </Typography>
-
-              <Typography variant="subtitle1" className={classes.info}>
-                <ThumbDownIcon className={classes.icon} /> {note.dislike}
-              </Typography>
+              <span className={classes.marginRight}>
+                <CommentAction comments={note.children} />
+              </span>
+              <span className={classes.marginRight}>
+                <LikeAction likes={note.like} />
+              </span>
+              <span>
+                <DislikeAction dislikes={note.dislike} />
+              </span>
             </Grid>
 
             <Grid item xs={6}>
