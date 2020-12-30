@@ -1,54 +1,77 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { createStyles, makeStyles } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { TextField, Button } from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Logger } from '../utils/Logger';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    contents: {
-      display: 'block',
+    margin: {
+      marginBottom: theme.spacing(2),
     },
-    submit: {},
   }),
 );
 
 const NewNote = (): React.ReactElement => {
   const classes = useStyles();
-  const [contents, updateContents] = useState('');
+  const [topic, updateTopic] = useState('');
+  const [body, updateBody] = useState('');
+
+  const handleTopicChange = (event: unknown, newValue: string | null) => {
+    updateTopic(newValue || '');
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    updateContents(event.target.value);
+    switch (event.target.id) {
+      case 'body':
+        updateBody(event.target.value);
+        break;
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
-      await axios.post('/api/notes', { body: contents });
-      window.location.assign('/');
+      const res = await axios.post<string>('/api/notes', { body });
+      window.location.assign(`/notes/${res.data}`);
     } catch (err) {
       Logger.error(err);
     }
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <TextField
-          className={classes.contents}
-          id="contents"
-          label="Contents"
-          multiline
-          rows={10}
-          onChange={handleChange}
-          value={contents}
-        />
-        <Button className={classes.submit} variant="contained" color="primary" type="submit">
-          Submit
-        </Button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <Autocomplete
+        id="topic"
+        size="small"
+        freeSolo
+        fullWidth
+        options={[]}
+        value={topic}
+        onChange={handleTopicChange}
+        getOptionLabel={(option) => option}
+        renderInput={(params) => (
+          <TextField {...params} className={classes.margin} id="topic" label="Topic" variant="outlined" />
+        )}
+      />
+
+      <TextField
+        className={classes.margin}
+        id="body"
+        variant="outlined"
+        fullWidth
+        multiline
+        rows={25}
+        onChange={handleChange}
+        value={body}
+      />
+
+      <Button variant="contained" size="large" color="primary" type="submit" fullWidth>
+        Submit
+      </Button>
+    </form>
   );
 };
 
