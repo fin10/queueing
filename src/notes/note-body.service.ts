@@ -7,10 +7,8 @@ import { ConfigKey, QueueingConfigService } from 'src/config/queueing-config.ser
 export class NoteBodyService {
   constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache, private readonly config: QueueingConfigService) {}
 
-  async put(body: string): Promise<string> {
-    const key = moment().valueOf().toString();
-    await this.cache.set(key, body, { ttl: this.getExpireTime() });
-    return key;
+  put(key: string, body: string): Promise<void> {
+    return this.cache.set(key, body, { ttl: this.getExpireTime() });
   }
 
   get(key: string): Promise<string | null> {

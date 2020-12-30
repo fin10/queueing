@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const NewNote = (): React.ReactElement => {
   const classes = useStyles();
+  const [title, updateTitle] = useState('');
   const [topic, updateTopic] = useState('');
   const [body, updateBody] = useState('');
 
@@ -24,6 +25,9 @@ const NewNote = (): React.ReactElement => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     switch (event.target.id) {
+      case 'title':
+        updateTitle(event.target.value);
+        break;
       case 'body':
         updateBody(event.target.value);
         break;
@@ -34,7 +38,7 @@ const NewNote = (): React.ReactElement => {
     event.preventDefault();
 
     try {
-      const res = await axios.post<string>('/api/notes', { body });
+      const res = await axios.post<string>('/api/notes', { topic, title, body });
       window.location.assign(`/notes/${res.data}`);
     } catch (err) {
       Logger.error(err);
@@ -50,7 +54,7 @@ const NewNote = (): React.ReactElement => {
         fullWidth
         options={[]}
         value={topic}
-        onChange={handleTopicChange}
+        onInputChange={handleTopicChange}
         getOptionLabel={(option) => option}
         renderInput={(params) => (
           <TextField {...params} className={classes.margin} id="topic" label="Topic" variant="outlined" />
@@ -59,11 +63,20 @@ const NewNote = (): React.ReactElement => {
 
       <TextField
         className={classes.margin}
+        id="title"
+        variant="outlined"
+        fullWidth
+        onChange={handleChange}
+        value={title}
+      />
+
+      <TextField
+        className={classes.margin}
         id="body"
         variant="outlined"
         fullWidth
         multiline
-        rows={25}
+        rows={20}
         onChange={handleChange}
         value={body}
       />

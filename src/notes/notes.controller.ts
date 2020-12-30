@@ -1,5 +1,6 @@
-import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CreateNoteDto } from './dto/create-note.dto';
+import { NoteResponse } from './interfaces/note-response.interface';
 import { Note } from './interfaces/note.interface';
 import { NotesService } from './notes.service';
 
@@ -13,13 +14,13 @@ export class NotesController {
   }
 
   @Get(':id')
-  async getNote(@Param('id') id: string): Promise<Note> {
+  async getNote(@Param('id') id: string): Promise<NoteResponse> {
     if (!id) throw new BadRequestException('id cannot be null.');
 
     const note = await this.service.getNote(id);
-    if (!note) throw new NotFoundException(`${id} not found.`);
+    const body = await this.service.getNoteBody(id);
 
-    return note;
+    return { note, body };
   }
 
   @Get()

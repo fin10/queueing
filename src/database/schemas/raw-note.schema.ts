@@ -6,10 +6,10 @@ export type RawNoteDocument = RawNote & Document;
 @Schema({ timestamps: true })
 export class RawNote {
   @Prop({ required: true })
-  readonly title!: string;
+  readonly topic!: string;
 
   @Prop({ required: true })
-  readonly bodyKey!: string;
+  readonly title!: string;
 
   readonly _id!: string;
   readonly createdAt!: Date;

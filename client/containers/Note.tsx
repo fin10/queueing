@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Logger } from '../utils/Logger';
-import { Note } from '../types';
+import { Note, NoteResponse } from '../types';
 import {
   Button,
   ButtonGroup,
@@ -35,11 +35,14 @@ const Note = (): React.ReactElement => {
   const classes = useStyles();
   const { id } = useParams<{ id: string }>();
   const [note, updateNote] = useState<Note>();
+  const [body, updateNoteBody] = useState<string>('');
 
   const fetchNote = async () => {
     try {
-      const res = await axios.get<Note>(`/api/notes/${id}`);
-      updateNote(res.data);
+      const res = await axios.get<NoteResponse>(`/api/notes/${id}`);
+      const { note, body } = res.data;
+      updateNote(note);
+      updateNoteBody(body);
     } catch (err) {
       Logger.error(err);
     }
@@ -61,7 +64,7 @@ const Note = (): React.ReactElement => {
             {note.user}
           </Typography>
 
-          <Typography className={classes.body}>{note.body}</Typography>
+          <Typography className={classes.body}>{body}</Typography>
         </CardContent>
         <CardActions className={classes.actions}>
           <ButtonGroup size="small" color="primary">
