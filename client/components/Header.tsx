@@ -1,10 +1,10 @@
-import { AppBar, createStyles, makeStyles, Theme, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, createStyles, Link, makeStyles, Theme, Toolbar, Typography } from '@material-ui/core';
 import React from 'react';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      marginBottom: theme.spacing(2),
+      marginBottom: theme.spacing(3),
     },
     title: {
       flexGrow: 1,
@@ -19,7 +19,9 @@ const Header = (): React.ReactElement => {
     <AppBar position="static" className={classes.root}>
       <Toolbar>
         <Typography variant="h6" align="center" className={classes.title}>
-          Queueing
+          <Link href="/" color="inherit" underline="none">
+            Queueing
+          </Link>
         </Typography>
       </Toolbar>
     </AppBar>
