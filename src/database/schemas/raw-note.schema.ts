@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 export type RawNoteDocument = RawNote & Document;
 
@@ -8,8 +8,11 @@ export class RawNote {
   @Prop({ required: true })
   readonly topic!: string;
 
-  @Prop({ required: true })
-  readonly title!: string;
+  @Prop()
+  readonly title?: string;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'RawNote' })
+  readonly parent?: string;
 
   readonly _id!: string;
   readonly createdAt!: Date;

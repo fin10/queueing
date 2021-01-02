@@ -10,7 +10,6 @@ export interface Note {
   readonly user: string;
 }
 
-export interface NoteResponse {
-  readonly note: Note;
+export interface NoteWithBody extends Note {
   readonly body: string;
 }
