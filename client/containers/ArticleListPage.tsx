@@ -44,7 +44,7 @@ const ArticleListPage = (): React.ReactElement => {
           </React.Fragment>
         ))}
       </List>
-      <Fab className={classes.fab} color="primary" aria-label="create" href="/notes/new">
+      <Fab className={classes.fab} color="primary" aria-label="create" href="/article/new">
         <CreateIcon />
       </Fab>
     </Paper>

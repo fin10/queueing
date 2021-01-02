@@ -39,7 +39,7 @@ const EditArticlePage = (): React.ReactElement => {
 
     try {
       const res = await axios.post<string>('/api/article', { topic, title, body });
-      window.location.assign(`/notes/${res.data}`);
+      window.location.assign(`/article/${res.data}`);
     } catch (err) {
       Logger.error(err);
     }
