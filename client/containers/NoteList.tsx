@@ -24,7 +24,7 @@ const NoteList = (): React.ReactElement => {
 
   const fetchNotes = async () => {
     try {
-      const res = await axios.get<Note[]>('/api/notes');
+      const res = await axios.get<Note[]>('/api/article');
       updateNotes(res.data);
     } catch (err) {
       Logger.error(err);

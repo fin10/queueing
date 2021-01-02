@@ -38,7 +38,7 @@ const NewNote = (): React.ReactElement => {
     event.preventDefault();
 
     try {
-      const res = await axios.post<string>('/api/notes', { topic, title, body });
+      const res = await axios.post<string>('/api/article', { topic, title, body });
       window.location.assign(`/notes/${res.data}`);
     } catch (err) {
       Logger.error(err);

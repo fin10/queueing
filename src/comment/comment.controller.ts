@@ -3,7 +3,7 @@ import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Note } from '../notes/dto/note.dto';
 
-@Controller('comments')
+@Controller('comment')
 export class CommentController {
   constructor(private readonly service: CommentService) {}
 

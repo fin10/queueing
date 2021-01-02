@@ -1,16 +1,16 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { NoteBodyService } from './note-body.service';
-import { CreateNoteDto } from './dto/create-note.dto';
-import { Note } from './dto/note.dto';
+import { NoteBodyService } from '../notes/note-body.service';
+import { CreateArticleDto } from './dto/create-article.dto';
+import { Note } from '../notes/dto/note.dto';
 import { NoteModel } from '../database/note-model.service';
 
 @Injectable()
-export class NotesService {
-  private readonly logger = new Logger(NotesService.name);
+export class ArticleService {
+  private readonly logger = new Logger(ArticleService.name);
 
   constructor(private readonly noteModel: NoteModel, private readonly bodyStore: NoteBodyService) {}
 
-  async create(data: CreateNoteDto): Promise<string> {
+  async create(data: CreateArticleDto): Promise<string> {
     const { topic, title, body } = data;
 
     const id = await this.noteModel.create(topic, title);
@@ -19,7 +19,7 @@ export class NotesService {
     return id;
   }
 
-  async getNote(id: string): Promise<Note> {
+  async getArticle(id: string): Promise<Note> {
     const rawNote = await this.noteModel.getNote(id);
     if (!rawNote) throw new NotFoundException(`${id} not found.`);
 
@@ -32,7 +32,7 @@ export class NotesService {
     return Note.instantiate(rawNote, body);
   }
 
-  async getNotes(): Promise<Note[]> {
+  async getArticles(): Promise<Note[]> {
     const rawNotes = await this.noteModel.getNotes({ parent: { $exists: false } });
     return rawNotes.map((rawNote) => Note.instantiate(rawNote));
   }

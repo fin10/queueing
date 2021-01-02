@@ -45,7 +45,7 @@ const Note = (): React.ReactElement => {
 
   const fetchNote = async () => {
     try {
-      const res = await axios.get<NoteWithBody>(`/api/notes/${id}`);
+      const res = await axios.get<NoteWithBody>(`/api/article/${id}`);
       updateNote(res.data);
     } catch (err) {
       Logger.error(err);
@@ -54,7 +54,7 @@ const Note = (): React.ReactElement => {
 
   const fetchComments = async () => {
     try {
-      const res = await axios.get<NoteWithBody[]>(`/api/comments/${id}`);
+      const res = await axios.get<NoteWithBody[]>(`/api/comment/${id}`);
       updateComments(res.data);
     } catch (err) {
       Logger.error(err);
@@ -85,7 +85,7 @@ const Note = (): React.ReactElement => {
     event.preventDefault();
 
     try {
-      await axios.post<string>('/api/comments', { body: comment, parentId: id });
+      await axios.post<string>('/api/comment', { body: comment, parentId: id });
       window.location.reload();
     } catch (err) {
       Logger.error(err);

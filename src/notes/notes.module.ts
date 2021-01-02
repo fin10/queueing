@@ -1,8 +1,6 @@
 import redisStore from 'cache-manager-ioredis';
 import { CacheModule, Module } from '@nestjs/common';
 import { NoteBodyService } from './note-body.service';
-import { NotesController } from './notes.controller';
-import { NotesService } from './notes.service';
 import { NoteModelModule } from 'src/database/note-model.module';
 import { ConfigKey, QueueingConfigService } from 'src/config/queueing-config.service';
 import { QueueingConfigModule } from 'src/config/queueing-config.module';
@@ -25,8 +23,7 @@ import { QueueingConfigModule } from 'src/config/queueing-config.module';
       },
     }),
   ],
-  controllers: [NotesController],
-  providers: [NotesService, NoteBodyService],
+  providers: [NoteBodyService],
   exports: [NoteBodyService],
 })
 export class NotesModule {}
