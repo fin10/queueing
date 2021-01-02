@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Container, createStyles, makeStyles, Theme } from '@material-ui/core';
-import NewNote from './NewNote';
-import NoteList from './NoteList';
-import Note from './Note';
+import EditArticlePage from './EditArticlePage';
+import ArticleListPage from './ArticleListPage';
+import ArticlePage from './ArticlePage';
 import Header from '../components/Header';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -24,14 +24,14 @@ const App = (): React.ReactElement => {
       <Container maxWidth="md">
         <Router>
           <Switch>
-            <Route path="/notes/new">
-              <NewNote />
+            <Route path="/article/new">
+              <EditArticlePage />
             </Route>
-            <Route path="/notes/:id">
-              <Note />
+            <Route path="/article/:id">
+              <ArticlePage />
             </Route>
             <Route path="/">
-              <NoteList />
+              <ArticleListPage />
             </Route>
           </Switch>
         </Router>

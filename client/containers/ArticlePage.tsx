@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const Note = (): React.ReactElement => {
+const ArticlePage = (): React.ReactElement => {
   const classes = useStyles();
   const { id } = useParams<{ id: string }>();
 
@@ -158,4 +158,4 @@ const Note = (): React.ReactElement => {
   );
 };
 
-export default Note;
+export default ArticlePage;

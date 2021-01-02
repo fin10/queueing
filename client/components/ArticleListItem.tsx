@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const NoteListItem = (props: PropTypes): React.ReactElement => {
+const ArticleListItem = (props: PropTypes): React.ReactElement => {
   const { note } = props;
   const classes = useStyles();
 
@@ -54,4 +54,4 @@ const NoteListItem = (props: PropTypes): React.ReactElement => {
   );
 };
 
-export default NoteListItem;
+export default ArticleListItem;

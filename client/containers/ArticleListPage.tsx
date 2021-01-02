@@ -5,7 +5,7 @@ import { List, Fab, Paper } from '@material-ui/core';
 import { Create as CreateIcon } from '@material-ui/icons';
 import { Logger } from '../utils/Logger';
 import { Note } from '../types';
-import NoteListItem from '../components/NoteListItem';
+import ArticleListItem from '../components/ArticleListItem';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const NoteList = (): React.ReactElement => {
+const ArticleListPage = (): React.ReactElement => {
   const [notes, updateNotes] = useState<Note[]>([]);
   const classes = useStyles();
 
@@ -40,7 +40,7 @@ const NoteList = (): React.ReactElement => {
       <List dense={true} disablePadding={true}>
         {notes.map((note) => (
           <React.Fragment key={note.id}>
-            <NoteListItem note={note} />
+            <ArticleListItem note={note} />
           </React.Fragment>
         ))}
       </List>
@@ -51,4 +51,4 @@ const NoteList = (): React.ReactElement => {
   );
 };
 
-export default NoteList;
+export default ArticleListPage;

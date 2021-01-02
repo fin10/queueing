@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const NewNote = (): React.ReactElement => {
+const EditArticlePage = (): React.ReactElement => {
   const classes = useStyles();
   const [title, updateTitle] = useState('');
   const [topic, updateTopic] = useState('');
@@ -88,4 +88,4 @@ const NewNote = (): React.ReactElement => {
   );
 };
 
-export default NewNote;
+export default EditArticlePage;
