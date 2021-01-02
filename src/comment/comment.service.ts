@@ -1,9 +1,9 @@
 import _ from 'underscore';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { NoteBodyService } from '../notes/note-body.service';
-import { NoteModel } from '../database/note-model.service';
+import { NoteBodyService } from 'src/note/note-body.service';
+import { NoteModel } from 'src/note/note-model.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { Note } from '../notes/dto/note.dto';
+import { Note } from 'src/note/dto/note.dto';
 
 @Injectable()
 export class CommentService {

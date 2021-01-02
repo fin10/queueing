@@ -1,4 +1,4 @@
-import { RawNote } from 'src/database/schemas/raw-note.schema';
+import { RawNote } from 'src/note/schemas/raw-note.schema';
 
 export class Note {
   private constructor(

@@ -1,13 +1,15 @@
 import redisStore from 'cache-manager-ioredis';
 import { CacheModule, Module } from '@nestjs/common';
-import { NoteBodyService } from './note-body.service';
-import { NoteModelModule } from 'src/database/note-model.module';
-import { ConfigKey, QueueingConfigService } from 'src/config/queueing-config.service';
+import { MongooseModule } from '@nestjs/mongoose';
 import { QueueingConfigModule } from 'src/config/queueing-config.module';
+import { ConfigKey, QueueingConfigService } from 'src/config/queueing-config.service';
+import { NoteModel } from './note-model.service';
+import { RawNote, RawNoteSchema } from './schemas/raw-note.schema';
+import { NoteBodyService } from './note-body.service';
 
 @Module({
   imports: [
-    NoteModelModule,
+    MongooseModule.forFeature([{ name: RawNote.name, schema: RawNoteSchema }]),
     CacheModule.registerAsync({
       imports: [QueueingConfigModule],
       inject: [QueueingConfigService],
@@ -23,7 +25,7 @@ import { QueueingConfigModule } from 'src/config/queueing-config.module';
       },
     }),
   ],
-  providers: [NoteBodyService],
-  exports: [NoteBodyService],
+  providers: [NoteModel, NoteBodyService],
+  exports: [NoteModel, NoteBodyService],
 })
-export class NotesModule {}
+export class NoteModule {}

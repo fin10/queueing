@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
-import { NoteModelModule } from 'src/database/note-model.module';
-import { NotesModule } from 'src/notes/notes.module';
+import { NoteModule } from 'src/note/note.module';
 import { ArticleController } from './article.controller';
 import { ArticleService } from './article.service';
 
 @Module({
-  imports: [NoteModelModule, NotesModule],
+  imports: [NoteModule],
   controllers: [ArticleController],
   providers: [ArticleService],
 })

@@ -1,8 +1,8 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { NoteBodyService } from '../notes/note-body.service';
+import { NoteBodyService } from 'src/note/note-body.service';
 import { CreateArticleDto } from './dto/create-article.dto';
-import { Note } from '../notes/dto/note.dto';
-import { NoteModel } from '../database/note-model.service';
+import { Note } from 'src/note/dto/note.dto';
+import { NoteModel } from 'src/note/note-model.service';
 
 @Injectable()
 export class ArticleService {

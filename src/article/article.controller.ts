@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
-import { Note } from '../notes/dto/note.dto';
+import { Note } from 'src/note/dto/note.dto';
 import { ArticleService } from './article.service';
 
 @Controller('article')

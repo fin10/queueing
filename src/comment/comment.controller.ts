@@ -1,7 +1,7 @@
 import { BadRequestException, Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { Note } from '../notes/dto/note.dto';
+import { Note } from 'src/note/dto/note.dto';
 
 @Controller('comment')
 export class CommentController {
