@@ -1,11 +1,11 @@
 import { BadRequestException, Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { CommentsService } from './comments.service';
+import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { Note } from './dto/note.dto';
+import { Note } from '../notes/dto/note.dto';
 
 @Controller('comments')
-export class CommentsController {
-  constructor(private readonly service: CommentsService) {}
+export class CommentController {
+  constructor(private readonly service: CommentService) {}
 
   @Post()
   create(@Body() data: CreateCommentDto): Promise<string> {

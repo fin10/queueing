@@ -5,6 +5,7 @@ import { NotesModule } from './notes/notes.module';
 import { QueueingConfigModule } from './config/queueing-config.module';
 import { LoggerModule } from './logger/logger.module';
 import { DatabaseModule } from './database/database.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { DatabaseModule } from './database/database.module';
       exclude: ['/api*'],
     }),
     NotesModule,
+    CommentModule,
   ],
 })
 export class AppModule {}

@@ -6,8 +6,6 @@ import { NotesService } from './notes.service';
 import { NoteModelModule } from 'src/database/note-model.module';
 import { ConfigKey, QueueingConfigService } from 'src/config/queueing-config.service';
 import { QueueingConfigModule } from 'src/config/queueing-config.module';
-import { CommentsService } from './comments.service';
-import { CommentsController } from './comments.controller';
 
 @Module({
   imports: [
@@ -27,7 +25,8 @@ import { CommentsController } from './comments.controller';
       },
     }),
   ],
-  controllers: [NotesController, CommentsController],
-  providers: [NotesService, NoteBodyService, CommentsService],
+  controllers: [NotesController],
+  providers: [NotesService, NoteBodyService],
+  exports: [NoteBodyService],
 })
 export class NotesModule {}

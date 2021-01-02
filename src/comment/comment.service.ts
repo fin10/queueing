@@ -1,13 +1,13 @@
 import _ from 'underscore';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { NoteBodyService } from './note-body.service';
+import { NoteBodyService } from '../notes/note-body.service';
 import { NoteModel } from '../database/note-model.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { Note } from './dto/note.dto';
+import { Note } from '../notes/dto/note.dto';
 
 @Injectable()
-export class CommentsService {
-  private readonly logger = new Logger(CommentsService.name);
+export class CommentService {
+  private readonly logger = new Logger(CommentService.name);
 
   constructor(private readonly noteModel: NoteModel, private readonly bodyStore: NoteBodyService) {}
 
