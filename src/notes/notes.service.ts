@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { NoteBodyService } from './note-body.service';
 import { CreateNoteDto } from './dto/create-note.dto';
-import { Note, NoteWithBody } from './interfaces/note.interface';
+import { Note } from './dto/note.dto';
 import { NoteModel } from '../database/note-model.service';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class NotesService {
     return id;
   }
 
-  async getNote(id: string): Promise<NoteWithBody> {
+  async getNote(id: string): Promise<Note> {
     const rawNote = await this.noteModel.getNote(id);
     if (!rawNote) throw new NotFoundException(`${id} not found.`);
 
@@ -29,31 +29,11 @@ export class NotesService {
       throw new NotFoundException(`${id} has been expired.`);
     }
 
-    return {
-      id: rawNote._id,
-      title: rawNote.title,
-      body,
-      created: rawNote.createdAt,
-      updated: rawNote.updatedAt,
-      children: 0,
-      like: 0,
-      dislike: 0,
-      user: 'tmp',
-    };
+    return Note.instantiate(rawNote, body);
   }
 
   async getNotes(): Promise<Note[]> {
     const rawNotes = await this.noteModel.getNotes({ parent: { $exists: false } });
-
-    return rawNotes.map((rawNote) => ({
-      id: rawNote._id,
-      title: rawNote.title,
-      created: rawNote.createdAt,
-      updated: rawNote.updatedAt,
-      children: 0,
-      like: 0,
-      dislike: 0,
-      user: 'tmp',
-    }));
+    return rawNotes.map((rawNote) => Note.instantiate(rawNote));
   }
 }

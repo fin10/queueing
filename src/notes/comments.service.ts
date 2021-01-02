@@ -3,7 +3,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { NoteBodyService } from './note-body.service';
 import { NoteModel } from '../database/note-model.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { NoteWithBody } from './interfaces/note.interface';
+import { Note } from './dto/note.dto';
 
 @Injectable()
 export class CommentsService {
@@ -23,7 +23,7 @@ export class CommentsService {
     return id;
   }
 
-  async getComments(id: string): Promise<NoteWithBody[]> {
+  async getComments(id: string): Promise<Note[]> {
     const rawNotes = await this.noteModel.getNotes({ parent: id });
 
     return _.compact(
@@ -36,17 +36,7 @@ export class CommentsService {
             return null;
           }
 
-          return {
-            id: rawNote._id,
-            parent: rawNote.parent,
-            body,
-            created: rawNote.createdAt,
-            updated: rawNote.updatedAt,
-            children: 0,
-            like: 0,
-            dislike: 0,
-            user: 'tmp',
-          };
+          return Note.instantiate(rawNote, body);
         }),
       ),
     );
