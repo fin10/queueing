@@ -24,7 +24,7 @@ const ArticleListItem = (props: PropTypes): React.ReactElement => {
   const classes = useStyles();
 
   return (
-    <ListItem button component={Link} to={`/notes/${note.id}`} divider={true}>
+    <ListItem button component={Link} to={`/article/${note.id}`} divider={true}>
       <ListItemText
         primary={
           <Grid container spacing={1}>

@@ -3,32 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Logger } from '../utils/Logger';
 import { NoteWithBody } from '../types';
-import {
-  Button,
-  ButtonGroup,
-  Card,
-  CardActions,
-  CardContent,
-  createStyles,
-  makeStyles,
-  TextField,
-  Theme,
-  Typography,
-} from '@material-ui/core';
-import { DislikeAction, LikeAction } from '../components/Action';
+import { Button, createStyles, makeStyles, TextField, Theme } from '@material-ui/core';
+import ArticleCard from '../components/ArticleCard';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    body: {
-      whiteSpace: 'pre-wrap',
-    },
-    actions: {
-      justifyContent: 'center',
-    },
-    button: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(2),
-    },
     margin: {
       marginBottom: theme.spacing(2),
     },
@@ -94,47 +73,11 @@ const ArticlePage = (): React.ReactElement => {
 
   return (
     <>
-      <Card className={classes.margin}>
-        <CardContent>
-          <Typography gutterBottom variant="subtitle1" color="textSecondary">
-            {note.user}
-          </Typography>
-
-          <Typography className={classes.body}>{note.body}</Typography>
-        </CardContent>
-        <CardActions className={classes.actions}>
-          <ButtonGroup size="small" color="primary">
-            <Button className={classes.button}>
-              <LikeAction likes={note.like} />
-            </Button>
-            <Button className={classes.button}>
-              <DislikeAction dislikes={note.dislike} />
-            </Button>
-          </ButtonGroup>
-        </CardActions>
-      </Card>
+      <ArticleCard note={note} />
 
       {comments.map((comment) => (
         <React.Fragment key={comment.id}>
-          <Card className={classes.margin}>
-            <CardContent>
-              <Typography gutterBottom variant="subtitle1" color="textSecondary">
-                {comment.user}
-              </Typography>
-
-              <Typography className={classes.body}>{comment.body}</Typography>
-            </CardContent>
-            <CardActions className={classes.actions}>
-              <ButtonGroup size="small" color="primary">
-                <Button className={classes.button}>
-                  <LikeAction likes={comment.like} />
-                </Button>
-                <Button className={classes.button}>
-                  <DislikeAction dislikes={comment.dislike} />
-                </Button>
-              </ButtonGroup>
-            </CardActions>
-          </Card>
+          <ArticleCard note={comment} />
         </React.Fragment>
       ))}
 
