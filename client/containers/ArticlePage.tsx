@@ -5,6 +5,7 @@ import { Logger } from '../utils/Logger';
 import { NoteWithBody } from '../types';
 import ArticleCard from '../components/ArticleCard';
 import InputComment from '../components/InputComment';
+import CommentCard from '../components/CommentCard';
 
 const ArticlePage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
@@ -48,7 +49,7 @@ const ArticlePage = (): React.ReactElement => {
 
       {comments.map((comment) => (
         <React.Fragment key={comment.id}>
-          <ArticleCard note={comment} />
+          <CommentCard note={comment} />
         </React.Fragment>
       ))}
 
