@@ -1,4 +1,6 @@
 import { AppBar, createStyles, Link, makeStyles, Theme, Toolbar, Typography } from '@material-ui/core';
+import { Resources } from '../resources/Resources';
+import { StringID } from '../resources/StringID';
 import React from 'react';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -20,7 +22,7 @@ const Header = (): React.ReactElement => {
       <Toolbar>
         <Typography variant="h6" align="center" className={classes.title}>
           <Link href="/" color="inherit" underline="none">
-            Queueing
+            {Resources.getString(StringID.HEADER_TITLE)}
           </Link>
         </Typography>
       </Toolbar>

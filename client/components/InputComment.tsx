@@ -2,6 +2,8 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { Logger } from '../utils/Logger';
 import { Button, createStyles, makeStyles, TextField, Theme } from '@material-ui/core';
+import { Resources } from '../resources/Resources';
+import { StringID } from '../resources/StringID';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,7 +43,7 @@ const InputComment = (props: { parentId: string }): React.ReactElement => {
       />
 
       <Button variant="contained" size="large" color="primary" type="submit" fullWidth>
-        Submit
+        {Resources.getString(StringID.INPUT_COMMENT_SUBMIT)}
       </Button>
     </form>
   );

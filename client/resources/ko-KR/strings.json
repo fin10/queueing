@@ -1,0 +1,11 @@
+{
+    "HEADER_TITLE": "Queueing",
+    "ARTICLE_LIST_NEW_ARTICLE": "새글 등록",
+    "EDIT_ARTICLE_TOPIC": "주제",
+    "EDIT_ARTICLE_TITLE": "제목",
+    "EDIT_ARTICLE_BODY": "내용",
+    "EDIT_ARTICLE_SUBMIT": "등록",
+    "INPUT_COMMENT_SUBMIT": "댓글 등록",
+    "ACTION_LIKE": "추천",
+    "ACTION_DISLIKE": "비추천"
+}

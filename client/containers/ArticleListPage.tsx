@@ -6,6 +6,8 @@ import { Create as CreateIcon } from '@material-ui/icons';
 import { Logger } from '../utils/Logger';
 import { Note } from '../types';
 import ArticleListItem from '../components/ArticleListItem';
+import { Resources } from '../resources/Resources';
+import { StringID } from '../resources/StringID';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -44,7 +46,12 @@ const ArticleListPage = (): React.ReactElement => {
           </React.Fragment>
         ))}
       </List>
-      <Fab className={classes.fab} color="primary" aria-label="create" href="/article/new">
+      <Fab
+        className={classes.fab}
+        color="primary"
+        aria-label={Resources.getString(StringID.ARTICLE_LIST_NEW_ARTICLE)}
+        href="/article/new"
+      >
         <CreateIcon />
       </Fab>
     </Paper>

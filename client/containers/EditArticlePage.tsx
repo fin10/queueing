@@ -4,6 +4,8 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { TextField, Button } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Logger } from '../utils/Logger';
+import { Resources } from '../resources/Resources';
+import { StringID } from '../resources/StringID';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -57,7 +59,13 @@ const EditArticlePage = (): React.ReactElement => {
         onInputChange={handleTopicChange}
         getOptionLabel={(option) => option}
         renderInput={(params) => (
-          <TextField {...params} className={classes.margin} id="topic" label="Topic" variant="outlined" />
+          <TextField
+            {...params}
+            className={classes.margin}
+            id="topic"
+            label={Resources.getString(StringID.EDIT_ARTICLE_TOPIC)}
+            variant="outlined"
+          />
         )}
       />
 
@@ -68,6 +76,7 @@ const EditArticlePage = (): React.ReactElement => {
         fullWidth
         onChange={handleChange}
         value={title}
+        label={Resources.getString(StringID.EDIT_ARTICLE_TITLE)}
       />
 
       <TextField
@@ -79,10 +88,11 @@ const EditArticlePage = (): React.ReactElement => {
         rows={20}
         onChange={handleChange}
         value={body}
+        label={Resources.getString(StringID.EDIT_ARTICLE_BODY)}
       />
 
       <Button variant="contained" size="large" color="primary" type="submit" fullWidth>
-        Submit
+        {Resources.getString(StringID.EDIT_ARTICLE_SUBMIT)}
       </Button>
     </form>
   );
