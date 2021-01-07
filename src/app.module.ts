@@ -7,6 +7,7 @@ import { CommentModule } from './comment/comment.module';
 import { ArticleModule } from './article/article.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigKey, QueueingConfigService } from './config/queueing-config.service';
+import { TopicModule } from './topic/topic.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ConfigKey, QueueingConfigService } from './config/queueing-config.servi
     }),
     CommentModule,
     ArticleModule,
+    TopicModule,
   ],
 })
 export class AppModule {}

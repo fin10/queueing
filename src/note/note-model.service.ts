@@ -20,7 +20,7 @@ export class NoteModel {
   }
 
   async getNote(id: string): Promise<RawNote | null> {
-    return await this.model.findById(id).lean();
+    return this.model.findById(id).lean();
   }
 
   async getNotes<T>(filter: FilterQuery<T>): Promise<RawNote[]> {
