@@ -16,7 +16,10 @@ import { TopicModule } from './topic/topic.module';
     MongooseModule.forRootAsync({
       imports: [QueueingConfigModule],
       inject: [QueueingConfigService],
-      useFactory: (config: QueueingConfigService) => ({ uri: config.getString(ConfigKey.MONGODB_URI) }),
+      useFactory: (config: QueueingConfigService) => ({
+        uri: config.getString(ConfigKey.MONGODB_URI),
+        useCreateIndex: true,
+      }),
     }),
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, 'client'),
