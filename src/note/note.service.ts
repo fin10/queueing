@@ -31,6 +31,6 @@ export class NoteService {
   }
 
   async count<T>(filter: FilterQuery<T>): Promise<number> {
-    return this.model.count(filter).lean();
+    return this.model.countDocuments(filter).lean();
   }
 }
