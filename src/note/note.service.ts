@@ -4,7 +4,7 @@ import { FilterQuery, Model } from 'mongoose';
 import { RawNote, RawNoteDocument } from './schemas/raw-note.schema';
 
 @Injectable()
-export class NoteModel {
+export class NoteService {
   constructor(@InjectModel(RawNote.name) private model: Model<RawNoteDocument>) {}
 
   async create(topic: string, title: string | null, parentId?: string): Promise<string> {

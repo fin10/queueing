@@ -1,6 +1,6 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { NoteModel } from 'src/note/note-model.service';
+import { NoteService } from 'src/note/note.service';
 import { RawTopic } from './schemas/topic.schema';
 import { TopicService } from './topic.service';
 
@@ -18,7 +18,7 @@ describe('TopicService', () => {
       providers: [
         TopicService,
         {
-          provide: NoteModel,
+          provide: NoteService,
           useValue: jest.fn(),
         },
         {

@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { NoteBodyService } from 'src/note/note-body.service';
-import { NoteModel } from 'src/note/note-model.service';
+import { NoteService } from 'src/note/note.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Note } from 'src/note/dto/note.dto';
 
@@ -9,22 +9,22 @@ import { Note } from 'src/note/dto/note.dto';
 export class CommentService {
   private readonly logger = new Logger(CommentService.name);
 
-  constructor(private readonly noteModel: NoteModel, private readonly bodyStore: NoteBodyService) {}
+  constructor(private readonly noteService: NoteService, private readonly bodyStore: NoteBodyService) {}
 
   async create(data: CreateCommentDto): Promise<string> {
     const { parentId, body } = data;
 
-    const parentNote = await this.noteModel.getNote(parentId);
+    const parentNote = await this.noteService.getNote(parentId);
     if (!parentNote) throw new NotFoundException(`parent not found: ${parentId}`);
 
-    const id = await this.noteModel.create(parentNote.topic, null, parentId);
+    const id = await this.noteService.create(parentNote.topic, null, parentId);
     await this.bodyStore.put(id, body);
 
     return id;
   }
 
   async getComments(id: string): Promise<Note[]> {
-    const rawNotes = await this.noteModel.getNotes({ parent: id });
+    const rawNotes = await this.noteService.getNotes({ parent: id });
 
     return _.compact(
       await Promise.all(
@@ -32,7 +32,7 @@ export class CommentService {
           const body = await this.bodyStore.get(rawNote._id);
           if (!body) {
             this.logger.verbose(`${rawNote._id} has been expired.`);
-            this.noteModel.remove(rawNote._id);
+            this.noteService.remove(rawNote._id);
             return null;
           }
 

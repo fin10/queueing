@@ -3,7 +3,7 @@ import { CacheModule, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { QueueingConfigModule } from 'src/config/queueing-config.module';
 import { ConfigKey, QueueingConfigService } from 'src/config/queueing-config.service';
-import { NoteModel } from './note-model.service';
+import { NoteService } from './note.service';
 import { RawNote, RawNoteSchema } from './schemas/raw-note.schema';
 import { NoteBodyService } from './note-body.service';
 
@@ -25,7 +25,7 @@ import { NoteBodyService } from './note-body.service';
       },
     }),
   ],
-  providers: [NoteModel, NoteBodyService],
-  exports: [NoteModel, NoteBodyService],
+  providers: [NoteService, NoteBodyService],
+  exports: [NoteService, NoteBodyService],
 })
 export class NoteModule {}

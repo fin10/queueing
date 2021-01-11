@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { NoteModel } from 'src/note/note-model.service';
+import { NoteService } from 'src/note/note.service';
 import { CreateTopicDto } from './dto/create-topic.dto';
 import { RawTopic, RawTopicDocument } from './schemas/topic.schema';
 
 @Injectable()
 export class TopicService {
   constructor(
-    @InjectModel(RawTopic.name) private model: Model<RawTopicDocument>,
-    private readonly noteModel: NoteModel,
+    @InjectModel(RawTopic.name) private readonly model: Model<RawTopicDocument>,
+    private readonly noteService: NoteService,
   ) {}
 
   async create(data: CreateTopicDto): Promise<RawTopic> {
@@ -24,7 +24,7 @@ export class TopicService {
 
     return Promise.all(
       topics.map(async (topic) => {
-        const count = await this.noteModel.count({ topic: topic.name });
+        const count = await this.noteService.count({ topic: topic.name });
         return {
           ...topic,
           count,
