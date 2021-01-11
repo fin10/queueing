@@ -3,7 +3,7 @@ import { RawNote } from 'src/note/schemas/raw-note.schema';
 export class Note {
   private constructor(
     private readonly id: string,
-    private readonly topic: string,
+    private readonly topic: string | null,
     private readonly title: string | null,
     private readonly body: string | null,
     private readonly parent: string | null,
@@ -18,7 +18,7 @@ export class Note {
   static instantiate(rawNote: RawNote, body?: string): Note {
     return new Note(
       rawNote._id,
-      rawNote.topic,
+      rawNote.topic || null,
       rawNote.title || null,
       body || null,
       rawNote.parent || null,

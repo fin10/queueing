@@ -7,11 +7,19 @@ import { RawNote, RawNoteDocument } from './schemas/raw-note.schema';
 export class NoteService {
   constructor(@InjectModel(RawNote.name) private model: Model<RawNoteDocument>) {}
 
-  async create(topic: string, title: string | null, parentId?: string): Promise<string> {
+  async createWithParentId(parentId: string): Promise<string> {
+    const note = new this.model({
+      parent: parentId,
+    });
+    await note.save();
+
+    return note._id;
+  }
+
+  async create(topic: string, title: string): Promise<string> {
     const note = new this.model({
       topic,
       title,
-      parent: parentId,
     });
     await note.save();
 

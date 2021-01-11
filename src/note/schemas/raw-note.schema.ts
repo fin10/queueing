@@ -5,8 +5,8 @@ export type RawNoteDocument = RawNote & Document;
 
 @Schema({ timestamps: true })
 export class RawNote {
-  @Prop({ required: true })
-  readonly topic!: string;
+  @Prop()
+  readonly topic?: string;
 
   @Prop()
   readonly title?: string;

@@ -17,7 +17,7 @@ export class CommentService {
     const parentNote = await this.noteService.getNote(parentId);
     if (!parentNote) throw new NotFoundException(`parent not found: ${parentId}`);
 
-    const id = await this.noteService.create(parentNote.topic, null, parentId);
+    const id = await this.noteService.createWithParentId(parentId);
     await this.bodyStore.put(id, body);
 
     return id;
