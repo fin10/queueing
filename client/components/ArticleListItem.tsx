@@ -4,22 +4,15 @@ import React from 'react';
 import { Note } from '../types';
 import { CommentAction, LikeAction, DislikeAction } from './Action';
 
-interface PropTypes {
-  note: Note;
-}
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     marginRight: {
       marginRight: theme.spacing(2),
     },
-    user: {
-      float: 'right',
-    },
   }),
 );
 
-const ArticleListItem = (props: PropTypes): React.ReactElement => {
+const ArticleListItem = (props: { note: Note }): React.ReactElement => {
   const { note } = props;
   const classes = useStyles();
 
@@ -49,7 +42,9 @@ const ArticleListItem = (props: PropTypes): React.ReactElement => {
             </Grid>
 
             <Grid item xs={6}>
-              <Typography className={classes.user}>{note.user}</Typography>
+              <Typography align="right" color="textSecondary" variant="body2">
+                {note.user}
+              </Typography>
             </Grid>
           </Grid>
         }
