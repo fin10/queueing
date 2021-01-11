@@ -15,13 +15,15 @@ export class TopicService {
   async getTopics(): Promise<RawTopic[]> {
     const topics = await this.topicModel.getTopics();
 
-    return topics.map((topic) => {
-      const count = this.noteModel.count({ topic: topic.name });
-      return {
-        ...topic,
-        count,
-      };
-    });
+    return Promise.all(
+      topics.map(async (topic) => {
+        const count = await this.noteModel.count({ topic: topic.name });
+        return {
+          ...topic,
+          count,
+        };
+      }),
+    );
   }
 
   async getOrCreate(name: string): Promise<RawTopic> {
