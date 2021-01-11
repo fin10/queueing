@@ -3,17 +3,23 @@ import { NoteBodyService } from 'src/note/note-body.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { Note } from 'src/note/dto/note.dto';
 import { NoteModel } from 'src/note/note-model.service';
+import { TopicService } from 'src/topic/topic.service';
 
 @Injectable()
 export class ArticleService {
   private readonly logger = new Logger(ArticleService.name);
 
-  constructor(private readonly noteModel: NoteModel, private readonly bodyStore: NoteBodyService) {}
+  constructor(
+    private readonly topicService: TopicService,
+    private readonly noteModel: NoteModel,
+    private readonly bodyStore: NoteBodyService,
+  ) {}
 
   async create(data: CreateArticleDto): Promise<string> {
     const { topic, title, body } = data;
 
-    const id = await this.noteModel.create(topic, title);
+    const rawTopic = await this.topicService.getOrCreate(topic);
+    const id = await this.noteModel.create(rawTopic.name, title);
     await this.bodyStore.put(id, body);
 
     return id;

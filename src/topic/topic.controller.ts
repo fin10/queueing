@@ -9,7 +9,7 @@ export class TopicController {
   constructor(private readonly topicService: TopicService) {}
 
   @Post()
-  create(@Body() data: CreateTopicDto): Promise<void> {
+  create(@Body() data: CreateTopicDto): Promise<RawTopic> {
     return this.topicService.create(data);
   }
 

@@ -8,7 +8,7 @@ import { TopicModel } from './topic.model';
 export class TopicService {
   constructor(private readonly topicModel: TopicModel, private readonly noteModel: NoteModel) {}
 
-  create(data: CreateTopicDto): Promise<void> {
+  create(data: CreateTopicDto): Promise<RawTopic> {
     return this.topicModel.create(data);
   }
 
@@ -16,11 +16,18 @@ export class TopicService {
     const topics = await this.topicModel.getTopics();
 
     return topics.map((topic) => {
-      const count = this.noteModel.count({ topic: topic._id });
+      const count = this.noteModel.count({ topic: topic.name });
       return {
         ...topic,
         count,
       };
     });
+  }
+
+  async getOrCreate(name: string): Promise<RawTopic> {
+    const rawTopic = await this.topicModel.findOne({ name });
+    if (rawTopic) return rawTopic;
+
+    return this.topicModel.create({ name });
   }
 }

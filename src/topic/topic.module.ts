@@ -10,5 +10,6 @@ import { NoteModule } from 'src/note/note.module';
   imports: [MongooseModule.forFeature([{ name: RawTopic.name, schema: RawTopicSchema }]), NoteModule],
   controllers: [TopicController],
   providers: [TopicModel, TopicService],
+  exports: [TopicService],
 })
 export class TopicModule {}
