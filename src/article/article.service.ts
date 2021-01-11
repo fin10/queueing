@@ -39,7 +39,7 @@ export class ArticleService {
   }
 
   async getArticles(): Promise<Note[]> {
-    const rawNotes = await this.noteService.getNotes({ parent: { $exists: false } });
+    const rawNotes = await this.noteService.getNotes({ parent: { $exists: false } }, '-createdAt');
     return rawNotes.map((rawNote) => Note.instantiate(rawNote));
   }
 }

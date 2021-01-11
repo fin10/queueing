@@ -22,8 +22,8 @@ export class NoteService {
     return this.model.findById(id).lean();
   }
 
-  async getNotes<T>(filter: FilterQuery<T>): Promise<RawNote[]> {
-    return this.model.find(filter).lean();
+  async getNotes<T>(filter: FilterQuery<T>, sorting?: string): Promise<RawNote[]> {
+    return this.model.find(filter).sort(sorting).lean();
   }
 
   async remove(id: string): Promise<void> {
