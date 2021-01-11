@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
-import { RawNoteDocument } from './schemas/raw-note.schema';
-import { RawNote } from './schemas/raw-note.schema';
+import { RawNote, RawNoteDocument } from './schemas/raw-note.schema';
 
 @Injectable()
 export class NoteModel {
@@ -29,5 +28,9 @@ export class NoteModel {
 
   async remove(id: string): Promise<void> {
     return this.model.deleteOne({ _id: id }).exec();
+  }
+
+  async count<T>(filter: FilterQuery<T>): Promise<number> {
+    return this.model.count(filter).lean();
   }
 }
