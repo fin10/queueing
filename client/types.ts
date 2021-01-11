@@ -13,3 +13,7 @@ export interface Note {
 export interface NoteWithBody extends Note {
   readonly body: string;
 }
+
+export interface Topic {
+  readonly name: string;
+}

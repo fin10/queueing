@@ -2,10 +2,10 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { TextField, Button } from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Logger } from '../utils/Logger';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
+import InputTopic from '../components/InputTopic';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -49,25 +49,7 @@ const EditArticlePage = (): React.ReactElement => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Autocomplete
-        id="topic"
-        size="small"
-        freeSolo
-        fullWidth
-        options={[]}
-        value={topic}
-        onInputChange={handleTopicChange}
-        getOptionLabel={(option) => option}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            className={classes.margin}
-            id="topic"
-            label={Resources.getString(StringID.EDIT_ARTICLE_TOPIC)}
-            variant="outlined"
-          />
-        )}
-      />
+      <InputTopic className={classes.margin} value={topic} onInputChange={handleTopicChange} />
 
       <TextField
         className={classes.margin}
