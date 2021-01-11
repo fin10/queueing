@@ -12,7 +12,7 @@ import { StringID } from '../resources/StringID';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     fab: {
-      position: 'absolute',
+      position: 'fixed',
       right: 0,
       bottom: 0,
       margin: theme.spacing(2),
