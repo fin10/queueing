@@ -1,11 +1,12 @@
+import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { NoteModel } from 'src/note/note-model.service';
-import { TopicModel } from './topic.model';
+import { RawTopic } from './schemas/topic.schema';
 import { TopicService } from './topic.service';
 
 describe('TopicService', () => {
   const mockData = [{ name: 'test' }];
-  const mockTopicModelService = {
+  const mockTopicModel = {
     create: jest.fn().mockImplementation((topic) => Promise.resolve(topic)),
     getTopics: jest.fn().mockImplementation(() => Promise.resolve(mockData)),
   };
@@ -21,8 +22,8 @@ describe('TopicService', () => {
           useValue: jest.fn(),
         },
         {
-          provide: TopicModel,
-          useValue: mockTopicModelService,
+          provide: getModelToken(RawTopic.name),
+          useValue: mockTopicModel,
         },
       ],
     }).compile();
