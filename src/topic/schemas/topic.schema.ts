@@ -1,12 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type TopicDocument = Topic & Document;
+export type RawTopicDocument = RawTopic & Document;
 
 @Schema({ timestamps: true })
-export class Topic {
+export class RawTopic {
   @Prop({ required: true, unique: true })
   readonly name!: string;
+
+  readonly _id!: string;
 }
 
-export const TopicSchema = SchemaFactory.createForClass(Topic);
+export const RawTopicSchema = SchemaFactory.createForClass(RawTopic);

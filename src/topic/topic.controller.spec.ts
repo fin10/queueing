@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TopicModelService } from './topic-model.service';
 import { TopicController } from './topic.controller';
+import { TopicService } from './topic.service';
 
 describe('TopicController', () => {
   const mockData = [{ name: 'test' }];
-  const mockTopicModelService = {
+  const mockTopicService = {
     create: jest.fn().mockImplementation((topic) => Promise.resolve(topic)),
     getTopics: jest.fn().mockImplementation(() => Promise.resolve(mockData)),
   };
@@ -16,13 +16,13 @@ describe('TopicController', () => {
       controllers: [TopicController],
       providers: [
         {
-          provide: TopicModelService,
-          useValue: mockTopicModelService,
+          provide: TopicService,
+          useValue: mockTopicService,
         },
       ],
     }).compile();
 
-    controller = module.get<TopicController>(TopicController);
+    controller = module.get(TopicController);
   });
 
   it('should be created topic', async () => {

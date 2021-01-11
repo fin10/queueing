@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Topic, TopicSchema } from './schemas/topic.schema';
+import { RawTopic, RawTopicSchema } from './schemas/topic.schema';
 import { TopicController } from './topic.controller';
-import { TopicModelService } from './topic-model.service';
+import { TopicModel } from './topic.model';
+import { TopicService } from './topic.service';
+import { NoteModule } from 'src/note/note.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Topic.name, schema: TopicSchema }])],
+  imports: [MongooseModule.forFeature([{ name: RawTopic.name, schema: RawTopicSchema }]), NoteModule],
   controllers: [TopicController],
-  providers: [TopicModelService],
+  providers: [TopicModel, TopicService],
 })
 export class TopicModule {}
