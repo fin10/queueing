@@ -2,8 +2,8 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
-import Autocomplete, { AutocompleteInputChangeReason } from '@material-ui/lab/Autocomplete';
-import { TextField } from '@material-ui/core';
+import Autocomplete, { AutocompleteInputChangeReason, createFilterOptions } from '@material-ui/lab/Autocomplete';
+import { TextField, Typography } from '@material-ui/core';
 import { Topic } from '../types';
 import { Logger } from '../utils/Logger';
 
@@ -13,16 +13,21 @@ interface PropTypes {
   onInputChange?: (event: React.ChangeEvent<unknown>, value: string, reason: AutocompleteInputChangeReason) => void;
 }
 
+const filterOptions = createFilterOptions<Topic>({
+  matchFrom: 'start',
+  stringify: (option) => option.name,
+});
+
 const InputTopic = (props: PropTypes): React.ReactElement => {
   const [loading, updateLoading] = useState(true);
-  const [topics, updateTopics] = useState<string[]>([]);
+  const [topics, updateTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
     (async () => {
       try {
         const res = await axios.get('/api/topic');
         const topics = res.data;
-        updateTopics(topics.map((topic: Topic) => topic.name));
+        updateTopics(topics);
         updateLoading(false);
       } catch (err) {
         Logger.error(err);
@@ -36,11 +41,20 @@ const InputTopic = (props: PropTypes): React.ReactElement => {
       freeSolo
       fullWidth
       options={topics}
-      value={props.value}
+      value={props.value ? { name: props.value } : null}
       loading={loading}
       loadingText={Resources.getString(StringID.EDIT_ARTICLE_LOADING_TOPICS)}
       onInputChange={props.onInputChange}
-      getOptionLabel={(option) => option}
+      getOptionLabel={(option) => option.name}
+      filterOptions={filterOptions}
+      renderOption={(option) => (
+        <Typography>
+          {option.name}{' '}
+          <Typography component="span" color="textSecondary">
+            ({option.count})
+          </Typography>
+        </Typography>
+      )}
       renderInput={(params) => (
         <TextField
           {...params}

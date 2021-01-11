@@ -16,5 +16,5 @@ export interface NoteWithBody extends Note {
 
 export interface Topic {
   readonly name: string;
-  readonly count: number;
+  readonly count?: number;
 }
