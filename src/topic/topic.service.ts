@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -22,15 +23,19 @@ export class TopicService {
   async getTopics(): Promise<RawTopic[]> {
     const topics = await this.model.find().lean();
 
-    return Promise.all(
-      topics.map(async (topic) => {
-        const count = await this.noteService.count({ topic: topic.name });
-        return {
-          ...topic,
-          count,
-        };
-      }),
-    );
+    return _.chain(
+      await Promise.all(
+        topics.map(async (topic) => {
+          const count = await this.noteService.count({ topic: topic.name });
+          if (!count) return null;
+
+          return { ...topic, count };
+        }),
+      ),
+    )
+      .compact()
+      .sortBy((topic) => -topic.count)
+      .value();
   }
 
   async getOrCreate(name: string): Promise<RawTopic> {
