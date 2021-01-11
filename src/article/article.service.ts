@@ -4,6 +4,7 @@ import { CreateArticleDto } from './dto/create-article.dto';
 import { Note } from 'src/note/dto/note.dto';
 import { NoteService } from 'src/note/note.service';
 import { TopicService } from 'src/topic/topic.service';
+import { RawNote } from 'src/note/schemas/raw-note.schema';
 
 @Injectable()
 export class ArticleService {
@@ -35,11 +36,16 @@ export class ArticleService {
       throw new NotFoundException(`${id} has been expired.`);
     }
 
-    return Note.instantiate(rawNote, body);
+    return this.populate(rawNote, body);
   }
 
   async getArticles(): Promise<Note[]> {
     const rawNotes = await this.noteService.getNotes({ parent: { $exists: false } }, '-createdAt');
-    return rawNotes.map((rawNote) => Note.instantiate(rawNote));
+    return Promise.all(rawNotes.map((rawNote) => this.populate(rawNote)));
+  }
+
+  private async populate(rawNote: RawNote, body?: string): Promise<Note> {
+    const comments = await this.noteService.count({ parent: rawNote._id });
+    return Note.instantiate({ ...rawNote, children: comments }, body);
   }
 }

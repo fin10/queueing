@@ -24,7 +24,7 @@ export class Note {
       rawNote.parent || null,
       rawNote.createdAt,
       rawNote.updatedAt,
-      0,
+      rawNote.children || 0,
       0,
       0,
       'tmp',

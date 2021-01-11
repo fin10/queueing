@@ -17,6 +17,8 @@ export class RawNote {
   readonly _id!: string;
   readonly createdAt!: Date;
   readonly updatedAt!: Date;
+
+  readonly children?: number;
 }
 
 export const RawNoteSchema = SchemaFactory.createForClass(RawNote);
