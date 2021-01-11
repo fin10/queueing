@@ -29,6 +29,10 @@ const ArticleListItem = (props: PropTypes): React.ReactElement => {
         primary={
           <Grid container spacing={1}>
             <Grid item xs={12}>
+              <Chip variant="outlined" size="small" label={note.topic} />
+            </Grid>
+
+            <Grid item xs={12}>
               <Typography>{note.title}</Typography>
             </Grid>
 
@@ -45,7 +49,7 @@ const ArticleListItem = (props: PropTypes): React.ReactElement => {
             </Grid>
 
             <Grid item xs={6}>
-              <Chip variant="outlined" size="small" label={note.user} className={classes.user} />
+              <Typography className={classes.user}>{note.user}</Typography>
             </Grid>
           </Grid>
         }
