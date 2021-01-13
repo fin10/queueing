@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { plainToClass } from 'class-transformer';
-import { IsEnum, IsInt, IsNotEmpty, Max, Min, validateSync } from 'class-validator';
+import { IsEnum, IsInt, IsNotEmpty, Min, validateSync } from 'class-validator';
 
 enum Environment {
   Development = 'development',
@@ -17,8 +17,7 @@ class EnvironmentVariables {
 
   @IsInt()
   @Min(0)
-  @Max(23)
-  readonly QUEUEING_CLEAR_TIME_HOUR!: number;
+  readonly QUEUEING_NOTE_TTL_MINS!: number;
 
   @IsNotEmpty()
   readonly QUEUEING_MONGODB_URI!: string;
@@ -33,7 +32,7 @@ class EnvironmentVariables {
 export enum ConfigKey {
   NODE_ENV = 'NODE_ENV',
   PORT = 'PORT',
-  CLEAR_TIME_HOUR = 'QUEUEING_CLEAR_TIME_HOUR',
+  NOTE_TTL_MINS = 'QUEUEING_NOTE_TTL_MINS',
   MONGODB_URI = 'QUEUEING_MONGODB_URI',
   REDIS_ENABLED = 'QUEUEING_REDIS_ENABLED',
   REDIS_HOST = 'QUEUEING_REDIS_HOST',
