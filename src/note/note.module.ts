@@ -21,6 +21,7 @@ import { Schema } from 'mongoose';
           schema.index({ createdAt: 1 }, { expires: `${ttl}m` });
           return schema;
         },
+        collection: 'notes',
       },
     ]),
     CacheModule.registerAsync({

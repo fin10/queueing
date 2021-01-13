@@ -6,7 +6,10 @@ import { TopicService } from './topic.service';
 import { NoteModule } from 'src/note/note.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: RawTopic.name, schema: RawTopicSchema }]), NoteModule],
+  imports: [
+    MongooseModule.forFeature([{ name: RawTopic.name, schema: RawTopicSchema, collection: 'topics' }]),
+    NoteModule,
+  ],
   controllers: [TopicController],
   providers: [TopicService],
   exports: [TopicService],
