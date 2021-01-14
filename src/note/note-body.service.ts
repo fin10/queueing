@@ -7,7 +7,7 @@ export class NoteBodyService {
   constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache, private readonly config: QueueingConfigService) {}
 
   put(key: string, body: string): Promise<void> {
-    const ttl = this.config.getInteger(ConfigKey.NOTE_TTL_MINS) * 60;
+    const ttl = this.config.getInteger(ConfigKey.NOTE_TTL);
     return this.cache.set(key, body, { ttl });
   }
 

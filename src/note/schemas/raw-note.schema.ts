@@ -15,20 +15,14 @@ export class RawNote {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: RawNote.name })
   readonly parent?: string;
 
+  @Prop({ required: true })
+  readonly expireTime!: Date;
+
   readonly _id!: string;
   readonly createdAt!: Date;
   readonly updatedAt!: Date;
 
   readonly children?: number;
-
-  static getExpireTime(note: RawNote): Date | null {
-    const index = RawNoteSchema.indexes().find(([fields]) => fields.createdAt);
-    const [, opts] = index || [];
-    const { expireAfterSeconds } = opts || {};
-    if (!expireAfterSeconds) return null;
-
-    return moment.utc(note.createdAt).add(expireAfterSeconds, 's').toDate();
-  }
 }
 
 export const RawNoteSchema = SchemaFactory.createForClass(RawNote);

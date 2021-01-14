@@ -6,21 +6,13 @@ import { ConfigKey, QueueingConfigService } from 'src/config/queueing-config.ser
 import { NoteService } from './note.service';
 import { RawNote, RawNoteSchema } from './schemas/raw-note.schema';
 import { NoteBodyService } from './note-body.service';
-import { Schema } from 'mongoose';
 
 @Module({
   imports: [
-    MongooseModule.forFeatureAsync([
+    MongooseModule.forFeature([
       {
-        imports: [QueueingConfigModule],
-        inject: [QueueingConfigService],
         name: RawNote.name,
-        useFactory: (config: QueueingConfigService) => {
-          const ttl = config.getInteger(ConfigKey.NOTE_TTL_MINS);
-          const schema: Schema<RawNote> = RawNoteSchema;
-          schema.index({ createdAt: 1 }, { expires: `${ttl}m` });
-          return schema;
-        },
+        schema: RawNoteSchema,
         collection: 'notes',
       },
     ]),

@@ -17,7 +17,7 @@ class EnvironmentVariables {
 
   @IsInt()
   @Min(0)
-  readonly QUEUEING_NOTE_TTL_MINS!: number;
+  readonly QUEUEING_NOTE_TTL!: number;
 
   @IsNotEmpty()
   readonly QUEUEING_MONGODB_URI!: string;
@@ -32,7 +32,7 @@ class EnvironmentVariables {
 export enum ConfigKey {
   NODE_ENV = 'NODE_ENV',
   PORT = 'PORT',
-  NOTE_TTL_MINS = 'QUEUEING_NOTE_TTL_MINS',
+  NOTE_TTL = 'QUEUEING_NOTE_TTL',
   MONGODB_URI = 'QUEUEING_MONGODB_URI',
   REDIS_ENABLED = 'QUEUEING_REDIS_ENABLED',
   REDIS_HOST = 'QUEUEING_REDIS_HOST',
