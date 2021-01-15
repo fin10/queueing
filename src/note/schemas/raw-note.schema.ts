@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import moment from 'moment';
 import mongoose, { Document } from 'mongoose';
 
 export type RawNoteDocument = RawNote & Document;

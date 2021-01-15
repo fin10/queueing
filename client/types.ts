@@ -4,6 +4,7 @@ export interface Note {
   readonly title: string;
   readonly created: Date;
   readonly updated: Date;
+  readonly expireTime: Date;
   readonly children: number;
   readonly like: number;
   readonly dislike: number;

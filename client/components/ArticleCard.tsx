@@ -4,17 +4,18 @@ import {
   Card,
   CardActions,
   CardContent,
-  CardHeader,
   Chip,
   createStyles,
   makeStyles,
   Theme,
   Typography,
 } from '@material-ui/core';
+import Moment from 'react-moment';
+import moment from 'moment';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
 import { NoteWithBody } from '../types';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DislikeAction, LikeAction } from './Action';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -39,15 +40,32 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const ArticleCard = (props: { note: NoteWithBody }): React.ReactElement => {
-  const classes = useStyles();
   const { note } = props;
+  const classes = useStyles();
+  const [currentTime, updateCurrentTime] = useState(moment.utc());
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      updateCurrentTime(moment.utc());
+    }, 1000);
+
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <>
       <Chip label={note.topic} variant="outlined" className={classes.topic} />
       <Card className={classes.margin}>
-        <CardHeader title={note.title} subheader={note.user} />
         <CardContent>
+          <div className={classes.margin}>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+              {note.user}
+            </Typography>
+            <Typography variant="h5">{note.title}</Typography>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+              <Moment date={note.expireTime} duration={currentTime} format="hh:mm:ss" />
+            </Typography>
+          </div>
           <Typography className={classes.body}>{note.body}</Typography>
         </CardContent>
         <CardActions className={classes.actions}>
