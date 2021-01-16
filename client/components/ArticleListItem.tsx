@@ -22,11 +22,11 @@ const ArticleListItem = (props: { note: Note }): React.ReactElement => {
       <ListItemText
         primary={
           <Grid container spacing={1} alignItems="center">
-            <Grid item xs={10}>
+            <Grid item xs={8}>
               <Chip variant="outlined" size="small" label={note.topic} />
             </Grid>
 
-            <Grid item xs={2}>
+            <Grid item xs={4}>
               <Typography align="right" color="textSecondary" variant="body2">
                 <ExpireTime expireTime={note.expireTime} />
               </Typography>
