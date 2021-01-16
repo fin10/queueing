@@ -1,6 +1,7 @@
 import path from 'path';
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ScheduleModule } from '@nestjs/schedule';
 import { QueueingConfigModule } from './config/queueing-config.module';
 import { LoggerModule } from './logger/logger.module';
 import { CommentModule } from './comment/comment.module';
@@ -8,9 +9,11 @@ import { ArticleModule } from './article/article.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigKey, QueueingConfigService } from './config/queueing-config.service';
 import { TopicModule } from './topic/topic.module';
+import { CleanerModule } from './cleaner/cleaner.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     LoggerModule,
     QueueingConfigModule,
     MongooseModule.forRootAsync({
@@ -28,6 +31,7 @@ import { TopicModule } from './topic/topic.module';
     CommentModule,
     ArticleModule,
     TopicModule,
+    CleanerModule,
   ],
 })
 export class AppModule {}

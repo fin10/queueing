@@ -48,6 +48,10 @@ export class NoteService {
     return this.model.deleteOne({ _id: id }).exec();
   }
 
+  async removeExpiredNotes(): Promise<number> {
+    return (await this.model.deleteMany({ expireTime: { $lte: moment.utc().toDate() } })).deletedCount;
+  }
+
   async count<T>(filter: FilterQuery<T>): Promise<number> {
     return this.getValidNotes().countDocuments(filter).lean();
   }
