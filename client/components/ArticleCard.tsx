@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Button,
   ButtonGroup,
@@ -10,13 +11,11 @@ import {
   Theme,
   Typography,
 } from '@material-ui/core';
-import Moment from 'react-moment';
-import moment from 'moment';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
 import { NoteWithBody } from '../types';
-import React, { useEffect, useState } from 'react';
 import { DislikeAction, LikeAction } from './Action';
+import { ExpireTime } from './ExpireTime';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -42,15 +41,6 @@ const useStyles = makeStyles((theme: Theme) =>
 const ArticleCard = (props: { note: NoteWithBody }): React.ReactElement => {
   const { note } = props;
   const classes = useStyles();
-  const [currentTime, updateCurrentTime] = useState(moment.utc());
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      updateCurrentTime(moment.utc());
-    }, 1000);
-
-    return () => clearInterval(id);
-  }, []);
 
   return (
     <>
@@ -63,7 +53,7 @@ const ArticleCard = (props: { note: NoteWithBody }): React.ReactElement => {
             </Typography>
             <Typography variant="h5">{note.title}</Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              <Moment date={note.expireTime} duration={currentTime} format="hh:mm:ss" />
+              <ExpireTime expireTime={note.expireTime} />
             </Typography>
           </div>
           <Typography className={classes.body}>{note.body}</Typography>

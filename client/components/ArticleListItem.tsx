@@ -1,8 +1,9 @@
+import React from 'react';
 import { Chip, createStyles, Grid, ListItem, ListItemText, makeStyles, Theme, Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
-import React from 'react';
 import { Note } from '../types';
 import { CommentAction, LikeAction, DislikeAction } from './Action';
+import { ExpireTime } from './ExpireTime';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,9 +21,15 @@ const ArticleListItem = (props: { note: Note }): React.ReactElement => {
     <ListItem button component={Link} to={`/article/${note.id}`} divider={true}>
       <ListItemText
         primary={
-          <Grid container spacing={1}>
-            <Grid item xs={12}>
+          <Grid container spacing={1} alignItems="center">
+            <Grid item xs={10}>
               <Chip variant="outlined" size="small" label={note.topic} />
+            </Grid>
+
+            <Grid item xs={2}>
+              <Typography align="right" color="textSecondary" variant="body2">
+                <ExpireTime expireTime={note.expireTime} />
+              </Typography>
             </Grid>
 
             <Grid item xs={12}>
