@@ -10,9 +10,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigKey, QueueingConfigService } from './config/queueing-config.service';
 import { TopicModule } from './topic/topic.module';
 import { CleanerModule } from './cleaner/cleaner.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     LoggerModule,
     QueueingConfigModule,

@@ -6,13 +6,24 @@ import { ConfigKey, QueueingConfigService } from 'src/config/queueing-config.ser
 import { NoteService } from './note.service';
 import { RawNote, RawNoteSchema } from './schemas/raw-note.schema';
 import { NoteBodyService } from './note-body.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { NoteRemovedEvent } from './events/note-removed.event';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
+    MongooseModule.forFeatureAsync([
       {
+        imports: [EventEmitter2],
+        inject: [EventEmitter2],
         name: RawNote.name,
-        schema: RawNoteSchema,
+        useFactory: (eventEmitter: EventEmitter2) => {
+          const schema = RawNoteSchema;
+          schema.post('remove', (doc: RawNote) => {
+            eventEmitter.emit('note.removed', new NoteRemovedEvent(doc._id));
+          });
+
+          return schema;
+        },
         collection: 'notes',
       },
     ]),
