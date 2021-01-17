@@ -19,7 +19,7 @@ export class NoteBodyService {
     return this.cache.get(key);
   }
 
-  @OnEvent('note.removed')
+  @OnEvent(NoteRemovedEvent.name)
   onNoteRemoved(event: NoteRemovedEvent): void {
     this.logger.debug(`Received note removed event: ${event.getId()}`);
     this.cache.del(event.getId());

@@ -19,7 +19,7 @@ import { NoteRemovedEvent } from './events/note-removed.event';
         useFactory: (eventEmitter: EventEmitter2) => {
           const schema = RawNoteSchema;
           schema.post('remove', (doc: RawNote) => {
-            eventEmitter.emit('note.removed', new NoteRemovedEvent(doc._id));
+            eventEmitter.emit(NoteRemovedEvent.name, new NoteRemovedEvent(doc._id));
           });
 
           return schema;
