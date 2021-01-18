@@ -26,6 +26,10 @@ export class ArticleService {
     return id;
   }
 
+  async remove(id: string): Promise<void> {
+    return this.noteService.remove(id);
+  }
+
   async getArticle(id: string): Promise<Note> {
     const rawNote = await this.noteService.getNote(id);
     if (!rawNote) throw new NotFoundException(`${id} not found.`);

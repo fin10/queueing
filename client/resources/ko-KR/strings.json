@@ -8,5 +8,6 @@
     "EDIT_ARTICLE_LOADING_TOPICS": "토픽 읽어오는 중...",
     "INPUT_COMMENT_SUBMIT": "댓글 등록",
     "ACTION_LIKE": "추천",
-    "ACTION_DISLIKE": "비추천"
+    "ACTION_DISLIKE": "비추천",
+    "ACTION_DELETE": "삭제"
 }

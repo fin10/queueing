@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import moment from 'moment';
 import { FilterQuery, Model } from 'mongoose';
@@ -45,7 +45,14 @@ export class NoteService {
   }
 
   async remove(id: string): Promise<void> {
-    return this.model.deleteOne({ _id: id }).exec();
+    const note = await this.model.findById(id);
+    if (!note) throw new NotFoundException(`Note not found with ${id}`);
+    return note.remove();
+  }
+
+  async removeChildren(parentId: string): Promise<number> {
+    const { deletedCount } = await this.model.deleteMany({ parent: parentId });
+    return deletedCount;
   }
 
   async removeExpiredNotes(): Promise<number> {

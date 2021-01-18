@@ -16,6 +16,6 @@ export class CommentController {
   async getComments(@Param('parentId') id: string): Promise<Note[]> {
     if (!id) throw new BadRequestException('parentId cannot be null.');
 
-    return this.service.getComments(id);
+    return this.service.getValidComments(id);
   }
 }

@@ -4,6 +4,9 @@ import { NoteBodyService } from 'src/note/note-body.service';
 import { NoteService } from 'src/note/note.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Note } from 'src/note/dto/note.dto';
+import { NoteRemovedEvent } from 'src/note/events/note-removed.event';
+import { OnEvent } from '@nestjs/event-emitter';
+import moment from 'moment';
 
 @Injectable()
 export class CommentService {
@@ -23,8 +26,8 @@ export class CommentService {
     return id;
   }
 
-  async getComments(id: string): Promise<Note[]> {
-    const rawNotes = await this.noteService.getNotes({ parent: id });
+  async getValidComments(parentId: string): Promise<Note[]> {
+    const rawNotes = await this.noteService.getNotes({ parent: parentId });
 
     return _.compact(
       await Promise.all(
@@ -40,5 +43,14 @@ export class CommentService {
         }),
       ),
     );
+  }
+
+  @OnEvent(NoteRemovedEvent.name, { nextTick: true })
+  async onNoteRemoved(event: NoteRemovedEvent): Promise<void> {
+    this.logger.debug(`Received note removed event: ${event.getId()}`);
+
+    const start = moment();
+    const count = await this.noteService.removeChildren(event.getId());
+    this.logger.debug(`Removed comments (${count}) with ${event.getId()} in ${moment().diff(start, 'ms')}ms`);
   }
 }
