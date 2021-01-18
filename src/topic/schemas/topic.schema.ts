@@ -7,6 +7,10 @@ export type RawTopicDocument = RawTopic & Document;
 export class RawTopic {
   @Prop({ required: true, unique: true, trim: true })
   readonly name!: string;
+
+  readonly _id!: string;
+
+  readonly count?: number;
 }
 
 export const RawTopicSchema = SchemaFactory.createForClass(RawTopic);
