@@ -9,5 +9,7 @@
     "INPUT_COMMENT_SUBMIT": "댓글 등록",
     "ACTION_LIKE": "추천",
     "ACTION_DISLIKE": "비추천",
-    "ACTION_DELETE": "삭제"
+    "ACTION_DELETE": "삭제",
+    "ACTION_CANCEL": "취소",
+    "DIALOG_QUESTION_REMOVE_ARTICLE": "글을 삭제할까요?"
 }

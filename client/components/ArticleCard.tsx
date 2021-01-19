@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   ButtonGroup,
@@ -16,6 +16,7 @@ import { StringID } from '../resources/StringID';
 import { NoteWithBody } from '../types';
 import { DislikeAction, LikeAction } from './Action';
 import { ExpireTime } from './ExpireTime';
+import ConfirmDialog from './ConfirmDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,9 +39,11 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const ArticleCard = (props: { note: NoteWithBody }): React.ReactElement => {
-  const { note } = props;
+const ArticleCard = (props: { note: NoteWithBody; onDelete: () => void }): React.ReactElement => {
+  const { note, onDelete } = props;
   const classes = useStyles();
+
+  const [isOpened, openConfirmDialog] = useState(false);
 
   return (
     <>
@@ -66,8 +69,19 @@ const ArticleCard = (props: { note: NoteWithBody }): React.ReactElement => {
             <Button className={classes.button} aria-label={Resources.getString(StringID.ACTION_DISLIKE)}>
               <DislikeAction dislikes={note.dislike} />
             </Button>
+            <Button className={classes.button} onClick={() => openConfirmDialog(true)}>
+              {Resources.getString(StringID.ACTION_DELETE)}
+            </Button>
           </ButtonGroup>
         </CardActions>
+
+        <ConfirmDialog
+          open={isOpened}
+          onClose={() => openConfirmDialog(false)}
+          contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_ARTICLE)}
+          positiveText={Resources.getString(StringID.ACTION_DELETE)}
+          onPositiveClick={onDelete}
+        />
       </Card>
     </>
   );
