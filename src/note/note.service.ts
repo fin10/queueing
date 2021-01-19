@@ -51,8 +51,10 @@ export class NoteService {
   }
 
   async removeChildren(parentId: string): Promise<number> {
-    const { deletedCount } = await this.model.deleteMany({ parent: parentId });
-    return deletedCount;
+    const children = await this.model.find({ parent: parentId });
+    children.forEach((child) => child.remove());
+
+    return children.length;
   }
 
   async removeExpiredNotes(): Promise<number> {
