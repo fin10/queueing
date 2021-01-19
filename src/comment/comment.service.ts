@@ -47,10 +47,10 @@ export class CommentService {
 
   @OnEvent(NoteRemovedEvent.name, { nextTick: true })
   async onNoteRemoved(event: NoteRemovedEvent): Promise<void> {
-    this.logger.debug(`Received note removed event: ${event.getId()}`);
-
     const start = moment();
     const count = await this.noteService.removeChildren(event.getId());
-    this.logger.debug(`Removed comments (${count}) with ${event.getId()} in ${moment().diff(start, 'ms')}ms`);
+    if (count) {
+      this.logger.debug(`Removed comments (${count}) with ${event.getId()} in ${moment().diff(start, 'ms')}ms`);
+    }
   }
 }

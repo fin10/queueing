@@ -1,6 +1,7 @@
 import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { Cache } from 'cache-manager';
+import moment from 'moment';
 import { ConfigKey, QueueingConfigService } from 'src/config/queueing-config.service';
 import { NoteRemovedEvent } from './events/note-removed.event';
 
@@ -20,8 +21,9 @@ export class NoteBodyService {
   }
 
   @OnEvent(NoteRemovedEvent.name, { nextTick: true })
-  onNoteRemoved(event: NoteRemovedEvent): void {
-    this.logger.debug(`Received note removed event: ${event.getId()}`);
-    this.cache.del(event.getId());
+  async onNoteRemoved(event: NoteRemovedEvent): Promise<void> {
+    const start = moment();
+    await this.cache.del(event.getId());
+    this.logger.debug(`Removed note body with ${event.getId()} in ${moment().diff(start, 'ms')}ms`);
   }
 }
