@@ -4,12 +4,13 @@
     "EDIT_ARTICLE_TOPIC": "토픽",
     "EDIT_ARTICLE_TITLE": "제목",
     "EDIT_ARTICLE_BODY": "내용",
-    "EDIT_ARTICLE_SUBMIT": "등록",
     "EDIT_ARTICLE_LOADING_TOPICS": "토픽 읽어오는 중...",
     "INPUT_COMMENT_SUBMIT": "댓글 등록",
     "ACTION_LIKE": "추천",
     "ACTION_DISLIKE": "비추천",
+    "ACTION_UPDATE": "수정",
     "ACTION_DELETE": "삭제",
     "ACTION_CANCEL": "취소",
+    "ACTION_SUBMIT": "등록",
     "DIALOG_QUESTION_REMOVE_ARTICLE": "글을 삭제할까요?"
 }

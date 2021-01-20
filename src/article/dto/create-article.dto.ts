@@ -1,6 +1,9 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateArticleDto {
+  @IsOptional()
+  readonly id?: string;
+
   @IsNotEmpty()
   readonly topic!: string;
 

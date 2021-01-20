@@ -36,6 +36,13 @@ export class NoteService {
     return note._id;
   }
 
+  async update(id: string, topic: string, title: string): Promise<void> {
+    const note = await this.model.findById(id);
+    if (!note) throw new NotFoundException(`Note not found with ${id}`);
+
+    return note.updateOne({ topic, title });
+  }
+
   async getNote(id: string): Promise<RawNote | null> {
     return this.getValidNotes().findOne({ _id: id }).lean();
   }

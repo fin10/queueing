@@ -9,6 +9,7 @@ export class ArticleController {
 
   @Post()
   create(@Body() data: CreateArticleDto): Promise<string> {
+    if (data.id) return this.service.update(data.id, data);
     return this.service.create(data);
   }
 

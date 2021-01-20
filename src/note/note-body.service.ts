@@ -16,6 +16,10 @@ export class NoteBodyService {
     return this.cache.set(key, body, { ttl });
   }
 
+  remove(id: string): Promise<void> {
+    return this.cache.del(id);
+  }
+
   get(key: string): Promise<string | null> {
     return this.cache.get(key);
   }

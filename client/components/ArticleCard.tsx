@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import qs from 'query-string';
 import {
   Button,
   ButtonGroup,
@@ -68,6 +69,10 @@ const ArticleCard = (props: { note: NoteWithBody; onDelete: () => void }): React
             </Button>
             <Button className={classes.button} aria-label={Resources.getString(StringID.ACTION_DISLIKE)}>
               <DislikeAction dislikes={note.dislike} />
+            </Button>
+
+            <Button className={classes.button} href={`/article/new?` + qs.stringify({ id: note.id })}>
+              {Resources.getString(StringID.ACTION_UPDATE)}
             </Button>
             <Button className={classes.button} onClick={() => openConfirmDialog(true)}>
               {Resources.getString(StringID.ACTION_DELETE)}

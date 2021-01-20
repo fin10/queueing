@@ -26,6 +26,17 @@ export class ArticleService {
     return id;
   }
 
+  async update(id: string, data: CreateArticleDto): Promise<string> {
+    const { topic, title, body } = data;
+
+    const rawTopic = await this.topicService.getOrCreate(topic);
+    await this.noteService.update(id, rawTopic.name, title);
+    await this.bodyStore.remove(id);
+    await this.bodyStore.put(id, body);
+
+    return id;
+  }
+
   async remove(id: string): Promise<void> {
     return this.noteService.remove(id);
   }

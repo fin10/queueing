@@ -1,11 +1,13 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { TextField, Button } from '@material-ui/core';
 import { Logger } from '../utils/Logger';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
 import InputTopic from '../components/InputTopic';
+import { NoteWithBody } from '../types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -16,10 +18,28 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const EditArticlePage = (): React.ReactElement => {
+  const query = new URLSearchParams(useLocation().search);
+  const id = query.get('id');
+
   const classes = useStyles();
   const [title, updateTitle] = useState('');
   const [topic, updateTopic] = useState('');
   const [body, updateBody] = useState('');
+
+  if (id) {
+    useEffect(() => {
+      (async () => {
+        try {
+          const res = await axios.get<NoteWithBody>(`/api/article/${id}`);
+          updateTitle(res.data.title);
+          updateTopic(res.data.topic);
+          updateBody(res.data.body);
+        } catch (err) {
+          Logger.error(err);
+        }
+      })();
+    }, []);
+  }
 
   const handleTopicChange = (event: unknown, newValue: string | null) => {
     updateTopic(newValue || '');
@@ -40,12 +60,14 @@ const EditArticlePage = (): React.ReactElement => {
     event.preventDefault();
 
     try {
-      const res = await axios.post<string>('/api/article', { topic, title, body });
+      const res = await axios.post<string>('/api/article', { id, topic, title, body });
       window.location.assign(`/article/${res.data}`);
     } catch (err) {
       Logger.error(err);
     }
   };
+
+  const submitText = id ? Resources.getString(StringID.ACTION_UPDATE) : Resources.getString(StringID.ACTION_SUBMIT);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -74,7 +96,7 @@ const EditArticlePage = (): React.ReactElement => {
       />
 
       <Button variant="contained" size="large" color="primary" type="submit" fullWidth>
-        {Resources.getString(StringID.EDIT_ARTICLE_SUBMIT)}
+        {submitText}
       </Button>
     </form>
   );
