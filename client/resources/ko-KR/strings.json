@@ -12,5 +12,6 @@
     "ACTION_DELETE": "삭제",
     "ACTION_CANCEL": "취소",
     "ACTION_SUBMIT": "등록",
-    "DIALOG_QUESTION_REMOVE_ARTICLE": "글을 삭제할까요?"
+    "DIALOG_QUESTION_REMOVE_ARTICLE": "글을 삭제할까요?",
+    "DIALOG_QUESTION_REMOVE_cOMMENT": "댓글을 삭제할까요?"
 }

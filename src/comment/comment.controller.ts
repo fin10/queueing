@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Note } from 'src/note/dto/note.dto';
@@ -10,6 +10,11 @@ export class CommentController {
   @Post()
   create(@Body() data: CreateCommentDto): Promise<string> {
     return this.service.create(data);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string): Promise<void> {
+    return this.service.remove(id);
   }
 
   @Get(':parentId')

@@ -10,10 +10,11 @@ import {
   Typography,
 } from '@material-ui/core';
 import { NoteWithBody } from '../types';
-import React from 'react';
+import React, { useState } from 'react';
 import { DislikeAction, LikeAction } from './Action';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
+import ConfirmDialog from './ConfirmDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -33,9 +34,11 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const CommentCard = (props: { note: NoteWithBody }): React.ReactElement => {
+const CommentCard = (props: { note: NoteWithBody; onDelete: () => void }): React.ReactElement => {
+  const { note, onDelete } = props;
   const classes = useStyles();
-  const { note } = props;
+
+  const [isOpened, openConfirmDialog] = useState(false);
 
   return (
     <Card className={classes.margin} variant="outlined">
@@ -55,8 +58,20 @@ const CommentCard = (props: { note: NoteWithBody }): React.ReactElement => {
           <Button className={classes.button} aria-label={Resources.getString(StringID.ACTION_DISLIKE)}>
             <DislikeAction dislikes={note.dislike} />
           </Button>
+
+          <Button className={classes.button} onClick={() => openConfirmDialog(true)}>
+            {Resources.getString(StringID.ACTION_DELETE)}
+          </Button>
         </ButtonGroup>
       </CardActions>
+
+      <ConfirmDialog
+        open={isOpened}
+        onClose={() => openConfirmDialog(false)}
+        contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_cOMMENT)}
+        positiveText={Resources.getString(StringID.ACTION_DELETE)}
+        onPositiveClick={onDelete}
+      />
     </Card>
   );
 };

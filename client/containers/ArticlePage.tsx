@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -44,6 +45,15 @@ const ArticlePage = (): React.ReactElement => {
     }
   };
 
+  const deleteComment = async (comment: NoteWithBody) => {
+    try {
+      await axios.delete(`/api/comment/${comment.id}`);
+      updateComments(_.without(comments, comment));
+    } catch (err) {
+      Logger.error(err);
+    }
+  };
+
   if (!note) {
     return <div />;
   }
@@ -54,7 +64,7 @@ const ArticlePage = (): React.ReactElement => {
 
       {comments.map((comment) => (
         <React.Fragment key={comment.id}>
-          <CommentCard note={comment} />
+          <CommentCard note={comment} onDelete={() => deleteComment(comment)} />
         </React.Fragment>
       ))}
 

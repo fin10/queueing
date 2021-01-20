@@ -26,6 +26,10 @@ export class CommentService {
     return id;
   }
 
+  async remove(id: string): Promise<void> {
+    return this.noteService.remove(id);
+  }
+
   async getValidComments(parentId: string): Promise<Note[]> {
     const rawNotes = await this.noteService.getNotes({ parent: parentId });
 
