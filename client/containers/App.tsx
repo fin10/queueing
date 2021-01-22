@@ -24,7 +24,7 @@ const App = (): React.ReactElement => {
       <Container maxWidth="md">
         <Router>
           <Switch>
-            <Route path="/article/new">
+            <Route exact path="/article/new">
               <EditArticlePage />
             </Route>
             <Route path="/article/:id">
