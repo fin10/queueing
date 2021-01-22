@@ -11,6 +11,7 @@ import { ConfigKey, QueueingConfigService } from './config/queueing-config.servi
 import { TopicModule } from './topic/topic.module';
 import { CleanerModule } from './cleaner/cleaner.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ActionModule } from './action/action.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     ArticleModule,
     TopicModule,
     CleanerModule,
+    ActionModule,
   ],
 })
 export class AppModule {}
