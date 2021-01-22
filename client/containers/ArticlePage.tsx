@@ -14,15 +14,17 @@ const ArticlePage = (): React.ReactElement => {
   const [note, updateNote] = useState<NoteWithBody>();
   const [comments, updateComments] = useState<NoteWithBody[]>([]);
 
+  const fetchArticle = async () => {
+    try {
+      const res = await axios.get<NoteWithBody>(`/api/article/${id}`);
+      updateNote(res.data);
+    } catch (err) {
+      Logger.error(err);
+    }
+  };
+
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await axios.get<NoteWithBody>(`/api/article/${id}`);
-        updateNote(res.data);
-      } catch (err) {
-        Logger.error(err);
-      }
-    })();
+    fetchArticle();
   }, []);
 
   useEffect(() => {
@@ -35,6 +37,17 @@ const ArticlePage = (): React.ReactElement => {
       }
     })();
   }, []);
+
+  const handleLikeAction = async () => {
+    try {
+      if (note) {
+        await axios.post<{ state: boolean; count: number }>(`/api/action/like/${id}`);
+        await fetchArticle();
+      }
+    } catch (err) {
+      Logger.error(err);
+    }
+  };
 
   const deleteArticle = async () => {
     try {
@@ -60,7 +73,7 @@ const ArticlePage = (): React.ReactElement => {
 
   return (
     <>
-      <ArticleCard note={note} onDelete={deleteArticle} />
+      <ArticleCard note={note} onLike={() => handleLikeAction()} onDelete={deleteArticle} />
 
       {comments.map((comment) => (
         <React.Fragment key={comment.id}>

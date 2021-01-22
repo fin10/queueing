@@ -5,6 +5,7 @@ import { Note } from 'src/note/dto/note.dto';
 import { NoteService } from 'src/note/note.service';
 import { TopicService } from 'src/topic/topic.service';
 import { RawNote } from 'src/note/schemas/raw-note.schema';
+import { ActionService } from 'src/action/action.service';
 
 @Injectable()
 export class ArticleService {
@@ -13,6 +14,7 @@ export class ArticleService {
   constructor(
     private readonly topicService: TopicService,
     private readonly noteService: NoteService,
+    private readonly actionService: ActionService,
     private readonly bodyStore: NoteBodyService,
   ) {}
 
@@ -61,6 +63,7 @@ export class ArticleService {
 
   private async populate(rawNote: RawNote, body?: string): Promise<Note> {
     const comments = await this.noteService.count({ parent: rawNote._id });
-    return Note.instantiate({ ...rawNote, children: comments }, body);
+    const like = await this.actionService.getLikes(rawNote._id);
+    return Note.instantiate({ ...rawNote }, comments, like, body);
   }
 }

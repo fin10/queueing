@@ -7,12 +7,17 @@ import { Note } from 'src/note/dto/note.dto';
 import { NoteRemovedEvent } from 'src/note/events/note-removed.event';
 import { OnEvent } from '@nestjs/event-emitter';
 import moment from 'moment';
+import { ActionService } from 'src/action/action.service';
 
 @Injectable()
 export class CommentService {
   private readonly logger = new Logger(CommentService.name);
 
-  constructor(private readonly noteService: NoteService, private readonly bodyStore: NoteBodyService) {}
+  constructor(
+    private readonly noteService: NoteService,
+    private readonly actionService: ActionService,
+    private readonly bodyStore: NoteBodyService,
+  ) {}
 
   async create(data: CreateCommentDto): Promise<string> {
     const { parentId, body } = data;
@@ -43,7 +48,9 @@ export class CommentService {
             return null;
           }
 
-          return Note.instantiate(rawNote, body);
+          const like = await this.actionService.getLikes(rawNote._id);
+
+          return Note.instantiate(rawNote, 0, like, body);
         }),
       ),
     );

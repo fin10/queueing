@@ -40,8 +40,8 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const ArticleCard = (props: { note: NoteWithBody; onDelete: () => void }): React.ReactElement => {
-  const { note, onDelete } = props;
+const ArticleCard = (props: { note: NoteWithBody; onLike: () => void; onDelete: () => void }): React.ReactElement => {
+  const { note, onLike, onDelete } = props;
   const classes = useStyles();
 
   const [isOpened, openConfirmDialog] = useState(false);
@@ -64,7 +64,11 @@ const ArticleCard = (props: { note: NoteWithBody; onDelete: () => void }): React
         </CardContent>
         <CardActions className={classes.actions}>
           <ButtonGroup size="small" color="primary">
-            <Button className={classes.button} aria-label={Resources.getString(StringID.ACTION_LIKE)}>
+            <Button
+              className={classes.button}
+              aria-label={Resources.getString(StringID.ACTION_LIKE)}
+              onClick={() => onLike()}
+            >
               <LikeAction likes={note.like} />
             </Button>
             <Button className={classes.button} aria-label={Resources.getString(StringID.ACTION_DISLIKE)}>
