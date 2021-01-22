@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Note } from 'src/note/dto/note.dto';
@@ -17,10 +17,13 @@ export class CommentController {
     return this.service.remove(id);
   }
 
-  @Get(':parentId')
-  async getComments(@Param('parentId') id: string): Promise<Note[]> {
-    if (!id) throw new BadRequestException('parentId cannot be null.');
+  @Get('/article/:id')
+  getComments(@Param('id') id: string): Promise<Note[]> {
+    return this.service.getComments(id);
+  }
 
-    return this.service.getValidComments(id);
+  @Get(':id')
+  getComment(@Param('id') id: string): Promise<Note> {
+    return this.service.getComment(id);
   }
 }

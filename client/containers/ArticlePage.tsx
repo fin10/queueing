@@ -23,26 +23,42 @@ const ArticlePage = (): React.ReactElement => {
     }
   };
 
+  const fetchComment = async (id: string) => {
+    try {
+      const res = await axios.get<NoteWithBody>(`/api/comment/${id}`);
+      updateComments(
+        comments.map((comment) => {
+          if (comment.id === id) return res.data;
+          return comment;
+        }),
+      );
+    } catch (err) {
+      Logger.error(err);
+    }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const res = await axios.get<NoteWithBody[]>(`/api/comment/article/${id}`);
+      updateComments(res.data);
+    } catch (err) {
+      Logger.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchArticle();
   }, []);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await axios.get<NoteWithBody[]>(`/api/comment/${id}`);
-        updateComments(res.data);
-      } catch (err) {
-        Logger.error(err);
-      }
-    })();
+    fetchComments();
   }, []);
 
-  const handleLikeAction = async () => {
+  const handleLikeAction = async (id: string, next: () => Promise<void>) => {
     try {
       if (note) {
         await axios.post<{ state: boolean; count: number }>(`/api/action/like/${id}`);
-        await fetchArticle();
+        await next();
       }
     } catch (err) {
       Logger.error(err);
@@ -73,11 +89,15 @@ const ArticlePage = (): React.ReactElement => {
 
   return (
     <>
-      <ArticleCard note={note} onLike={() => handleLikeAction()} onDelete={deleteArticle} />
+      <ArticleCard note={note} onLike={() => handleLikeAction(id, fetchArticle)} onDelete={deleteArticle} />
 
       {comments.map((comment) => (
         <React.Fragment key={comment.id}>
-          <CommentCard note={comment} onDelete={() => deleteComment(comment)} />
+          <CommentCard
+            note={comment}
+            onLike={() => handleLikeAction(comment.id, () => fetchComment(comment.id))}
+            onDelete={() => deleteComment(comment)}
+          />
         </React.Fragment>
       ))}
 

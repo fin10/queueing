@@ -23,7 +23,7 @@ export class CommentService {
     const { parentId, body } = data;
 
     const parentNote = await this.noteService.getNote(parentId);
-    if (!parentNote) throw new NotFoundException(`parent not found: ${parentId}`);
+    if (!parentNote) throw new NotFoundException(`comments not found from ${parentId}`);
 
     const id = await this.noteService.createWithParentId(parentId);
     await this.bodyStore.put(id, body);
@@ -35,7 +35,22 @@ export class CommentService {
     return this.noteService.remove(id);
   }
 
-  async getValidComments(parentId: string): Promise<Note[]> {
+  async getComment(id: string): Promise<Note> {
+    const rawNote = await this.noteService.getNote(id);
+    if (!rawNote) throw new NotFoundException(`${id} not found.`);
+
+    const body = await this.bodyStore.get(rawNote._id);
+    if (!body) {
+      this.noteService.remove(rawNote._id);
+      throw new NotFoundException(`${rawNote._id} has been expired.`);
+    }
+
+    const like = await this.actionService.getLikes(rawNote._id);
+
+    return Note.instantiate(rawNote, 0, like, body);
+  }
+
+  async getComments(parentId: string): Promise<Note[]> {
     const rawNotes = await this.noteService.getNotes({ parent: parentId });
 
     return _.compact(
@@ -43,8 +58,8 @@ export class CommentService {
         rawNotes.map(async (rawNote) => {
           const body = await this.bodyStore.get(rawNote._id);
           if (!body) {
-            this.logger.verbose(`${rawNote._id} has been expired.`);
             this.noteService.remove(rawNote._id);
+            this.logger.verbose(`${rawNote._id} has been expired.`);
             return null;
           }
 
