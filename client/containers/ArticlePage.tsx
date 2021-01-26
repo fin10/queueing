@@ -23,13 +23,12 @@ const ArticlePage = (): React.ReactElement => {
   }, []);
 
   const likeArticle = async (id: string) => {
-    await Article.like(id);
-    updateNote(await Article.fetch(id));
+    const updated = await Article.like(id);
+    updateNote(updated);
   };
 
   const likeComment = async (id: string) => {
-    await Comment.like(id);
-    const updated = await Comment.fetch(id);
+    const updated = await Comment.like(id);
     updateComments(comments.map((c) => (c.id === id ? updated : c)));
   };
 
