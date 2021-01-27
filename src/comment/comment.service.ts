@@ -8,6 +8,7 @@ import { NoteRemovedEvent } from 'src/note/events/note-removed.event';
 import { OnEvent } from '@nestjs/event-emitter';
 import moment from 'moment';
 import { ActionService } from 'src/action/action.service';
+import { EmotionType } from 'src/action/interfaces/emotion-type.interface';
 
 @Injectable()
 export class CommentService {
@@ -45,8 +46,8 @@ export class CommentService {
       throw new NotFoundException(`${rawNote._id} has been expired.`);
     }
 
-    const like = await this.actionService.getLikes(rawNote._id);
-    const dislike = await this.actionService.getDislikes(rawNote._id);
+    const like = await this.actionService.getEmotions(rawNote._id, EmotionType.LIKE);
+    const dislike = await this.actionService.getEmotions(rawNote._id, EmotionType.DISLIKE);
 
     return Note.instantiate(rawNote, 0, like, dislike, body);
   }
@@ -64,8 +65,8 @@ export class CommentService {
             return null;
           }
 
-          const like = await this.actionService.getLikes(rawNote._id);
-          const dislike = await this.actionService.getDislikes(rawNote._id);
+          const like = await this.actionService.getEmotions(rawNote._id, EmotionType.LIKE);
+          const dislike = await this.actionService.getEmotions(rawNote._id, EmotionType.DISLIKE);
 
           return Note.instantiate(rawNote, 0, like, dislike, body);
         }),

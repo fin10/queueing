@@ -6,6 +6,7 @@ import { NoteService } from 'src/note/note.service';
 import { TopicService } from 'src/topic/topic.service';
 import { RawNote } from 'src/note/schemas/raw-note.schema';
 import { ActionService } from 'src/action/action.service';
+import { EmotionType } from 'src/action/interfaces/emotion-type.interface';
 
 @Injectable()
 export class ArticleService {
@@ -63,8 +64,8 @@ export class ArticleService {
 
   private async populate(rawNote: RawNote, body?: string): Promise<Note> {
     const comments = await this.noteService.count({ parent: rawNote._id });
-    const like = await this.actionService.getLikes(rawNote._id);
-    const dislike = await this.actionService.getDislikes(rawNote._id);
+    const like = await this.actionService.getEmotions(rawNote._id, EmotionType.LIKE);
+    const dislike = await this.actionService.getEmotions(rawNote._id, EmotionType.DISLIKE);
 
     return Note.instantiate({ ...rawNote }, comments, like, dislike, body);
   }
