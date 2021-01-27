@@ -19,3 +19,7 @@ export interface Topic {
   readonly name: string;
   readonly count?: number;
 }
+
+export interface ActionFunc {
+  (id: string): void;
+}

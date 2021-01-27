@@ -9,7 +9,7 @@ import {
   Theme,
   Typography,
 } from '@material-ui/core';
-import { NoteWithBody } from '../types';
+import { ActionFunc, NoteWithBody } from '../types';
 import React, { useState } from 'react';
 import { DislikeAction, LikeAction } from './Action';
 import { Resources } from '../resources/Resources';
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const CommentCard = (props: { note: NoteWithBody; onLike: () => void; onDelete: () => void }): React.ReactElement => {
+const CommentCard = (props: { note: NoteWithBody; onLike: ActionFunc; onDelete: ActionFunc }): React.ReactElement => {
   const { note, onLike, onDelete } = props;
   const classes = useStyles();
 
@@ -55,7 +55,7 @@ const CommentCard = (props: { note: NoteWithBody; onLike: () => void; onDelete: 
           <Button
             className={classes.button}
             aria-label={Resources.getString(StringID.ACTION_LIKE)}
-            onClick={() => onLike()}
+            onClick={() => onLike(note.id)}
           >
             <LikeAction likes={note.like} />
           </Button>
@@ -74,7 +74,7 @@ const CommentCard = (props: { note: NoteWithBody; onLike: () => void; onDelete: 
         onClose={() => openConfirmDialog(false)}
         contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_cOMMENT)}
         positiveText={Resources.getString(StringID.ACTION_DELETE)}
-        onPositiveClick={onDelete}
+        onPositiveClick={() => onDelete(note.id)}
       />
     </Card>
   );

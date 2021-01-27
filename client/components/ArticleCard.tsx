@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
-import { NoteWithBody } from '../types';
+import { ActionFunc, NoteWithBody } from '../types';
 import { DislikeAction, LikeAction } from './Action';
 import { ExpireTime } from './ExpireTime';
 import ConfirmDialog from './ConfirmDialog';
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const ArticleCard = (props: { note: NoteWithBody; onLike: () => void; onDelete: () => void }): React.ReactElement => {
+const ArticleCard = (props: { note: NoteWithBody; onLike: ActionFunc; onDelete: ActionFunc }): React.ReactElement => {
   const { note, onLike, onDelete } = props;
   const classes = useStyles();
 
@@ -67,7 +67,7 @@ const ArticleCard = (props: { note: NoteWithBody; onLike: () => void; onDelete: 
             <Button
               className={classes.button}
               aria-label={Resources.getString(StringID.ACTION_LIKE)}
-              onClick={() => onLike()}
+              onClick={() => onLike(note.id)}
             >
               <LikeAction likes={note.like} />
             </Button>
@@ -89,7 +89,7 @@ const ArticleCard = (props: { note: NoteWithBody; onLike: () => void; onDelete: 
           onClose={() => openConfirmDialog(false)}
           contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_ARTICLE)}
           positiveText={Resources.getString(StringID.ACTION_DELETE)}
-          onPositiveClick={onDelete}
+          onPositiveClick={() => onDelete(note.id)}
         />
       </Card>
     </>

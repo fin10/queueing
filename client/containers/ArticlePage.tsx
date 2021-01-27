@@ -18,28 +18,28 @@ const ArticlePage = (): React.ReactElement => {
     Article.fetch(id).then((note) => updateNote(note));
   }, []);
 
-  useEffect(() => {
-    Comment.fetchComments(id).then((comments) => updateComments(comments));
-  }, []);
-
   const likeArticle = async (id: string) => {
     const updated = await Article.like(id);
     updateNote(updated);
   };
+
+  const deleteArticle = async (id: string) => {
+    await Article.remove(id);
+    window.location.assign('/');
+  };
+
+  useEffect(() => {
+    Comment.fetchComments(id).then((comments) => updateComments(comments));
+  }, []);
 
   const likeComment = async (id: string) => {
     const updated = await Comment.like(id);
     updateComments(comments.map((c) => (c.id === id ? updated : c)));
   };
 
-  const deleteArticle = async () => {
-    await Article.remove(id);
-    window.location.assign('/');
-  };
-
-  const deleteComment = async (comment: NoteWithBody) => {
-    await Comment.remove(comment.id);
-    updateComments(_.without(comments, comment));
+  const deleteComment = async (id: string) => {
+    await Comment.remove(id);
+    updateComments(comments.filter((c) => c.id !== id));
   };
 
   if (!note) {
@@ -48,11 +48,11 @@ const ArticlePage = (): React.ReactElement => {
 
   return (
     <>
-      <ArticleCard note={note} onLike={() => likeArticle(id)} onDelete={deleteArticle} />
+      <ArticleCard note={note} onLike={likeArticle} onDelete={deleteArticle} />
 
       {comments.map((comment) => (
         <React.Fragment key={comment.id}>
-          <CommentCard note={comment} onLike={() => likeComment(comment.id)} onDelete={() => deleteComment(comment)} />
+          <CommentCard note={comment} onLike={likeComment} onDelete={deleteComment} />
         </React.Fragment>
       ))}
 
