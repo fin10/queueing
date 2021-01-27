@@ -41,6 +41,11 @@ const ArticlePage = (): React.ReactElement => {
     updateComments(comments.map((c) => (c.id === id ? updated : c)));
   };
 
+  const dislikeComment = async (id: string) => {
+    const updated = await Comment.dislike(id);
+    updateComments(comments.map((c) => (c.id === id ? updated : c)));
+  };
+
   const deleteComment = async (id: string) => {
     await Comment.remove(id);
     updateComments(comments.filter((c) => c.id !== id));
@@ -56,7 +61,7 @@ const ArticlePage = (): React.ReactElement => {
 
       {comments.map((comment) => (
         <React.Fragment key={comment.id}>
-          <CommentCard note={comment} onLike={likeComment} onDelete={deleteComment} />
+          <CommentCard note={comment} onLike={likeComment} onDislike={dislikeComment} onDelete={deleteComment} />
         </React.Fragment>
       ))}
 

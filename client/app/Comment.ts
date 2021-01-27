@@ -16,6 +16,11 @@ export async function like(id: string): Promise<NoteWithBody> {
   return fetch(id);
 }
 
+export async function dislike(id: string): Promise<NoteWithBody> {
+  await axios.post<{ state: boolean; count: number }>(`/api/action/dislike/${id}`);
+  return fetch(id);
+}
+
 export async function remove(id: string): Promise<void> {
   await axios.delete(`/api/comment/${id}`);
 }
