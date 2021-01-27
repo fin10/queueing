@@ -16,7 +16,7 @@ export class Note {
     private readonly user: string,
   ) {}
 
-  static instantiate(rawNote: RawNote, children: number, like: number, body?: string): Note {
+  static instantiate(rawNote: RawNote, children: number, like: number, dislike: number, body?: string): Note {
     return new Note(
       rawNote._id,
       rawNote.topic || null,
@@ -28,7 +28,7 @@ export class Note {
       rawNote.expireTime,
       children,
       like,
-      0,
+      dislike,
       'tmp',
     );
   }

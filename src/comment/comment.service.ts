@@ -46,8 +46,9 @@ export class CommentService {
     }
 
     const like = await this.actionService.getLikes(rawNote._id);
+    const dislike = await this.actionService.getDislikes(rawNote._id);
 
-    return Note.instantiate(rawNote, 0, like, body);
+    return Note.instantiate(rawNote, 0, like, dislike, body);
   }
 
   async getComments(parentId: string): Promise<Note[]> {
@@ -64,8 +65,9 @@ export class CommentService {
           }
 
           const like = await this.actionService.getLikes(rawNote._id);
+          const dislike = await this.actionService.getDislikes(rawNote._id);
 
-          return Note.instantiate(rawNote, 0, like, body);
+          return Note.instantiate(rawNote, 0, like, dislike, body);
         }),
       ),
     );

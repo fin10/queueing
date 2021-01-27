@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { NoteWithBody } from '../types';
@@ -20,6 +19,11 @@ const ArticlePage = (): React.ReactElement => {
 
   const likeArticle = async (id: string) => {
     const updated = await Article.like(id);
+    updateNote(updated);
+  };
+
+  const dislikeArticle = async (id: string) => {
+    const updated = await Article.dislike(id);
     updateNote(updated);
   };
 
@@ -48,7 +52,7 @@ const ArticlePage = (): React.ReactElement => {
 
   return (
     <>
-      <ArticleCard note={note} onLike={likeArticle} onDelete={deleteArticle} />
+      <ArticleCard note={note} onLike={likeArticle} onDislike={dislikeArticle} onDelete={deleteArticle} />
 
       {comments.map((comment) => (
         <React.Fragment key={comment.id}>

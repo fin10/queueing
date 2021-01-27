@@ -19,7 +19,19 @@ export class ActionService {
     await this.model.create({ name: 'emotion', type: 'like', note: note._id });
   }
 
+  async dislike(id: string): Promise<void> {
+    const note = await this.noteService.getNote(id);
+    if (!note) throw new NotFoundException(`Note not found with ${id}`);
+
+    await this.model.deleteOne({ name: 'emotion', note: note._id });
+    await this.model.create({ name: 'emotion', type: 'dislike', note: note._id });
+  }
+
   async getLikes(id: string): Promise<number> {
     return this.model.find({ note: id, name: 'emotion', type: 'like' }).countDocuments();
+  }
+
+  async getDislikes(id: string): Promise<number> {
+    return this.model.find({ note: id, name: 'emotion', type: 'dislike' }).countDocuments();
   }
 }

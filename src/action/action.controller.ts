@@ -9,4 +9,9 @@ export class ActionController {
   async like(@Param('id') id: string): Promise<void> {
     return this.action.like(id);
   }
+
+  @Post('/dislike/:id')
+  async dislike(@Param('id') id: string): Promise<void> {
+    return this.action.dislike(id);
+  }
 }

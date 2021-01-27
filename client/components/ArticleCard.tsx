@@ -40,8 +40,13 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const ArticleCard = (props: { note: NoteWithBody; onLike: ActionFunc; onDelete: ActionFunc }): React.ReactElement => {
-  const { note, onLike, onDelete } = props;
+const ArticleCard = (props: {
+  note: NoteWithBody;
+  onLike: ActionFunc;
+  onDislike: ActionFunc;
+  onDelete: ActionFunc;
+}): React.ReactElement => {
+  const { note, onLike, onDislike, onDelete } = props;
   const classes = useStyles();
 
   const [isOpened, openConfirmDialog] = useState(false);
@@ -71,7 +76,11 @@ const ArticleCard = (props: { note: NoteWithBody; onLike: ActionFunc; onDelete: 
             >
               <LikeAction likes={note.like} />
             </Button>
-            <Button className={classes.button} aria-label={Resources.getString(StringID.ACTION_DISLIKE)}>
+            <Button
+              className={classes.button}
+              aria-label={Resources.getString(StringID.ACTION_DISLIKE)}
+              onClick={() => onDislike(note.id)}
+            >
               <DislikeAction dislikes={note.dislike} />
             </Button>
 
