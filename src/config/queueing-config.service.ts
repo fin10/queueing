@@ -27,6 +27,10 @@ class EnvironmentVariables {
   readonly QUEUEING_REDIS_HOST?: string;
 
   readonly QUEUEING_REDIS_PORT?: string;
+
+  readonly QUEUEING_GOOGLE_CLIENT_ID?: string;
+
+  readonly QUEUEING_GOOGLE_CLIENT_SECRET?: string;
 }
 
 export enum ConfigKey {
@@ -37,6 +41,8 @@ export enum ConfigKey {
   REDIS_ENABLED = 'QUEUEING_REDIS_ENABLED',
   REDIS_HOST = 'QUEUEING_REDIS_HOST',
   REDIS_PORT = 'QUEUEING_REDIS_PORT',
+  GOOGLE_CLIENT_ID = 'QUEUEING_GOOGLE_CLIENT_ID',
+  GOOGLE_CLIENT_SECRET = 'QUEUEING_GOOGLE_CLIENT_SECRET',
 }
 
 @Injectable()

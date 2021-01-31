@@ -12,6 +12,7 @@ import { TopicModule } from './topic/topic.module';
 import { CleanerModule } from './cleaner/cleaner.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ActionModule } from './action/action.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ActionModule } from './action/action.module';
     TopicModule,
     CleanerModule,
     ActionModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
