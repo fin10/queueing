@@ -72,8 +72,6 @@ export class QueueingConfigService {
 
   private getValue(key: ConfigKey) {
     const value = this.config.get(key);
-    if (!value) throw new InternalServerErrorException(`${key} is not defined.`);
-
     this.logger.debug(`${key}: ${value}`);
 
     return value;
