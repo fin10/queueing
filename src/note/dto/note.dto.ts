@@ -29,7 +29,7 @@ export class Note {
       children,
       like,
       dislike,
-      'tmp',
+      rawNote.userId,
     );
   }
 }

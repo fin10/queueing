@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { NoteBodyService } from 'src/note/note-body.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { Note } from 'src/note/dto/note.dto';
@@ -41,7 +41,11 @@ export class ArticleService {
     return id;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(user: User, id: string): Promise<void> {
+    const note = await this.noteService.getNote(id);
+    if (!note) throw new NotFoundException();
+    if (note.userId !== user.id) throw new ForbiddenException();
+
     return this.noteService.remove(id);
   }
 

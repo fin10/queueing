@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Req, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { Note } from 'src/note/dto/note.dto';
 import { ArticleService } from './article.service';
@@ -20,9 +20,11 @@ export class ArticleController {
     return this.service.create(user, data);
   }
 
+  @UseGuards(UserAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
-    return this.service.remove(id);
+  remove(@Req() req: Request, @Param('id') id: string): Promise<void> {
+    const user = req.user as User;
+    return this.service.remove(user, id);
   }
 
   @Get(':id')

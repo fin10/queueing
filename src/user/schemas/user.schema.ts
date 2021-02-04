@@ -7,8 +7,6 @@ export type UserDocument = User & Document;
 export class User {
   @Prop({ required: true, unique: true })
   readonly id!: string;
-
-  readonly _id!: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

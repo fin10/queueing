@@ -32,7 +32,7 @@ export class TopicService {
     const rawTopic = await this.model.findOne({ name }).lean();
     if (rawTopic) return rawTopic;
 
-    return this.create({ user: user._id, name });
+    return this.create({ userId: user.id, name });
   }
 
   async removeEmptyTopics(): Promise<number> {

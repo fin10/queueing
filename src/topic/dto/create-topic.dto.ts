@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CreateTopicDto {
   @IsNotEmpty()
-  user!: string;
+  userId!: string;
 
   @IsNotEmpty()
   name!: string;

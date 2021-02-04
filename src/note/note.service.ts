@@ -1,6 +1,6 @@
+import moment from 'moment';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import moment from 'moment';
 import { FilterQuery, Model } from 'mongoose';
 import { ConfigKey, QueueingConfigService } from 'src/config/queueing-config.service';
 import { User } from 'src/user/schemas/user.schema';
@@ -28,7 +28,7 @@ export class NoteService {
 
   async create(user: User, topic: string, title: string): Promise<string> {
     const note = new this.model({
-      user: user._id,
+      userId: user.id,
       topic,
       title,
       expireTime: this.getExpireTime(),
