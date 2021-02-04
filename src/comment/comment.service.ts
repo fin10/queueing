@@ -1,14 +1,15 @@
 import _ from 'underscore';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import moment from 'moment';
+import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import { NoteBodyService } from 'src/note/note-body.service';
 import { NoteService } from 'src/note/note.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Note } from 'src/note/dto/note.dto';
 import { NoteRemovedEvent } from 'src/note/events/note-removed.event';
-import { OnEvent } from '@nestjs/event-emitter';
-import moment from 'moment';
 import { ActionService } from 'src/action/action.service';
 import { EmotionType } from 'src/action/interfaces/emotion-type.interface';
+import { User } from 'src/user/schemas/user.schema';
 
 @Injectable()
 export class CommentService {
@@ -20,19 +21,23 @@ export class CommentService {
     private readonly bodyStore: NoteBodyService,
   ) {}
 
-  async create(data: CreateCommentDto): Promise<string> {
+  async create(user: User, data: CreateCommentDto): Promise<string> {
     const { parentId, body } = data;
 
     const parentNote = await this.noteService.getNote(parentId);
     if (!parentNote) throw new NotFoundException(`comments not found from ${parentId}`);
 
-    const id = await this.noteService.createWithParentId(parentId);
+    const id = await this.noteService.createWithParentId(user, parentId);
     await this.bodyStore.put(id, body);
 
     return id;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(user: User, id: string): Promise<void> {
+    const note = await this.noteService.getNote(id);
+    if (!note) throw new NotFoundException();
+    if (note.userId !== user.id) throw new ForbiddenException();
+
     return this.noteService.remove(id);
   }
 

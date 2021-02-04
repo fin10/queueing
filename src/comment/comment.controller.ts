@@ -1,20 +1,27 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Note } from 'src/note/dto/note.dto';
+import { UserAuthGuard } from 'src/auth/user-auth.guard';
+import { User } from 'src/user/schemas/user.schema';
 
 @Controller('comment')
 export class CommentController {
   constructor(private readonly service: CommentService) {}
 
+  @UseGuards(UserAuthGuard)
   @Post()
-  create(@Body() data: CreateCommentDto): Promise<string> {
-    return this.service.create(data);
+  create(@Req() req: Request, @Body() data: CreateCommentDto): Promise<string> {
+    const user = req.user as User;
+    return this.service.create(user, data);
   }
 
+  @UseGuards(UserAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
-    return this.service.remove(id);
+  remove(@Req() req: Request, @Param('id') id: string): Promise<void> {
+    const user = req.user as User;
+    return this.service.remove(user, id);
   }
 
   @Get('/article/:id')

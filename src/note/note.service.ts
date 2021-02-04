@@ -13,11 +13,12 @@ export class NoteService {
     private readonly config: QueueingConfigService,
   ) {}
 
-  async createWithParentId(parentId: string): Promise<string> {
+  async createWithParentId(user: User, parentId: string): Promise<string> {
     const parent = await this.model.findById(parentId);
     if (!parent) throw new BadRequestException(`${parentId} not found.`);
 
     const note = new this.model({
+      userId: user.id,
       parent: parent._id,
       expireTime: parent.expireTime,
     });
