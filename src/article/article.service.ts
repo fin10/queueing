@@ -7,6 +7,7 @@ import { TopicService } from 'src/topic/topic.service';
 import { RawNote } from 'src/note/schemas/raw-note.schema';
 import { ActionService } from 'src/action/action.service';
 import { EmotionType } from 'src/action/interfaces/emotion-type.interface';
+import { User } from 'src/user/schemas/user.schema';
 
 @Injectable()
 export class ArticleService {
@@ -19,20 +20,20 @@ export class ArticleService {
     private readonly bodyStore: NoteBodyService,
   ) {}
 
-  async create(data: CreateArticleDto): Promise<string> {
+  async create(user: User, data: CreateArticleDto): Promise<string> {
     const { topic, title, body } = data;
 
-    const rawTopic = await this.topicService.getOrCreate(topic);
-    const id = await this.noteService.create(rawTopic.name, title);
+    const rawTopic = await this.topicService.getOrCreate(user, topic);
+    const id = await this.noteService.create(user, rawTopic.name, title);
     await this.bodyStore.put(id, body);
 
     return id;
   }
 
-  async update(id: string, data: CreateArticleDto): Promise<string> {
+  async update(user: User, id: string, data: CreateArticleDto): Promise<string> {
     const { topic, title, body } = data;
 
-    const rawTopic = await this.topicService.getOrCreate(topic);
+    const rawTopic = await this.topicService.getOrCreate(user, topic);
     await this.noteService.update(id, rawTopic.name, title);
     await this.bodyStore.remove(id);
     await this.bodyStore.put(id, body);

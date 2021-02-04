@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import moment from 'moment';
 import { FilterQuery, Model } from 'mongoose';
 import { ConfigKey, QueueingConfigService } from 'src/config/queueing-config.service';
+import { User } from 'src/user/schemas/user.schema';
 import { RawNote, RawNoteDocument } from './schemas/raw-note.schema';
 
 @Injectable()
@@ -25,8 +26,9 @@ export class NoteService {
     return note._id;
   }
 
-  async create(topic: string, title: string): Promise<string> {
+  async create(user: User, topic: string, title: string): Promise<string> {
     const note = new this.model({
+      user: user._id,
       topic,
       title,
       expireTime: this.getExpireTime(),

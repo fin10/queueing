@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { NoteService } from 'src/note/note.service';
 import { CreateTopicDto } from './dto/create-topic.dto';
 import { RawTopic, RawTopicDocument } from './schemas/topic.schema';
+import { User } from 'src/user/schemas/user.schema';
 
 @Injectable()
 export class TopicService {
@@ -27,11 +28,11 @@ export class TopicService {
       .value();
   }
 
-  async getOrCreate(name: string): Promise<RawTopic> {
+  async getOrCreate(user: User, name: string): Promise<RawTopic> {
     const rawTopic = await this.model.findOne({ name }).lean();
     if (rawTopic) return rawTopic;
 
-    return this.create({ name });
+    return this.create({ user: user._id, name });
   }
 
   async removeEmptyTopics(): Promise<number> {

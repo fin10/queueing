@@ -31,6 +31,8 @@ class EnvironmentVariables {
   readonly QUEUEING_GOOGLE_CLIENT_ID?: string;
 
   readonly QUEUEING_GOOGLE_CLIENT_SECRET?: string;
+
+  readonly QUEUEING_AUTH_SECRET?: string;
 }
 
 export enum ConfigKey {
@@ -43,6 +45,7 @@ export enum ConfigKey {
   REDIS_PORT = 'QUEUEING_REDIS_PORT',
   GOOGLE_CLIENT_ID = 'QUEUEING_GOOGLE_CLIENT_ID',
   GOOGLE_CLIENT_SECRET = 'QUEUEING_GOOGLE_CLIENT_SECRET',
+  AUTH_SECRET = 'QUEUEING_AUTH_SECRET',
 }
 
 @Injectable()
