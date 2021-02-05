@@ -7,6 +7,9 @@ export type RawActionDocument = RawAction & Document;
 @Schema({ timestamps: true })
 export class RawAction {
   @Prop({ required: true })
+  readonly userId!: string;
+
+  @Prop({ required: true })
   readonly name!: string;
 
   @Prop({ required: true })

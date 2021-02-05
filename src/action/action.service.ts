@@ -1,11 +1,12 @@
-import { Logger } from '@nestjs/common';
+import moment from 'moment';
+import { ForbiddenException, Logger } from '@nestjs/common';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
-import moment from 'moment';
 import { Model } from 'mongoose';
 import { NoteRemovedEvent } from 'src/note/events/note-removed.event';
 import { NoteService } from 'src/note/note.service';
+import { User } from 'src/user/schemas/user.schema';
 import { EmotionType } from './interfaces/emotion-type.interface';
 import { RawAction, RawActionDocument } from './schemas/raw-action.schema';
 
@@ -22,12 +23,17 @@ export class ActionService {
     private readonly noteService: NoteService,
   ) {}
 
-  async putEmotion(id: string, type: EmotionType): Promise<void> {
+  async putEmotion(user: User, id: string, type: EmotionType): Promise<void> {
     const note = await this.noteService.getNote(id);
-    if (!note) throw new NotFoundException(`Note not found with ${id}`);
+    if (!note) throw new NotFoundException();
 
-    await this.model.deleteOne({ name: ActionName.EMOTION, note: note._id });
-    await this.model.create({ name: ActionName.EMOTION, type, note: note._id });
+    const action = await this.model.findOne({ name: ActionName.EMOTION, note: note._id });
+    if (action) {
+      if (action.userId !== user.id) throw new ForbiddenException();
+      if (action.type !== type) await action.updateOne({ type });
+    } else {
+      await this.model.create({ userId: user.id, name: ActionName.EMOTION, type, note: note._id });
+    }
   }
 
   async getEmotions(id: string, type: EmotionType): Promise<number> {

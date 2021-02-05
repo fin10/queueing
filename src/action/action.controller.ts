@@ -1,18 +1,24 @@
-import { Controller, Param, Post } from '@nestjs/common';
+import { Controller, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
+import { UserAuthGuard } from 'src/auth/user-auth.guard';
+import { User } from 'src/user/schemas/user.schema';
 import { ActionService } from './action.service';
 import { EmotionType } from './interfaces/emotion-type.interface';
 
+@UseGuards(UserAuthGuard)
 @Controller('action')
 export class ActionController {
   constructor(private readonly action: ActionService) {}
 
   @Post('/like/:id')
-  async like(@Param('id') id: string): Promise<void> {
-    return this.action.putEmotion(id, EmotionType.LIKE);
+  async like(@Req() req: Request, @Param('id') id: string): Promise<void> {
+    const user = req.user as User;
+    return this.action.putEmotion(user, id, EmotionType.LIKE);
   }
 
   @Post('/dislike/:id')
-  async dislike(@Param('id') id: string): Promise<void> {
-    return this.action.putEmotion(id, EmotionType.DISLIKE);
+  async dislike(@Req() req: Request, @Param('id') id: string): Promise<void> {
+    const user = req.user as User;
+    return this.action.putEmotion(user, id, EmotionType.DISLIKE);
   }
 }
