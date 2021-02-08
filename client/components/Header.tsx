@@ -1,22 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import qs from 'query-string';
-import {
-  AppBar,
-  Button,
-  createStyles,
-  Link,
-  makeStyles,
-  Menu,
-  MenuItem,
-  Theme,
-  Toolbar,
-  Typography,
-} from '@material-ui/core';
+import { AppBar, Button, createStyles, Link, makeStyles, Theme, Toolbar, Typography } from '@material-ui/core';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
 import LoginDialog from './LoginDialog';
 import { User } from '../types';
+import ProfileMenu from './ProfileMenu';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,17 +21,9 @@ const useStyles = makeStyles((theme: Theme) =>
 const Header = (): React.ReactElement => {
   const classes = useStyles();
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [isOpened, openLoginDialog] = useState(false);
   const [user, updateUser] = useState<User | null>(null);
-
-  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
 
   useEffect(() => {
     axios
@@ -52,8 +33,6 @@ const Header = (): React.ReactElement => {
         // ignored
       });
   }, []);
-
-  const query = qs.stringify({ redirect: window.location.pathname });
 
   return (
     <AppBar position="static" className={classes.root}>
@@ -65,14 +44,10 @@ const Header = (): React.ReactElement => {
         </Typography>
         {user ? (
           <>
-            <Button color="inherit" onClick={handleProfileMenuOpen}>
+            <Button color="inherit" onClick={(e) => setAnchor(e.currentTarget)}>
               {user.id}
             </Button>
-            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-              <MenuItem component="a" href={`/api/auth/logout?${query}`}>
-                {Resources.getString(StringID.HEADER_LOGOUT)}
-              </MenuItem>
-            </Menu>
+            <ProfileMenu anchor={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)} />
           </>
         ) : (
           <>
