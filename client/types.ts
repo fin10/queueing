@@ -23,3 +23,7 @@ export interface Topic {
 export interface ActionFunc {
   (id: string): void;
 }
+
+export interface User {
+  readonly id: string;
+}

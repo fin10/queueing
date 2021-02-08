@@ -3,7 +3,7 @@ import { Request } from 'express';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Note } from 'src/note/dto/note.dto';
-import { UserAuthGuard } from 'src/auth/user-auth.guard';
+import { UserAuthGuard } from 'src/user/user-auth.guard';
 import { User } from 'src/user/schemas/user.schema';
 
 @Controller('comment')

@@ -3,7 +3,7 @@ import { CreateArticleDto } from './dto/create-article.dto';
 import { Note } from 'src/note/dto/note.dto';
 import { ArticleService } from './article.service';
 import { UseGuards } from '@nestjs/common';
-import { UserAuthGuard } from 'src/auth/user-auth.guard';
+import { UserAuthGuard } from 'src/user/user-auth.guard';
 import { Request } from 'express';
 import { User } from 'src/user/schemas/user.schema';
 

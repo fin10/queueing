@@ -1,6 +1,7 @@
 {
     "HEADER_TITLE": "Queueing",
     "HEADER_LOGIN": "로그인",
+    "HEADER_LOGOUT": "로그아웃",
     "ARTICLE_LIST_NEW_ARTICLE": "새글 등록",
     "EDIT_ARTICLE_TOPIC": "토픽",
     "EDIT_ARTICLE_TITLE": "제목",

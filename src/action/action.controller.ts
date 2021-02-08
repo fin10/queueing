@@ -1,6 +1,6 @@
 import { Controller, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
-import { UserAuthGuard } from 'src/auth/user-auth.guard';
+import { UserAuthGuard } from 'src/user/user-auth.guard';
 import { User } from 'src/user/schemas/user.schema';
 import { ActionService } from './action.service';
 import { EmotionType } from './interfaces/emotion-type.interface';
