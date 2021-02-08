@@ -1,5 +1,6 @@
 {
     "HEADER_TITLE": "Queueing",
+    "HEADER_LOGIN": "로그인",
     "ARTICLE_LIST_NEW_ARTICLE": "새글 등록",
     "EDIT_ARTICLE_TOPIC": "토픽",
     "EDIT_ARTICLE_TITLE": "제목",
@@ -13,5 +14,6 @@
     "ACTION_CANCEL": "취소",
     "ACTION_SUBMIT": "등록",
     "DIALOG_QUESTION_REMOVE_ARTICLE": "글을 삭제할까요?",
-    "DIALOG_QUESTION_REMOVE_cOMMENT": "댓글을 삭제할까요?"
+    "DIALOG_QUESTION_REMOVE_cOMMENT": "댓글을 삭제할까요?",
+    "SIGN_IN_WITH_GOOGLE": "Google 계정으로 로그인"
 }

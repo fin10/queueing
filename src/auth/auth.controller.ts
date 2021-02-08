@@ -1,19 +1,18 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
-import { Request, Response } from 'express';
-import { User } from 'src/user/schemas/user.schema';
+import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
 import { GoogleAuthGuard } from './google-auth.guard';
 
 @Controller('auth')
 export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @Get('google')
-  login(@Req() req: Request): User {
-    return req.user as User;
+  login(@Query('redirect') redirect = '/', @Res() res: Response): void {
+    res.redirect(redirect);
   }
 
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
-  handleGoogleCallback(@Res() res: Response): void {
-    res.redirect('/');
+  handleGoogleCallback(@Query('state') redirect = '/', @Res() res: Response): void {
+    res.redirect(redirect);
   }
 }

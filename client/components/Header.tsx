@@ -1,7 +1,8 @@
-import { AppBar, createStyles, Link, makeStyles, Theme, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Button, createStyles, Link, makeStyles, Theme, Toolbar, Typography } from '@material-ui/core';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
-import React from 'react';
+import React, { useState } from 'react';
+import LoginDialog from './LoginDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -17,6 +18,8 @@ const useStyles = makeStyles((theme: Theme) =>
 const Header = (): React.ReactElement => {
   const classes = useStyles();
 
+  const [isOpened, openLoginDialog] = useState(false);
+
   return (
     <AppBar position="static" className={classes.root}>
       <Toolbar>
@@ -25,7 +28,12 @@ const Header = (): React.ReactElement => {
             {Resources.getString(StringID.HEADER_TITLE)}
           </Link>
         </Typography>
+        <Button color="inherit" onClick={() => openLoginDialog(true)}>
+          {Resources.getString(StringID.HEADER_LOGIN)}
+        </Button>
       </Toolbar>
+
+      <LoginDialog open={isOpened} onClose={() => openLoginDialog(false)} />
     </AppBar>
   );
 };

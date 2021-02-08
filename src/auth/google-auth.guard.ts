@@ -22,4 +22,10 @@ export class GoogleAuthGuard extends AuthGuard('google') {
 
     return false;
   }
+
+  getAuthenticateOptions(context: ExecutionContext): { state: string } {
+    const request: Request = context.switchToHttp().getRequest();
+    const orignalUrl = request.originalUrl;
+    return { state: orignalUrl };
+  }
 }
