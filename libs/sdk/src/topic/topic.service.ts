@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import { Mutex } from 'async-mutex';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -9,6 +10,8 @@ import { User } from '../user/schemas/user.schema';
 
 @Injectable()
 export class TopicService {
+  private readonly mutex = new Mutex();
+
   constructor(
     @InjectModel(RawTopic.name) private readonly model: Model<RawTopicDocument>,
     private readonly noteService: NoteService,
@@ -29,10 +32,12 @@ export class TopicService {
   }
 
   async getOrCreate(user: User, name: string): Promise<RawTopic> {
-    const rawTopic = await this.model.findOne({ name }).lean();
-    if (rawTopic) return rawTopic;
+    return this.mutex.runExclusive(async () => {
+      const rawTopic = await this.model.findOne({ name }).lean();
+      if (rawTopic) return rawTopic;
 
-    return this.create({ userId: user.id, name });
+      return this.create({ userId: user.id, name });
+    });
   }
 
   async removeEmptyTopics(): Promise<number> {
