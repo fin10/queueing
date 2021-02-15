@@ -25,6 +25,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/webservice/tsconfig.app.json"
       }
+    },
+    "tool": {
+      "type": "application",
+      "root": "apps/tool",
+      "entryFile": "main",
+      "sourceRoot": "apps/tool/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/tool/tsconfig.app.json"
+      }
     }
   }
 }
