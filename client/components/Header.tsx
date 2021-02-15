@@ -37,7 +37,7 @@ const Header = (): React.ReactElement => {
   return (
     <AppBar position="static" className={classes.root}>
       <Toolbar>
-        <Typography variant="h6" align="center" className={classes.title}>
+        <Typography variant="h6" className={classes.title}>
           <Link href="/" color="inherit" underline="none">
             {Resources.getString(StringID.HEADER_TITLE)}
           </Link>

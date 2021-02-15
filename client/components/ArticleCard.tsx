@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     body: {
       whiteSpace: 'pre-wrap',
+      wordBreak: 'break-word',
     },
     topic: {
       marginBottom: theme.spacing(1),
