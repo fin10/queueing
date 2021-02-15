@@ -9,16 +9,16 @@
     "build": "yarn build:client && yarn build:server",
     "build:client": "parcel build ./client/index.html -d ./dist/client",
     "build:server": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "concurrently \"yarn watch:client\" \"nest start\"",
     "start:debug": "concurrently \"yarn watch:client\" \"nest start --debug --watch\"",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/apps/webservice/main.js",
     "watch:client": "parcel watch ./client/index.html -d ./dist/client",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "test": "jest",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./apps/webservice/test/jest-e2e.json"
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",
@@ -73,6 +73,7 @@
     "@types/underscore": "^1.10.24",
     "@typescript-eslint/eslint-plugin": "^4.6.1",
     "@typescript-eslint/parser": "^4.6.1",
+    "cheerio": "^1.0.0-rc.5",
     "eslint": "^7.12.1",
     "eslint-config-prettier": "7.0.0",
     "eslint-plugin-prettier": "^3.1.4",
