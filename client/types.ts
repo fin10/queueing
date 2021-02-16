@@ -15,6 +15,13 @@ export interface NoteWithBody extends Note {
   readonly body: string;
 }
 
+export interface ArticlesResponse {
+  readonly page: number;
+  readonly pageSize: number;
+  readonly totalPages: number;
+  readonly notes: Note[];
+}
+
 export interface Topic {
   readonly name: string;
   readonly count?: number;

@@ -1,4 +1,5 @@
 import redisStore from 'cache-manager-ioredis';
+import paginate from 'mongoose-paginate-v2';
 import { CacheModule, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { QueueingConfigModule } from '../config/queueing-config.module';
@@ -18,6 +19,9 @@ import { NoteRemovedEvent } from './events/note-removed.event';
         name: RawNote.name,
         useFactory: (eventEmitter: EventEmitter2) => {
           const schema = RawNoteSchema;
+
+          schema.plugin(paginate);
+
           schema.post('remove', (doc: RawNote) => {
             eventEmitter.emit(NoteRemovedEvent.name, new NoteRemovedEvent(doc._id));
           });

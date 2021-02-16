@@ -51,7 +51,7 @@ export class TopicService {
   }
 
   private async getTopicsWithCount(): Promise<RawTopic[]> {
-    const topics = await this.model.find().lean();
+    const topics: RawTopic[] = await this.model.find().lean();
 
     return Promise.all(
       topics.map(async (topic) => {

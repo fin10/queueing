@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Post, Query, Req } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { Note } from '../note/dto/note.dto';
 import { ArticleService } from './article.service';
@@ -6,6 +6,7 @@ import { UseGuards } from '@nestjs/common';
 import { UserAuthGuard } from '../user/user-auth.guard';
 import { Request } from 'express';
 import { User } from '../user/schemas/user.schema';
+import { ArticlesResponse } from './interfaces/articles-response.interface';
 
 @Controller('article')
 export class ArticleController {
@@ -33,7 +34,10 @@ export class ArticleController {
   }
 
   @Get()
-  getNotes(): Promise<Note[]> {
-    return this.service.getArticles();
+  getNotes(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
+  ): Promise<ArticlesResponse> {
+    return this.service.getArticles(page, pageSize);
   }
 }

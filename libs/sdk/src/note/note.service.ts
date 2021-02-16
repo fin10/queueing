@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import mongoose, { FilterQuery } from 'mongoose';
 import { ConfigKey, QueueingConfigService } from '../config/queueing-config.service';
 import { User } from '../user/schemas/user.schema';
 import { RawNote, RawNoteDocument } from './schemas/raw-note.schema';
@@ -9,7 +9,7 @@ import { RawNote, RawNoteDocument } from './schemas/raw-note.schema';
 @Injectable()
 export class NoteService {
   constructor(
-    @InjectModel(RawNote.name) private model: Model<RawNoteDocument>,
+    @InjectModel(RawNote.name) private model: mongoose.PaginateModel<RawNoteDocument>,
     private readonly config: QueueingConfigService,
   ) {}
 
@@ -52,6 +52,17 @@ export class NoteService {
 
   async getNotes<T>(filter: FilterQuery<T>, sorting?: string): Promise<RawNote[]> {
     return this.getValidNotes().find(filter).sort(sorting).lean();
+  }
+
+  async paginateNotes<T>(
+    filter: FilterQuery<T>,
+    page: number,
+    limit: number,
+    sorting?: string,
+  ): Promise<mongoose.PaginateResult<RawNote>> {
+    const query = { expireTime: { $gt: moment.utc().toDate() }, ...filter };
+    const options = { page, limit, sort: sorting, lean: true };
+    return this.model.paginate(query, options);
   }
 
   async remove(id: string): Promise<void> {

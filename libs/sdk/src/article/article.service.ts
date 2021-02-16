@@ -8,6 +8,7 @@ import { RawNote } from '../note/schemas/raw-note.schema';
 import { ActionService } from '../action/action.service';
 import { EmotionType } from '../action/interfaces/emotion-type.interface';
 import { User } from '../user/schemas/user.schema';
+import { ArticlesResponse } from './interfaces/articles-response.interface';
 
 @Injectable()
 export class ArticleService {
@@ -62,9 +63,16 @@ export class ArticleService {
     return this.populate(rawNote, body);
   }
 
-  async getArticles(): Promise<Note[]> {
-    const rawNotes = await this.noteService.getNotes({ parent: { $exists: false } }, '-createdAt');
-    return Promise.all(rawNotes.map((rawNote) => this.populate(rawNote)));
+  async getArticles(page: number, limit: number): Promise<ArticlesResponse> {
+    const result = await this.noteService.paginateNotes({ parent: { $exists: false } }, page, limit, '-createdAt');
+    const populated = await Promise.all(result.docs.map((rawNote) => this.populate(rawNote)));
+
+    return {
+      page: result.page || -1,
+      pageSize: result.limit,
+      totalPages: result.totalPages,
+      notes: populated,
+    };
   }
 
   private async populate(rawNote: RawNote, body?: string): Promise<Note> {
