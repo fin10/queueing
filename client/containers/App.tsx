@@ -9,6 +9,7 @@ import Header from '../components/Header';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      display: 'unset',
       backgroundColor: theme.palette.background.default,
       height: '100%',
     },
