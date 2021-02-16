@@ -18,7 +18,7 @@ const bootstrap = async () => {
 
   app.useLogger(logger);
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   const port = config.getInteger(ConfigKey.PORT);
   if (!port) throw new InternalServerErrorException('port is not defined.');
