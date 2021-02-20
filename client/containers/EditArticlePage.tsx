@@ -33,7 +33,9 @@ const EditArticlePage = (): React.ReactElement => {
           const res = await axios.get<NoteWithBody>(`/api/article/${id}`);
           updateTitle(res.data.title);
           updateTopic(res.data.topic);
-          updateBody(res.data.body);
+
+          const bodyString = res.data.body.map((entity) => entity.value).join('');
+          updateBody(bodyString);
         } catch (err) {
           Logger.error(err);
         }

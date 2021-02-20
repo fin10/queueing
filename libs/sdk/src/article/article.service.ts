@@ -9,6 +9,7 @@ import { ActionService } from '../action/action.service';
 import { EmotionType } from '../action/interfaces/emotion-type.interface';
 import { User } from '../user/schemas/user.schema';
 import { ArticlesResponse } from './interfaces/articles-response.interface';
+import { NoteBodyEntity } from '../note/note-body.entity';
 
 @Injectable()
 export class ArticleService {
@@ -18,7 +19,7 @@ export class ArticleService {
     private readonly topicService: TopicService,
     private readonly noteService: NoteService,
     private readonly actionService: ActionService,
-    private readonly bodyStore: NoteBodyService,
+    private readonly bodyService: NoteBodyService,
   ) {}
 
   async create(user: User, data: CreateArticleDto): Promise<string> {
@@ -26,7 +27,7 @@ export class ArticleService {
 
     const rawTopic = await this.topicService.getOrCreate(user, topic);
     const id = await this.noteService.create(user, rawTopic.name, title);
-    await this.bodyStore.put(id, body);
+    await this.bodyService.put(id, body);
 
     return id;
   }
@@ -36,8 +37,8 @@ export class ArticleService {
 
     const rawTopic = await this.topicService.getOrCreate(user, topic);
     await this.noteService.update(id, rawTopic.name, title);
-    await this.bodyStore.remove(id);
-    await this.bodyStore.put(id, body);
+    await this.bodyService.remove(id);
+    await this.bodyService.put(id, body);
 
     return id;
   }
@@ -54,7 +55,7 @@ export class ArticleService {
     const rawNote = await this.noteService.getNote(id);
     if (!rawNote) throw new NotFoundException(`${id} not found.`);
 
-    const body = await this.bodyStore.get(rawNote._id);
+    const body = await this.bodyService.get(rawNote._id);
     if (!body) {
       this.noteService.remove(rawNote._id);
       throw new NotFoundException(`${id} has been expired.`);
@@ -75,7 +76,7 @@ export class ArticleService {
     };
   }
 
-  private async populate(rawNote: RawNote, body?: string): Promise<Note> {
+  private async populate(rawNote: RawNote, body?: NoteBodyEntity[]): Promise<Note> {
     const comments = await this.noteService.count({ parent: rawNote._id });
     const like = await this.actionService.getEmotions(rawNote._id, EmotionType.LIKE);
     const dislike = await this.actionService.getEmotions(rawNote._id, EmotionType.DISLIKE);

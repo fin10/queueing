@@ -18,13 +18,10 @@ import { ActionFunc, NoteWithBody } from '../types';
 import { DislikeAction, LikeAction } from './Action';
 import { ExpireTime } from './ExpireTime';
 import ConfirmDialog from './ConfirmDialog';
+import NoteBody from './NoteBody';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    body: {
-      whiteSpace: 'pre-wrap',
-      wordBreak: 'break-word',
-    },
     topic: {
       marginBottom: theme.spacing(1),
     },
@@ -66,7 +63,7 @@ const ArticleCard = (props: {
               <ExpireTime expireTime={note.expireTime} />
             </Typography>
           </div>
-          <Typography className={classes.body}>{note.body}</Typography>
+          <NoteBody body={note.body} />
         </CardContent>
         <CardActions className={classes.actions}>
           <ButtonGroup size="small" color="primary">

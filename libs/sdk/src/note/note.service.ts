@@ -9,7 +9,7 @@ import { RawNote, RawNoteDocument } from './schemas/raw-note.schema';
 @Injectable()
 export class NoteService {
   constructor(
-    @InjectModel(RawNote.name) private model: mongoose.PaginateModel<RawNoteDocument>,
+    @InjectModel(RawNote.name) private readonly model: mongoose.PaginateModel<RawNoteDocument>,
     private readonly config: QueueingConfigService,
   ) {}
 

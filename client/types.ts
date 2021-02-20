@@ -11,8 +11,21 @@ export interface Note {
   readonly user: string;
 }
 
+export enum EntityType {
+  STRING = 'string',
+  IMAGE = 'image',
+  VIDEO = 'video',
+  YOUTUBE = 'youtube',
+  LINK = 'link',
+}
+
+export interface NoteBodyEntity {
+  readonly type: EntityType;
+  readonly value: string;
+}
+
 export interface NoteWithBody extends Note {
-  readonly body: string;
+  readonly body: NoteBodyEntity[];
 }
 
 export interface ArticlesResponse {

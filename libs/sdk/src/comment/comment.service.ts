@@ -18,7 +18,7 @@ export class CommentService {
   constructor(
     private readonly noteService: NoteService,
     private readonly actionService: ActionService,
-    private readonly bodyStore: NoteBodyService,
+    private readonly bodyService: NoteBodyService,
   ) {}
 
   async create(user: User, data: CreateCommentDto): Promise<string> {
@@ -28,7 +28,7 @@ export class CommentService {
     if (!parentNote) throw new NotFoundException(`comments not found from ${parentId}`);
 
     const id = await this.noteService.createWithParentId(user, parentId);
-    await this.bodyStore.put(id, body);
+    await this.bodyService.put(id, body);
 
     return id;
   }
@@ -45,7 +45,7 @@ export class CommentService {
     const rawNote = await this.noteService.getNote(id);
     if (!rawNote) throw new NotFoundException(`${id} not found.`);
 
-    const body = await this.bodyStore.get(rawNote._id);
+    const body = await this.bodyService.get(rawNote._id);
     if (!body) {
       this.noteService.remove(rawNote._id);
       throw new NotFoundException(`${rawNote._id} has been expired.`);
@@ -63,7 +63,7 @@ export class CommentService {
     return _.compact(
       await Promise.all(
         rawNotes.map(async (rawNote) => {
-          const body = await this.bodyStore.get(rawNote._id);
+          const body = await this.bodyService.get(rawNote._id);
           if (!body) {
             this.noteService.remove(rawNote._id);
             this.logger.verbose(`${rawNote._id} has been expired.`);

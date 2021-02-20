@@ -1,11 +1,12 @@
 import { RawNote } from '../../note/schemas/raw-note.schema';
+import { NoteBodyEntity } from '../note-body.entity';
 
 export class Note {
   private constructor(
     private readonly id: string,
     private readonly topic: string | null,
     private readonly title: string | null,
-    private readonly body: string | null,
+    private readonly body: NoteBodyEntity[] | null,
     private readonly parent: string | null,
     private readonly created: Date,
     private readonly updated: Date,
@@ -16,7 +17,7 @@ export class Note {
     private readonly user: string,
   ) {}
 
-  static instantiate(rawNote: RawNote, children: number, like: number, dislike: number, body?: string): Note {
+  static instantiate(rawNote: RawNote, children: number, like: number, dislike: number, body?: NoteBodyEntity[]): Note {
     return new Note(
       rawNote._id,
       rawNote.topic || null,
