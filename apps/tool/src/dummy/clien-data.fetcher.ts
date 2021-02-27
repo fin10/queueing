@@ -69,6 +69,9 @@ export class ClienDataFetcher {
         const img = $(el).find('img');
         if (img.length) return img.attr('src');
 
+        const video = $(el).find('video');
+        if (video.length) return video.attr('poster');
+
         const anchor = $(el).find('a');
         if (anchor.length) return anchor.attr('href');
 
