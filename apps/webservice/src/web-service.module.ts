@@ -13,6 +13,7 @@ import { CleanerModule } from '@lib/sdk/cleaner/cleaner.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ActionModule } from '@lib/sdk/action/action.module';
 import { AuthModule } from '@lib/sdk/auth/auth.module';
+import { ProfileModule } from '@lib/sdk/profile/profile.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AuthModule } from '@lib/sdk/auth/auth.module';
     CleanerModule,
     ActionModule,
     AuthModule,
+    ProfileModule,
   ],
 })
 export class WebServiceModule {}

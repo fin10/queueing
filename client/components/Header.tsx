@@ -4,7 +4,7 @@ import { AppBar, Button, createStyles, Link, makeStyles, Theme, Toolbar, Typogra
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
 import LoginDialog from './LoginDialog';
-import { User } from '../types';
+import { Profile } from '../types';
 import ProfileMenu from './ProfileMenu';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -23,12 +23,12 @@ const Header = (): React.ReactElement => {
 
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [isOpened, openLoginDialog] = useState(false);
-  const [user, updateUser] = useState<User | null>(null);
+  const [profile, updateProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
     axios
-      .get<User>('/api/user/profile')
-      .then((res) => updateUser(res.data))
+      .get<Profile>('/api/profile')
+      .then((res) => updateProfile(res.data))
       .catch(() => {
         // ignored
       });
@@ -42,10 +42,10 @@ const Header = (): React.ReactElement => {
             {Resources.getString(StringID.HEADER_TITLE)}
           </Link>
         </Typography>
-        {user ? (
+        {profile ? (
           <>
             <Button color="inherit" onClick={(e) => setAnchor(e.currentTarget)}>
-              {user.id}
+              {profile.name}
             </Button>
             <ProfileMenu anchor={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)} />
           </>

@@ -2,7 +2,7 @@ import _ from 'underscore';
 import fs from 'fs';
 import path from 'path';
 import { Injectable } from '@nestjs/common';
-import { User } from './schemas/user.schema';
+import { User } from '../user/schemas/user.schema';
 
 class Dictionary {
   static Name = {
@@ -25,6 +25,10 @@ class Dictionary {
     return new Dictionary(words);
   }
 
+  choice(): string {
+    return _.chain(this.words).sample(1).first().value() || 'empty';
+  }
+
   getSize(): number {
     return this.words.length;
   }
@@ -43,7 +47,7 @@ export class NicknameService {
   public getNickname(user: User): string {
     const id = user._id.toString();
     const suffix = id.substring(id.length - 4);
-    const name = this.dictionaries.map((dict) => _.sample(dict, 1)).join(' ');
+    const name = this.dictionaries.map((dict) => dict.choice()).join(' ');
     const nickname = `${name} (${suffix})`;
     return nickname;
   }
