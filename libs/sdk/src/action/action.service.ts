@@ -29,10 +29,10 @@ export class ActionService {
 
     const action = await this.model.findOne({ name: ActionName.EMOTION, note: note._id });
     if (action) {
-      if (action.userId !== user.id) throw new ForbiddenException();
+      if (action.userId !== user._id) throw new ForbiddenException();
       if (action.type !== type) await action.updateOne({ type });
     } else {
-      await this.model.create({ userId: user.id, name: ActionName.EMOTION, type, note: note._id });
+      await this.model.create({ userId: user._id, name: ActionName.EMOTION, type, note: note._id });
     }
   }
 

@@ -6,10 +6,10 @@ import { UserService } from '../user/user.service';
 export class AuthService {
   constructor(private readonly userService: UserService) {}
 
-  async validateUser(id: string): Promise<User> {
-    let user = await this.userService.findUser(id);
+  async validateUser(provider: string, key: string): Promise<User> {
+    let user = await this.userService.findUser({ provider, key });
     if (!user) {
-      user = await this.userService.createUser(id);
+      user = await this.userService.createUser(provider, key);
     }
 
     return user;

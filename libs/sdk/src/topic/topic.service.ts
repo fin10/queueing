@@ -36,7 +36,7 @@ export class TopicService {
       const rawTopic = await this.model.findOne({ name }).lean();
       if (rawTopic) return rawTopic;
 
-      return this.create({ userId: user.id, name });
+      return this.create({ userId: user._id, name });
     });
   }
 

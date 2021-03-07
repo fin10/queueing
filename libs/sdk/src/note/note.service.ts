@@ -18,7 +18,7 @@ export class NoteService {
     if (!parent) throw new BadRequestException(`${parentId} not found.`);
 
     const note = new this.model({
-      userId: user.id,
+      userId: user._id,
       parent: parent._id,
       expireTime: parent.expireTime,
     });
@@ -29,7 +29,7 @@ export class NoteService {
 
   async create(user: User, topic: string, title: string): Promise<string> {
     const note = new this.model({
-      userId: user.id,
+      userId: user._id,
       topic,
       title,
       expireTime: this.getExpireTime(),

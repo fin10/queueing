@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongoose';
 import { RawNote } from '../../note/schemas/raw-note.schema';
 import { NoteBodyEntity } from '../note-body.entity';
 
@@ -14,7 +15,7 @@ export class Note {
     private readonly children: number,
     private readonly like: number,
     private readonly dislike: number,
-    private readonly user: string,
+    private readonly user: ObjectId,
   ) {}
 
   static instantiate(rawNote: RawNote, children: number, like: number, dislike: number, body?: NoteBodyEntity[]): Note {

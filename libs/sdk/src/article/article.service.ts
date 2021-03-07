@@ -46,7 +46,7 @@ export class ArticleService {
   async remove(user: User, id: string): Promise<void> {
     const note = await this.noteService.getNote(id);
     if (!note) throw new NotFoundException();
-    if (note.userId !== user.id) throw new ForbiddenException();
+    if (note.userId !== user._id) throw new ForbiddenException();
 
     return this.noteService.remove(id);
   }

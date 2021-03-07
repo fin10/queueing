@@ -22,10 +22,10 @@ const bootstrap = async () => {
     const userService = app.get(UserService);
     await Promise.all(
       users.map(async (nickname) => {
-        const found = await userService.findUser(nickname);
+        const found = await userService.findUser({ provider: 'clien', key: nickname });
         if (found) return;
 
-        await userService.createUser(nickname);
+        await userService.createUser('clien', nickname);
         logger.debug(`User registered: ${nickname}`);
       }),
     );
@@ -33,7 +33,9 @@ const bootstrap = async () => {
     const articleService = app.get(ArticleService);
     await Promise.all(
       dummies.map(async (data) => {
-        const user = { id: data.nickname };
+        const user = await userService.findUser({ provider: 'clien', key: data.nickname });
+        if (!user) return;
+
         await articleService.create(user, data);
         logger.debug(`Article registered: [${data.topic}] ${data.title}`);
       }),

@@ -1,13 +1,14 @@
+import { User } from '@lib/sdk/user/schemas/user.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, ObjectId } from 'mongoose';
 import { RawNote } from '../../note/schemas/raw-note.schema';
 
 export type RawActionDocument = RawAction & Document;
 
 @Schema({ timestamps: true })
 export class RawAction {
-  @Prop({ required: true })
-  readonly userId!: string;
+  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: User.name })
+  readonly userId!: ObjectId;
 
   @Prop({ required: true })
   readonly name!: string;

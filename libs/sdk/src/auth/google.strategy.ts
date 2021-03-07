@@ -20,6 +20,6 @@ export class GoogleStrategy extends PassportStrategy(OAuth2Strategy) {
   }
 
   async validate(_accessToken: string, _refreshToken: string, profile: Profile): Promise<User> {
-    return this.authService.validateUser(profile.id);
+    return this.authService.validateUser('google', profile.id);
   }
 }

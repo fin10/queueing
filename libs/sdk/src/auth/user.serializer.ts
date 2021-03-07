@@ -11,12 +11,12 @@ export class UserSerializer extends PassportSerializer {
   }
 
   serializeUser(user: User, done: CallableFunction): void {
-    return done(null, user.id);
+    return done(null, user._id);
   }
 
   async deserializeUser(id: string, done: CallableFunction): Promise<void> {
     try {
-      const user = await this.userService.findUser(id);
+      const user = await this.userService.findUser({ _id: id });
       if (!user) throw new NotFoundException(`Not found user with ${id}`);
       done(null, user);
     } catch (err) {
