@@ -15,12 +15,10 @@ import { DislikeAction, LikeAction } from './Action';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
 import ConfirmDialog from './ConfirmDialog';
+import NoteBody from './NoteBody';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    body: {
-      whiteSpace: 'pre-wrap',
-    },
     actions: {
       justifyContent: 'center',
     },
@@ -51,9 +49,7 @@ const CommentCard = (props: {
         <Typography gutterBottom variant="subtitle2" color="textSecondary">
           {note.user}
         </Typography>
-        <Typography className={classes.body} variant="body2">
-          {note.body}
-        </Typography>
+        <NoteBody body={note.body} />
       </CardContent>
       <CardActions className={classes.actions}>
         <ButtonGroup size="small" color="primary">
