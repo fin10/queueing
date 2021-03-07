@@ -10,6 +10,7 @@ import { NoteRemovedEvent } from '../note/events/note-removed.event';
 import { ActionService } from '../action/action.service';
 import { EmotionType } from '../action/interfaces/emotion-type.interface';
 import { User } from '../user/schemas/user.schema';
+import { ProfileService } from '../profile/profile.service';
 
 @Injectable()
 export class CommentService {
@@ -19,6 +20,7 @@ export class CommentService {
     private readonly noteService: NoteService,
     private readonly actionService: ActionService,
     private readonly bodyService: NoteBodyService,
+    private readonly profileService: ProfileService,
   ) {}
 
   async create(user: User, data: CreateCommentDto): Promise<string> {
@@ -51,10 +53,11 @@ export class CommentService {
       throw new NotFoundException(`${rawNote._id} has been expired.`);
     }
 
+    const profile = this.profileService.getProfile(rawNote.userId);
     const like = await this.actionService.getEmotions(rawNote._id, EmotionType.LIKE);
     const dislike = await this.actionService.getEmotions(rawNote._id, EmotionType.DISLIKE);
 
-    return Note.instantiate(rawNote, 0, like, dislike, body);
+    return Note.instantiate(profile, rawNote, 0, like, dislike, body);
   }
 
   async getComments(parentId: string): Promise<Note[]> {
@@ -70,10 +73,11 @@ export class CommentService {
             return null;
           }
 
+          const profile = this.profileService.getProfile(rawNote.userId);
           const like = await this.actionService.getEmotions(rawNote._id, EmotionType.LIKE);
           const dislike = await this.actionService.getEmotions(rawNote._id, EmotionType.DISLIKE);
 
-          return Note.instantiate(rawNote, 0, like, dislike, body);
+          return Note.instantiate(profile, rawNote, 0, like, dislike, body);
         }),
       ),
     );

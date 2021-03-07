@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ObjectId } from 'mongoose';
-import { User } from '../user/schemas/user.schema';
 import { NicknameService } from './nickname.service';
 
 export interface Profile {
@@ -12,10 +11,10 @@ export interface Profile {
 export class ProfileService {
   constructor(private readonly nicknameService: NicknameService) {}
 
-  getProfile(user: User): Profile {
-    const nickname = this.nicknameService.getNickname(user);
+  getProfile(userId: ObjectId): Profile {
+    const nickname = this.nicknameService.getNickname(userId);
     return {
-      id: user._id,
+      id: userId,
       name: nickname,
     };
   }

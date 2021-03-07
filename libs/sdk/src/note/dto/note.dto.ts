@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongoose';
+import { Profile } from '@lib/sdk/profile/profile.service';
 import { RawNote } from '../../note/schemas/raw-note.schema';
 import { NoteBodyEntity } from '../note-body.entity';
 
@@ -15,10 +15,17 @@ export class Note {
     private readonly children: number,
     private readonly like: number,
     private readonly dislike: number,
-    private readonly user: ObjectId,
+    private readonly user: string,
   ) {}
 
-  static instantiate(rawNote: RawNote, children: number, like: number, dislike: number, body?: NoteBodyEntity[]): Note {
+  static instantiate(
+    profile: Profile,
+    rawNote: RawNote,
+    children: number,
+    like: number,
+    dislike: number,
+    body?: NoteBodyEntity[],
+  ): Note {
     return new Note(
       rawNote._id,
       rawNote.topic || null,
@@ -31,7 +38,7 @@ export class Note {
       children,
       like,
       dislike,
-      rawNote.userId,
+      profile.name,
     );
   }
 }

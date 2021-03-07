@@ -10,6 +10,7 @@ import { EmotionType } from '../action/interfaces/emotion-type.interface';
 import { User } from '../user/schemas/user.schema';
 import { ArticlesResponse } from './interfaces/articles-response.interface';
 import { NoteBodyEntity } from '../note/note-body.entity';
+import { ProfileService } from '../profile/profile.service';
 
 @Injectable()
 export class ArticleService {
@@ -20,6 +21,7 @@ export class ArticleService {
     private readonly noteService: NoteService,
     private readonly actionService: ActionService,
     private readonly bodyService: NoteBodyService,
+    private readonly profileService: ProfileService,
   ) {}
 
   async create(user: User, data: CreateArticleDto): Promise<string> {
@@ -77,10 +79,11 @@ export class ArticleService {
   }
 
   private async populate(rawNote: RawNote, body?: NoteBodyEntity[]): Promise<Note> {
+    const profile = this.profileService.getProfile(rawNote.userId);
     const comments = await this.noteService.count({ parent: rawNote._id });
     const like = await this.actionService.getEmotions(rawNote._id, EmotionType.LIKE);
     const dislike = await this.actionService.getEmotions(rawNote._id, EmotionType.DISLIKE);
 
-    return Note.instantiate({ ...rawNote }, comments, like, dislike, body);
+    return Note.instantiate(profile, { ...rawNote }, comments, like, dislike, body);
   }
 }

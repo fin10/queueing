@@ -12,6 +12,6 @@ export class ProfileController {
   @Get('/')
   login(@Req() req: Request): Profile {
     const user = req.user as User;
-    return this.profileService.getProfile(user);
+    return this.profileService.getProfile(user._id);
   }
 }
