@@ -1,9 +1,9 @@
 import { IsNotEmpty } from 'class-validator';
-import { ObjectId } from 'mongoose';
+import mongoose from 'mongoose';
 
 export class CreateTopicDto {
   @IsNotEmpty()
-  userId!: ObjectId;
+  userId!: mongoose.Schema.Types.ObjectId;
 
   @IsNotEmpty()
   name!: string;

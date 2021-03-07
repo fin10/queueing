@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import mongoose from 'mongoose';
 import { TopicController } from './topic.controller';
 import { TopicService } from './topic.service';
 
@@ -26,7 +27,7 @@ describe('TopicController', () => {
   });
 
   it('should be created topic', async () => {
-    const topic = { userId: 'test', name: 'test' };
+    const topic = { userId: new mongoose.Schema.Types.ObjectId('test'), name: 'test' };
     await expect(controller.create(topic)).resolves.toStrictEqual(topic);
   });
 
