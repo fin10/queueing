@@ -14,7 +14,14 @@
     "ACTION_DELETE": "삭제",
     "ACTION_CANCEL": "취소",
     "ACTION_SUBMIT": "등록",
+    "ACTION_REPORT": "신고",
     "DIALOG_QUESTION_REMOVE_ARTICLE": "글을 삭제할까요?",
     "DIALOG_QUESTION_REMOVE_cOMMENT": "댓글을 삭제할까요?",
-    "SIGN_IN_WITH_GOOGLE": "Google 계정으로 로그인"
+    "SIGN_IN_WITH_GOOGLE": "Google 계정으로 로그인",
+    "REPORT_TYPE_RUDE": "욕설, 비속어, 인신공격, 혐오 발언 혹은 반말 사용",
+    "REPORT_TYPE_AD": "영리 목적의 바이럴 마케팅, 홍보",
+    "REPORT_TYPE_LEWD": "선정적인 내용",
+    "REPORT_TYPE_ILLEGAL": "도박, 마약 등의 불법적인 내용",
+    "REPORT_TYPE_COPYRIGHT": "저작권, 초상권 침해",
+    "REPORT_TYPE_PLASTERED": "악의적으로 반복적인 내용 게시"
 }

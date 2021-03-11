@@ -19,6 +19,7 @@ import { DislikeAction, LikeAction } from './Action';
 import { ExpireTime } from './ExpireTime';
 import ConfirmDialog from './ConfirmDialog';
 import NoteBody from './NoteBody';
+import ReportDialog from './ReportDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -47,7 +48,8 @@ const ArticleCard = (props: {
   const { note, onLike, onDislike, onDelete } = props;
   const classes = useStyles();
 
-  const [isOpened, openConfirmDialog] = useState(false);
+  const [isConfirmDialogOpened, openConfirmDialog] = useState(false);
+  const [isReportDialogOpened, openReportDialog] = useState(false);
 
   return (
     <>
@@ -67,6 +69,10 @@ const ArticleCard = (props: {
         </CardContent>
         <CardActions className={classes.actions}>
           <ButtonGroup size="small" color="primary">
+            <Button className={classes.button} onClick={() => openReportDialog(true)}>
+              {Resources.getString(StringID.ACTION_REPORT)}
+            </Button>
+
             <Button
               className={classes.button}
               aria-label={Resources.getString(StringID.ACTION_LIKE)}
@@ -92,12 +98,14 @@ const ArticleCard = (props: {
         </CardActions>
 
         <ConfirmDialog
-          open={isOpened}
+          open={isConfirmDialogOpened}
           onClose={() => openConfirmDialog(false)}
           contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_ARTICLE)}
           positiveText={Resources.getString(StringID.ACTION_DELETE)}
           onPositiveClick={() => onDelete(note.id)}
         />
+
+        <ReportDialog open={isReportDialogOpened} onClose={() => openReportDialog(false)} />
       </Card>
     </>
   );

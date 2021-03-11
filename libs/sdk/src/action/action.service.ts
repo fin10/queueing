@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { ForbiddenException, Logger } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Logger } from '@nestjs/common';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
@@ -9,9 +9,11 @@ import { NoteService } from '../note/note.service';
 import { User } from '../user/schemas/user.schema';
 import { EmotionType } from './interfaces/emotion-type.interface';
 import { RawAction, RawActionDocument } from './schemas/raw-action.schema';
+import { ReportType } from './interfaces/report-type.interface';
 
 enum ActionName {
   EMOTION = 'emotion',
+  REPORT = 'report',
 }
 
 @Injectable()
@@ -38,6 +40,16 @@ export class ActionService {
 
   async getEmotions(id: string, type: EmotionType): Promise<number> {
     return this.model.find({ note: id, name: ActionName.EMOTION, type }).countDocuments();
+  }
+
+  async putReport(user: User, id: string, type: ReportType): Promise<void> {
+    const note = await this.noteService.getNote(id);
+    if (!note) throw new NotFoundException();
+
+    const action = await this.model.findOne({ userId: user._id, name: ActionName.EMOTION, note: note._id });
+    if (action) throw new BadRequestException('Already reported');
+
+    await this.model.create({ userId: user._id, name: ActionName.REPORT, type, note: note._id });
   }
 
   @OnEvent(NoteRemovedEvent.name, { nextTick: true })
