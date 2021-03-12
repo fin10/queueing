@@ -2,8 +2,7 @@ import _ from 'underscore';
 import fs from 'fs';
 import path from 'path';
 import { Injectable } from '@nestjs/common';
-import { User } from '../user/schemas/user.schema';
-import { ObjectId } from 'mongoose';
+import mongoose from 'mongoose';
 
 class Dictionary {
   static Name = {
@@ -45,8 +44,8 @@ export class NicknameService {
     );
   }
 
-  public getNickname(userId: ObjectId): string {
-    const id = userId.toString();
+  public getNickname(userId: mongoose.Types.ObjectId): string {
+    const id = userId.toHexString();
     const suffix = id.substring(id.length - 4);
     const name = this.dictionaries.map((dict) => dict.choice()).join(' ');
     const nickname = `${name} (${suffix})`;

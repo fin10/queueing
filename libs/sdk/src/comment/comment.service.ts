@@ -11,6 +11,7 @@ import { ActionService } from '../action/action.service';
 import { EmotionType } from '../action/interfaces/emotion-type.interface';
 import { User } from '../user/schemas/user.schema';
 import { ProfileService } from '../profile/profile.service';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class CommentService {
@@ -23,7 +24,7 @@ export class CommentService {
     private readonly profileService: ProfileService,
   ) {}
 
-  async create(user: User, data: CreateCommentDto): Promise<string> {
+  async create(user: User, data: CreateCommentDto): Promise<mongoose.Types.ObjectId> {
     const { parentId, body } = data;
 
     const parentNote = await this.noteService.getNote(parentId);
@@ -35,15 +36,15 @@ export class CommentService {
     return id;
   }
 
-  async remove(user: User, id: string): Promise<void> {
+  async remove(user: User, id: mongoose.Types.ObjectId): Promise<void> {
     const note = await this.noteService.getNote(id);
     if (!note) throw new NotFoundException();
-    if (note.userId !== user._id) throw new ForbiddenException();
+    if (!note.userId.equals(user._id)) throw new ForbiddenException();
 
     return this.noteService.remove(id);
   }
 
-  async getComment(id: string): Promise<Note> {
+  async getComment(id: mongoose.Types.ObjectId): Promise<Note> {
     const rawNote = await this.noteService.getNote(id);
     if (!rawNote) throw new NotFoundException(`${id} not found.`);
 
@@ -60,7 +61,7 @@ export class CommentService {
     return Note.instantiate(profile, rawNote, 0, like, dislike, body);
   }
 
-  async getComments(parentId: string): Promise<Note[]> {
+  async getComments(parentId: mongoose.Types.ObjectId): Promise<Note[]> {
     const rawNotes = await this.noteService.getNotes({ parent: parentId });
 
     return _.compact(

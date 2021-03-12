@@ -13,7 +13,7 @@ export class NoteService {
     private readonly config: QueueingConfigService,
   ) {}
 
-  async createWithParentId(user: User, parentId: string): Promise<string> {
+  async createWithParentId(user: User, parentId: mongoose.Types.ObjectId): Promise<mongoose.Types.ObjectId> {
     const parent = await this.model.findById(parentId);
     if (!parent) throw new BadRequestException(`${parentId} not found.`);
 
@@ -27,7 +27,7 @@ export class NoteService {
     return note._id;
   }
 
-  async create(user: User, topic: string, title: string): Promise<string> {
+  async create(user: User, topic: string, title: string): Promise<mongoose.Types.ObjectId> {
     const note = new this.model({
       userId: user._id,
       topic,
@@ -39,14 +39,14 @@ export class NoteService {
     return note._id;
   }
 
-  async update(id: string, topic: string, title: string): Promise<void> {
+  async update(id: mongoose.Types.ObjectId, topic: string, title: string): Promise<void> {
     const note = await this.model.findById(id);
     if (!note) throw new NotFoundException(`Note not found with ${id}`);
 
     return note.updateOne({ topic, title });
   }
 
-  async getNote(id: string): Promise<RawNote | null> {
+  async getNote(id: mongoose.Types.ObjectId): Promise<RawNote | null> {
     return this.getValidNotes().findOne({ _id: id }).lean();
   }
 
@@ -65,13 +65,13 @@ export class NoteService {
     return this.model.paginate(query, options);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: mongoose.Types.ObjectId): Promise<void> {
     const note = await this.model.findById(id);
     if (!note) throw new NotFoundException(`Note not found with ${id}`);
     return note.remove();
   }
 
-  async removeChildren(parentId: string): Promise<number> {
+  async removeChildren(parentId: mongoose.Types.ObjectId): Promise<number> {
     const children = await this.model.find({ parent: parentId });
     children.forEach((child) => child.remove());
 

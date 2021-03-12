@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, ObjectId } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 export type UserDocument = User & Document;
 
@@ -11,7 +11,7 @@ export class User {
   @Prop({ required: true, unique: true })
   readonly key!: string;
 
-  readonly _id!: ObjectId;
+  readonly _id!: mongoose.Types.ObjectId;
   readonly createdAt!: Date;
 }
 

@@ -1,7 +1,9 @@
-export class NoteRemovedEvent {
-  constructor(private readonly id: string) {}
+import mongoose from 'mongoose';
 
-  getId(): string {
+export class NoteRemovedEvent {
+  constructor(private readonly id: mongoose.Types.ObjectId) {}
+
+  getId(): mongoose.Types.ObjectId {
     return this.id;
   }
 }

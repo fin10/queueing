@@ -8,6 +8,8 @@ import { Request } from 'express';
 import { User } from '../user/schemas/user.schema';
 import { ArticlesResponse } from './interfaces/articles-response.interface';
 import { GetArticlesDto } from './dto/get-articles.dto';
+import mongoose from 'mongoose';
+import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
 
 @Controller('article')
 export class ArticleController {
@@ -15,7 +17,7 @@ export class ArticleController {
 
   @UseGuards(UserAuthGuard)
   @Post()
-  createOrUpdate(@Req() req: Request, @Body() data: CreateArticleDto): Promise<string> {
+  createOrUpdate(@Req() req: Request, @Body() data: CreateArticleDto): Promise<mongoose.Types.ObjectId> {
     const user = req.user as User;
 
     if (data.id) return this.service.update(user, data.id, data);
@@ -24,13 +26,13 @@ export class ArticleController {
 
   @UseGuards(UserAuthGuard)
   @Delete(':id')
-  remove(@Req() req: Request, @Param('id') id: string): Promise<void> {
+  remove(@Req() req: Request, @Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId): Promise<void> {
     const user = req.user as User;
     return this.service.remove(user, id);
   }
 
   @Get(':id')
-  getNote(@Param('id') id: string): Promise<Note> {
+  getNote(@Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId): Promise<Note> {
     return this.service.getArticle(id);
   }
 

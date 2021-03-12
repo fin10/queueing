@@ -3,7 +3,7 @@ import { BadRequestException, ForbiddenException, Logger } from '@nestjs/common'
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { NoteRemovedEvent } from '../note/events/note-removed.event';
 import { NoteService } from '../note/note.service';
 import { User } from '../user/schemas/user.schema';
@@ -25,24 +25,24 @@ export class ActionService {
     private readonly noteService: NoteService,
   ) {}
 
-  async putEmotion(user: User, id: string, type: EmotionType): Promise<void> {
+  async putEmotion(user: User, id: mongoose.Types.ObjectId, type: EmotionType): Promise<void> {
     const note = await this.noteService.getNote(id);
     if (!note) throw new NotFoundException();
 
     const action = await this.model.findOne({ name: ActionName.EMOTION, note: note._id });
     if (action) {
-      if (action.userId !== user._id) throw new ForbiddenException();
+      if (!action.userId.equals(user._id)) throw new ForbiddenException();
       if (action.type !== type) await action.updateOne({ type });
     } else {
       await this.model.create({ userId: user._id, name: ActionName.EMOTION, type, note: note._id });
     }
   }
 
-  async getEmotions(id: string, type: EmotionType): Promise<number> {
+  async getEmotions(id: mongoose.Types.ObjectId, type: EmotionType): Promise<number> {
     return this.model.find({ note: id, name: ActionName.EMOTION, type }).countDocuments();
   }
 
-  async putReport(user: User, id: string, type: ReportType): Promise<void> {
+  async putReport(user: User, id: mongoose.Types.ObjectId, type: ReportType): Promise<void> {
     const note = await this.noteService.getNote(id);
     if (!note) throw new NotFoundException();
 

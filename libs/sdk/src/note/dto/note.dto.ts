@@ -1,14 +1,15 @@
 import { Profile } from '@lib/sdk/profile/profile.service';
+import mongoose from 'mongoose';
 import { RawNote } from '../../note/schemas/raw-note.schema';
 import { NoteBodyEntity } from '../note-body.entity';
 
 export class Note {
   private constructor(
-    private readonly id: string,
+    private readonly id: mongoose.Types.ObjectId,
     private readonly topic: string | null,
     private readonly title: string | null,
     private readonly body: NoteBodyEntity[] | null,
-    private readonly parent: string | null,
+    private readonly parent: mongoose.Types.ObjectId | null,
     private readonly created: Date,
     private readonly updated: Date,
     private readonly expireTime: Date,

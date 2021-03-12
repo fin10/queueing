@@ -11,6 +11,7 @@ import { User } from '../user/schemas/user.schema';
 import { ArticlesResponse } from './interfaces/articles-response.interface';
 import { NoteBodyEntity } from '../note/note-body.entity';
 import { ProfileService } from '../profile/profile.service';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class ArticleService {
@@ -24,7 +25,7 @@ export class ArticleService {
     private readonly profileService: ProfileService,
   ) {}
 
-  async create(user: User, data: CreateArticleDto): Promise<string> {
+  async create(user: User, data: CreateArticleDto): Promise<mongoose.Types.ObjectId> {
     const { topic, title, body } = data;
 
     const rawTopic = await this.topicService.getOrCreate(user, topic);
@@ -34,7 +35,7 @@ export class ArticleService {
     return id;
   }
 
-  async update(user: User, id: string, data: CreateArticleDto): Promise<string> {
+  async update(user: User, id: mongoose.Types.ObjectId, data: CreateArticleDto): Promise<mongoose.Types.ObjectId> {
     const { topic, title, body } = data;
 
     const rawTopic = await this.topicService.getOrCreate(user, topic);
@@ -45,15 +46,15 @@ export class ArticleService {
     return id;
   }
 
-  async remove(user: User, id: string): Promise<void> {
+  async remove(user: User, id: mongoose.Types.ObjectId): Promise<void> {
     const note = await this.noteService.getNote(id);
     if (!note) throw new NotFoundException();
-    if (note.userId !== user._id) throw new ForbiddenException();
+    if (!note.userId.equals(user._id)) throw new ForbiddenException();
 
     return this.noteService.remove(id);
   }
 
-  async getArticle(id: string): Promise<Note> {
+  async getArticle(id: mongoose.Types.ObjectId): Promise<Note> {
     const rawNote = await this.noteService.getNote(id);
     if (!rawNote) throw new NotFoundException(`${id} not found.`);
 
