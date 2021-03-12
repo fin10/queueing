@@ -12,14 +12,16 @@ import {
   Theme,
   Typography,
 } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
-import { ActionFunc, NoteWithBody } from '../types';
+import { NoteWithBody } from '../types';
 import { DislikeAction, LikeAction } from './Action';
 import { ExpireTime } from './ExpireTime';
 import ConfirmDialog from './ConfirmDialog';
 import NoteBody from './NoteBody';
 import ReportDialog from './ReportDialog';
+import { dislikeArticle, likeArticle, removeArticle } from '../redux/article';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,14 +41,10 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const ArticleCard = (props: {
-  note: NoteWithBody;
-  onLike: ActionFunc;
-  onDislike: ActionFunc;
-  onDelete: ActionFunc;
-}): React.ReactElement => {
-  const { note, onLike, onDislike, onDelete } = props;
+const ArticleCard = (props: { note: NoteWithBody }): React.ReactElement => {
+  const { note } = props;
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const [isConfirmDialogOpened, openConfirmDialog] = useState(false);
   const [isReportDialogOpened, openReportDialog] = useState(false);
@@ -76,14 +74,14 @@ const ArticleCard = (props: {
             <Button
               className={classes.button}
               aria-label={Resources.getString(StringID.ACTION_LIKE)}
-              onClick={() => onLike(note.id)}
+              onClick={() => dispatch(likeArticle(note.id))}
             >
               <LikeAction likes={note.like} />
             </Button>
             <Button
               className={classes.button}
               aria-label={Resources.getString(StringID.ACTION_DISLIKE)}
-              onClick={() => onDislike(note.id)}
+              onClick={() => dispatch(dislikeArticle(note.id))}
             >
               <DislikeAction dislikes={note.dislike} />
             </Button>
@@ -102,7 +100,7 @@ const ArticleCard = (props: {
           onClose={() => openConfirmDialog(false)}
           contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_ARTICLE)}
           positiveText={Resources.getString(StringID.ACTION_DELETE)}
-          onPositiveClick={() => onDelete(note.id)}
+          onPositiveClick={() => dispatch(removeArticle(note.id))}
         />
 
         <ReportDialog open={isReportDialogOpened} onClose={() => openReportDialog(false)} />

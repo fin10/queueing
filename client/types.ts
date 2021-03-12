@@ -47,3 +47,23 @@ export interface ActionFunc {
 export interface Profile {
   readonly name: string;
 }
+
+export const FETCH_ARTICLE = 'FETCH_ARTICLE';
+export const LIKE_ARTICLE = 'LIKE_ARTICLE';
+export const DISLIKE_ARTICLE = 'DISLIKE_ARTICLE';
+export const REMOVE_ARTICLE = 'REMOVE_ARTICLE';
+
+export interface ArticleState {
+  readonly loading: boolean;
+  readonly article?: NoteWithBody;
+  readonly removed: boolean;
+  readonly error?: Error;
+}
+
+export interface ArticleAction {
+  readonly type: typeof FETCH_ARTICLE | typeof LIKE_ARTICLE | typeof DISLIKE_ARTICLE | typeof REMOVE_ARTICLE;
+  readonly loading: boolean;
+  readonly article?: NoteWithBody;
+  readonly removed: boolean;
+  readonly error?: Error;
+}
