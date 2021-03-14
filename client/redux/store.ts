@@ -1,9 +1,15 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { ArticleAction, ArticleState } from '../types';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import thunk from 'redux-thunk';
+import logger from 'redux-logger';
 import article from './article';
+import comment from './comment';
 
-export default configureStore<{ article: ArticleState }, ArticleAction>({
-  reducer: {
-    article,
-  },
+const rootReducer = combineReducers({
+  article,
+  comment,
+});
+
+export default configureStore({
+  reducer: rootReducer,
+  middleware: [thunk, logger],
 });

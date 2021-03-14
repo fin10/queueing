@@ -1,64 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { ArticleState, NoteWithBody } from '../types';
+import { ArticleState, CommentState } from '../types';
 import ArticleCard from '../components/ArticleCard';
 import InputComment from '../components/InputComment';
 import CommentCard from '../components/CommentCard';
-import * as Comment from '../app/Comment';
 import { fetchArticle } from '../redux/article';
+import { fetchComments } from '../redux/comment';
 
 const ArticlePage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
 
-  const { article, removed, error } = useSelector<{ article: ArticleState }, ArticleState>((state) => state.article);
+  const articleState = useSelector<{ article: ArticleState }, ArticleState>((state) => state.article);
+  const commentState = useSelector<{ comment: CommentState }, CommentState>((state) => state.comment);
   const dispatch = useDispatch();
-
-  const [comments, updateComments] = useState<NoteWithBody[]>([]);
 
   useEffect(() => {
     dispatch(fetchArticle(id));
+    dispatch(fetchComments(id));
   }, [dispatch]);
 
-  useEffect(() => {
-    Comment.fetchComments(id).then((comments) => updateComments(comments));
-  }, []);
+  if (articleState.error) console.error(articleState.error.stack);
+  if (commentState.error) console.error(commentState.error.stack);
 
-  const likeComment = async (id: string) => {
-    const updated = await Comment.like(id);
-    updateComments(comments.map((c) => (c.id === id ? updated : c)));
-  };
-
-  const dislikeComment = async (id: string) => {
-    const updated = await Comment.dislike(id);
-    updateComments(comments.map((c) => (c.id === id ? updated : c)));
-  };
-
-  const deleteComment = async (id: string) => {
-    await Comment.remove(id);
-    updateComments(comments.filter((c) => c.id !== id));
-  };
-
-  if (error) {
-    console.error(error.stack);
-  }
-
-  if (removed) {
+  if (articleState.removed) {
     window.location.assign('/');
     return <div />;
   }
 
-  if (!article) {
+  if (!articleState.article) {
     return <div />;
   }
 
   return (
     <>
-      <ArticleCard note={article} />
+      <ArticleCard note={articleState.article} />
 
-      {comments.map((comment) => (
+      {commentState.comments.map((comment) => (
         <React.Fragment key={comment.id}>
-          <CommentCard note={comment} onLike={likeComment} onDislike={dislikeComment} onDelete={deleteComment} />
+          <CommentCard note={comment} />
         </React.Fragment>
       ))}
 

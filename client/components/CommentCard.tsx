@@ -9,13 +9,15 @@ import {
   Theme,
   Typography,
 } from '@material-ui/core';
-import { ActionFunc, NoteWithBody } from '../types';
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { DislikeAction, LikeAction } from './Action';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
 import ConfirmDialog from './ConfirmDialog';
 import NoteBody from './NoteBody';
+import { NoteWithBody } from '../types';
+import { dislikeComment, likeComment, removeComment } from '../redux/comment';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,14 +34,10 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const CommentCard = (props: {
-  note: NoteWithBody;
-  onLike: ActionFunc;
-  onDislike: ActionFunc;
-  onDelete: ActionFunc;
-}): React.ReactElement => {
-  const { note, onLike, onDislike, onDelete } = props;
+const CommentCard = (props: { note: NoteWithBody }): React.ReactElement => {
+  const { note } = props;
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const [isOpened, openConfirmDialog] = useState(false);
 
@@ -56,14 +54,14 @@ const CommentCard = (props: {
           <Button
             className={classes.button}
             aria-label={Resources.getString(StringID.ACTION_LIKE)}
-            onClick={() => onLike(note.id)}
+            onClick={() => dispatch(likeComment(note.id))}
           >
             <LikeAction likes={note.like} />
           </Button>
           <Button
             className={classes.button}
             aria-label={Resources.getString(StringID.ACTION_DISLIKE)}
-            onClick={() => onDislike(note.id)}
+            onClick={() => dispatch(dislikeComment(note.id))}
           >
             <DislikeAction dislikes={note.dislike} />
           </Button>
@@ -79,7 +77,7 @@ const CommentCard = (props: {
         onClose={() => openConfirmDialog(false)}
         contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_cOMMENT)}
         positiveText={Resources.getString(StringID.ACTION_DELETE)}
-        onPositiveClick={() => onDelete(note.id)}
+        onPositiveClick={() => dispatch(removeComment(note.id))}
       />
     </Card>
   );

@@ -11,10 +11,10 @@ import {
   REMOVE_ARTICLE,
 } from '../types';
 
-export async function fetch(id: string): Promise<NoteWithBody> {
+const fetch = async (id: string): Promise<NoteWithBody> => {
   const res = await axios.get<NoteWithBody>(`/api/article/${id}`);
   return res.data;
-}
+};
 
 export function fetchArticle(id: string): ThunkAction<void, ArticleState, unknown, Action<string>> {
   return async (dispatch): Promise<void> => {
@@ -67,7 +67,7 @@ export function dislikeArticle(id: string): ThunkAction<void, ArticleState, unkn
 }
 
 const initialState: ArticleState = {
-  loading: true,
+  loading: false,
   removed: false,
 };
 
