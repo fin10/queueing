@@ -33,7 +33,7 @@ export function fetchComments(parentId: string): ThunkAction<void, CommentState,
 export function addComment(
   parentId: string,
   body: string,
-  onAdded: { (): void },
+  onAdded?: { (): void },
 ): ThunkAction<void, CommentState, unknown, Action<string>> {
   return async (dispatch): Promise<void> => {
     const type = ADD_COMMENT;
@@ -42,7 +42,7 @@ export function addComment(
       const res = await axios.post<string>('/api/comment', { body, parentId });
       const comment = await fetch(res.data);
       dispatch({ type, comment });
-      onAdded();
+      if (onAdded) onAdded();
     } catch (error) {
       dispatch({ type, error });
     }
