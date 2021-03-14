@@ -54,9 +54,10 @@ export const DISLIKE_ARTICLE = 'DISLIKE_ARTICLE';
 export const REMOVE_ARTICLE = 'REMOVE_ARTICLE';
 
 export const FETCH_COMMENTS = 'FETCH_COMMENTS';
+export const ADD_COMMENT = 'ADD_COMMENT';
+export const REMOVE_COMMENT = 'REMOVE_COMMENT';
 export const LIKE_COMMENT = 'LIKE_COMMENT';
 export const DISLIKE_COMMENT = 'DISLIKE_COMMENT';
-export const REMOVE_COMMENT = 'REMOVE_COMMENT';
 
 interface AsyncState {
   readonly loading: boolean;
@@ -65,14 +66,14 @@ interface AsyncState {
 
 export interface ArticleState extends AsyncState {
   readonly article?: NoteWithBody;
-  readonly removed: boolean;
+  readonly removed?: boolean;
 }
 
 export interface ArticleAction {
   readonly type: typeof FETCH_ARTICLE | typeof LIKE_ARTICLE | typeof DISLIKE_ARTICLE | typeof REMOVE_ARTICLE;
   readonly loading: boolean;
   readonly article?: NoteWithBody;
-  readonly removed: boolean;
+  readonly removed?: boolean;
   readonly error?: Error;
 }
 
@@ -81,7 +82,12 @@ export interface CommentState extends AsyncState {
 }
 
 export interface CommentAction {
-  readonly type: typeof FETCH_COMMENTS | typeof LIKE_COMMENT | typeof DISLIKE_COMMENT | typeof REMOVE_COMMENT;
+  readonly type:
+    | typeof FETCH_COMMENTS
+    | typeof ADD_COMMENT
+    | typeof REMOVE_COMMENT
+    | typeof LIKE_COMMENT
+    | typeof DISLIKE_COMMENT;
   readonly loading: boolean;
   readonly comment?: NoteWithBody;
   readonly comments?: NoteWithBody[];

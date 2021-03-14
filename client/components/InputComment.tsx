@@ -1,9 +1,9 @@
-import axios from 'axios';
 import React, { useState } from 'react';
-import { Logger } from '../utils/Logger';
+import { useDispatch } from 'react-redux';
 import { Button, createStyles, makeStyles, TextField, Theme } from '@material-ui/core';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
+import { addComment } from '../redux/comment';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -17,16 +17,11 @@ const InputComment = (props: { parentId: string }): React.ReactElement => {
   const { parentId } = props;
   const classes = useStyles();
   const [comment, updateComment] = useState('');
+  const dispatch = useDispatch();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    try {
-      await axios.post<string>('/api/comment', { body: comment, parentId });
-      window.location.reload();
-    } catch (err) {
-      Logger.error(err);
-    }
+    dispatch(addComment(parentId, comment, () => updateComment('')));
   };
 
   return (
