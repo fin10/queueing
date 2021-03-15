@@ -46,7 +46,7 @@ export class ActionService {
     const note = await this.noteService.getNote(id);
     if (!note) throw new NotFoundException();
 
-    const action = await this.model.findOne({ userId: user._id, name: ActionName.EMOTION, note: note._id });
+    const action = await this.model.findOne({ userId: user._id, name: ActionName.REPORT, note: note._id });
     if (action) throw new BadRequestException('Already reported');
 
     await this.model.create({ userId: user._id, name: ActionName.REPORT, type, note: note._id });

@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 
 export class CreateArticleDto {
   @IsOptional()
-  @Transform((v) => mongoose.Types.ObjectId(v))
+  @Transform((v) => (v ? mongoose.Types.ObjectId(v) : undefined))
   readonly id?: mongoose.Types.ObjectId;
 
   @IsNotEmpty()
