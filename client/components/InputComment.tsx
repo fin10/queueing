@@ -13,7 +13,11 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const InputComment = (props: { parentId: string }): React.ReactElement => {
+interface PropTypes {
+  readonly parentId: string;
+}
+
+const InputComment = (props: PropTypes): React.ReactElement => {
   const { parentId } = props;
   const classes = useStyles();
   const [comment, updateComment] = useState('');

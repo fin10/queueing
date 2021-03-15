@@ -1,15 +1,27 @@
-import React, { useEffect } from 'react';
+import qs from 'query-string';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { Snackbar } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { ArticleState, CommentState } from '../types';
 import ArticleCard from '../components/ArticleCard';
 import InputComment from '../components/InputComment';
 import CommentCard from '../components/CommentCard';
-import { fetchArticle } from '../redux/article';
-import { fetchComments } from '../redux/comment';
+import { dislikeArticle, fetchArticle, likeArticle, removeArticle } from '../redux/article';
+import { dislikeComment, fetchComments, likeComment } from '../redux/comment';
+import { Resources } from '../resources/Resources';
+import ConfirmDialog from '../components/ConfirmDialog';
+import ReportDialog from '../components/ReportDialog';
+import { StringID } from '../resources/StringID';
+import { postReport } from '../redux/report';
 
 const ArticlePage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
+
+  const [isRemoveDialogOpened, openRemoveDialog] = useState(false);
+  const [isReportDialogOpened, openReportDialog] = useState(false);
+  const [isAlertOpened, openAlert] = useState(false);
 
   const articleState = useSelector<{ article: ArticleState }, ArticleState>((state) => state.article);
   const commentState = useSelector<{ comment: CommentState }, CommentState>((state) => state.comment);
@@ -32,17 +44,81 @@ const ArticlePage = (): React.ReactElement => {
     return <div />;
   }
 
+  const handleArticleAction = (action: string, id: string, type?: string) => {
+    switch (action) {
+      case 'UPDATE':
+        window.location.assign(`/article/new?${qs.stringify({ id })}`);
+        break;
+      case 'REPORT':
+        openReportDialog(true);
+        break;
+      case 'REPORT_CONFIRMED':
+        if (type) {
+          dispatch(
+            postReport(id, type, () => {
+              openReportDialog(false);
+              openAlert(true);
+            }),
+          );
+        }
+        break;
+      case 'LIKE':
+        dispatch(likeArticle(id));
+        break;
+      case 'DISLIKE':
+        dispatch(dislikeArticle(id));
+        break;
+      case 'DELETE':
+        openRemoveDialog(true);
+        break;
+      case 'DELETE_CONFIRMED':
+        dispatch(removeArticle(id));
+        break;
+    }
+  };
+
+  const handleCommentAction = (action: string, id: string) => {
+    switch (action) {
+      case 'LIKE':
+        dispatch(likeComment(id));
+        break;
+      case 'DISLIKE':
+        dispatch(dislikeComment(id));
+        break;
+      case 'DELETE':
+        break;
+    }
+  };
+
   return (
     <>
-      <ArticleCard note={articleState.article} />
+      <ArticleCard note={articleState.article} onActionClick={handleArticleAction} />
 
       {commentState.comments.map((comment) => (
         <React.Fragment key={comment.id}>
-          <CommentCard note={comment} />
+          <CommentCard note={comment} onActionClick={handleCommentAction} />
         </React.Fragment>
       ))}
 
       <InputComment parentId={id} />
+
+      <ConfirmDialog
+        open={isRemoveDialogOpened}
+        onClose={() => openRemoveDialog(false)}
+        contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_ARTICLE)}
+        positiveText={Resources.getString(StringID.ACTION_DELETE)}
+        onPositiveClick={() => handleArticleAction('DELETE_CONFIRMED', id)}
+      />
+
+      <ReportDialog
+        open={isReportDialogOpened}
+        onClose={() => openReportDialog(false)}
+        onReportClick={(type?: string) => handleArticleAction('REPORT_CONFIRMED', id, type)}
+      />
+
+      <Snackbar open={isAlertOpened} autoHideDuration={10000} onClose={() => openAlert(false)}>
+        <Alert severity="success">{Resources.getString(StringID.REPORT_SUCCEED)}</Alert>
+      </Snackbar>
     </>
   );
 };

@@ -19,13 +19,13 @@ const fetch = async (id: string): Promise<NoteWithBody> => {
 
 export function fetchComments(parentId: string): ThunkAction<void, CommentState, unknown, Action<string>> {
   return async (dispatch): Promise<void> => {
-    dispatch({ type: FETCH_COMMENTS, loading: true });
+    const type = FETCH_COMMENTS;
+    dispatch({ type, loading: true });
     try {
       const res = await axios.get<NoteWithBody[]>(`/api/comment/article/${parentId}`);
-      const comments = res.data;
-      dispatch({ type: FETCH_COMMENTS, comments });
+      dispatch({ type, comments: res.data });
     } catch (error) {
-      dispatch({ type: FETCH_COMMENTS, error });
+      dispatch({ type, error });
     }
   };
 }
@@ -33,7 +33,7 @@ export function fetchComments(parentId: string): ThunkAction<void, CommentState,
 export function addComment(
   parentId: string,
   body: string,
-  onAdded?: { (): void },
+  onAdded?: () => void,
 ): ThunkAction<void, CommentState, unknown, Action<string>> {
   return async (dispatch): Promise<void> => {
     const type = ADD_COMMENT;
@@ -51,38 +51,41 @@ export function addComment(
 
 export function removeComment(id: string): ThunkAction<void, CommentState, unknown, Action<string>> {
   return async (dispatch): Promise<void> => {
-    dispatch({ type: REMOVE_COMMENT, loading: true });
+    const type = REMOVE_COMMENT;
+    dispatch({ type, loading: true });
     try {
       await axios.delete(`/api/comment/${id}`);
-      dispatch({ type: REMOVE_COMMENT, removedId: id });
+      dispatch({ type, removedId: id });
     } catch (error) {
-      dispatch({ type: REMOVE_COMMENT, error });
+      dispatch({ type, error });
     }
   };
 }
 
 export function likeComment(id: string): ThunkAction<void, CommentState, unknown, Action<string>> {
   return async (dispatch): Promise<void> => {
-    dispatch({ type: LIKE_COMMENT, loading: true });
+    const type = LIKE_COMMENT;
+    dispatch({ type, loading: true });
     try {
-      await axios.post<{ state: boolean; count: number }>(`/api/action/like/${id}`);
+      await axios.post(`/api/action/like/${id}`);
       const comment = await fetch(id);
-      dispatch({ type: LIKE_COMMENT, comment });
+      dispatch({ type, comment });
     } catch (error) {
-      dispatch({ type: LIKE_COMMENT, error });
+      dispatch({ type, error });
     }
   };
 }
 
 export function dislikeComment(id: string): ThunkAction<void, CommentState, unknown, Action<string>> {
   return async (dispatch): Promise<void> => {
-    dispatch({ type: DISLIKE_COMMENT, loading: true });
+    const type = DISLIKE_COMMENT;
+    dispatch({ type, loading: true });
     try {
-      await axios.post<{ state: boolean; count: number }>(`/api/action/dislike/${id}`);
+      await axios.post(`/api/action/dislike/${id}`);
       const comment = await fetch(id);
-      dispatch({ type: DISLIKE_COMMENT, comment });
+      dispatch({ type, comment });
     } catch (error) {
-      dispatch({ type: DISLIKE_COMMENT, error });
+      dispatch({ type, error });
     }
   };
 }

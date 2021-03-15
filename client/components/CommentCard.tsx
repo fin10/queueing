@@ -9,15 +9,12 @@ import {
   Theme,
   Typography,
 } from '@material-ui/core';
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React from 'react';
 import { DislikeAction, LikeAction } from './Action';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
-import ConfirmDialog from './ConfirmDialog';
 import NoteBody from './NoteBody';
 import { NoteWithBody } from '../types';
-import { dislikeComment, likeComment, removeComment } from '../redux/comment';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,12 +31,14 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const CommentCard = (props: { note: NoteWithBody }): React.ReactElement => {
-  const { note } = props;
-  const classes = useStyles();
-  const dispatch = useDispatch();
+interface PropTypes {
+  readonly note: NoteWithBody;
+  readonly onActionClick: (action: string, id: string) => void;
+}
 
-  const [isOpened, openConfirmDialog] = useState(false);
+const CommentCard = (props: PropTypes): React.ReactElement => {
+  const { note, onActionClick } = props;
+  const classes = useStyles();
 
   return (
     <Card className={classes.margin} variant="outlined">
@@ -54,31 +53,23 @@ const CommentCard = (props: { note: NoteWithBody }): React.ReactElement => {
           <Button
             className={classes.button}
             aria-label={Resources.getString(StringID.ACTION_LIKE)}
-            onClick={() => dispatch(likeComment(note.id))}
+            onClick={() => onActionClick('LIKE', note.id)}
           >
             <LikeAction likes={note.like} />
           </Button>
           <Button
             className={classes.button}
             aria-label={Resources.getString(StringID.ACTION_DISLIKE)}
-            onClick={() => dispatch(dislikeComment(note.id))}
+            onClick={() => onActionClick('DISLIKE', note.id)}
           >
             <DislikeAction dislikes={note.dislike} />
           </Button>
 
-          <Button className={classes.button} onClick={() => openConfirmDialog(true)}>
+          <Button className={classes.button} onClick={() => onActionClick('DELETE', note.id)}>
             {Resources.getString(StringID.ACTION_DELETE)}
           </Button>
         </ButtonGroup>
       </CardActions>
-
-      <ConfirmDialog
-        open={isOpened}
-        onClose={() => openConfirmDialog(false)}
-        contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_cOMMENT)}
-        positiveText={Resources.getString(StringID.ACTION_DELETE)}
-        onPositiveClick={() => dispatch(removeComment(note.id))}
-      />
     </Card>
   );
 };

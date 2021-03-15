@@ -59,7 +59,9 @@ export const REMOVE_COMMENT = 'REMOVE_COMMENT';
 export const LIKE_COMMENT = 'LIKE_COMMENT';
 export const DISLIKE_COMMENT = 'DISLIKE_COMMENT';
 
-interface AsyncState {
+export const POST_REPORT = 'POST_REPORT';
+
+export interface AsyncState {
   readonly loading: boolean;
   readonly error?: Error;
 }
@@ -92,5 +94,11 @@ export interface CommentAction {
   readonly comment?: NoteWithBody;
   readonly comments?: NoteWithBody[];
   readonly removedId?: string;
+  readonly error?: Error;
+}
+
+export interface ReportAction {
+  readonly type: typeof POST_REPORT;
+  readonly loading: boolean;
   readonly error?: Error;
 }

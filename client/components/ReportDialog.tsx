@@ -6,19 +6,16 @@ import { StringID } from '../resources/StringID';
 interface PropTypes {
   readonly open: boolean;
   readonly onClose: () => void;
+  readonly onReportClick: (type?: string) => void;
 }
 
 const ReportDialog = (props: PropTypes): React.ReactElement => {
-  const { open, onClose } = props;
+  const { open, onClose, onReportClick } = props;
 
-  const [type, updateType] = React.useState<string | null>(null);
+  const [type, updateType] = React.useState<string>('');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     updateType(event.target.value);
-  };
-
-  const handleSubmit = async () => {
-    onClose();
   };
 
   return (
@@ -49,7 +46,7 @@ const ReportDialog = (props: PropTypes): React.ReactElement => {
         <Button onClick={onClose} color="primary">
           {Resources.getString(StringID.ACTION_CANCEL)}
         </Button>
-        <Button onClick={handleSubmit} color="primary" autoFocus>
+        <Button onClick={() => onReportClick(type)} color="primary" autoFocus>
           {Resources.getString(StringID.ACTION_REPORT)}
         </Button>
       </DialogActions>

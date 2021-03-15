@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import qs from 'query-string';
+import React from 'react';
 import {
   Button,
   ButtonGroup,
@@ -12,16 +11,12 @@ import {
   Theme,
   Typography,
 } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
 import { NoteWithBody } from '../types';
 import { DislikeAction, LikeAction } from './Action';
 import { ExpireTime } from './ExpireTime';
-import ConfirmDialog from './ConfirmDialog';
 import NoteBody from './NoteBody';
-import ReportDialog from './ReportDialog';
-import { dislikeArticle, likeArticle, removeArticle } from '../redux/article';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,13 +36,14 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const ArticleCard = (props: { note: NoteWithBody }): React.ReactElement => {
-  const { note } = props;
-  const classes = useStyles();
-  const dispatch = useDispatch();
+interface PropTypes {
+  readonly note: NoteWithBody;
+  readonly onActionClick: (action: string, id: string) => void;
+}
 
-  const [isConfirmDialogOpened, openConfirmDialog] = useState(false);
-  const [isReportDialogOpened, openReportDialog] = useState(false);
+const ArticleCard = (props: PropTypes): React.ReactElement => {
+  const { note, onActionClick } = props;
+  const classes = useStyles();
 
   return (
     <>
@@ -67,43 +63,33 @@ const ArticleCard = (props: { note: NoteWithBody }): React.ReactElement => {
         </CardContent>
         <CardActions className={classes.actions}>
           <ButtonGroup size="small" color="primary">
-            <Button className={classes.button} onClick={() => openReportDialog(true)}>
+            <Button className={classes.button} onClick={() => onActionClick('REPORT', note.id)}>
               {Resources.getString(StringID.ACTION_REPORT)}
             </Button>
 
             <Button
               className={classes.button}
               aria-label={Resources.getString(StringID.ACTION_LIKE)}
-              onClick={() => dispatch(likeArticle(note.id))}
+              onClick={() => onActionClick('LIKE', note.id)}
             >
               <LikeAction likes={note.like} />
             </Button>
             <Button
               className={classes.button}
               aria-label={Resources.getString(StringID.ACTION_DISLIKE)}
-              onClick={() => dispatch(dislikeArticle(note.id))}
+              onClick={() => onActionClick('DISLIKE', note.id)}
             >
               <DislikeAction dislikes={note.dislike} />
             </Button>
 
-            <Button className={classes.button} href={`/article/new?` + qs.stringify({ id: note.id })}>
+            <Button className={classes.button} onClick={() => onActionClick('UPDATE', note.id)}>
               {Resources.getString(StringID.ACTION_UPDATE)}
             </Button>
-            <Button className={classes.button} onClick={() => openConfirmDialog(true)}>
+            <Button className={classes.button} onClick={() => onActionClick('DELETE', note.id)}>
               {Resources.getString(StringID.ACTION_DELETE)}
             </Button>
           </ButtonGroup>
         </CardActions>
-
-        <ConfirmDialog
-          open={isConfirmDialogOpened}
-          onClose={() => openConfirmDialog(false)}
-          contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_ARTICLE)}
-          positiveText={Resources.getString(StringID.ACTION_DELETE)}
-          onPositiveClick={() => dispatch(removeArticle(note.id))}
-        />
-
-        <ReportDialog open={isReportDialogOpened} onClose={() => openReportDialog(false)} />
       </Card>
     </>
   );
