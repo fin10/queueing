@@ -18,50 +18,54 @@ const fetch = async (id: string): Promise<NoteWithBody> => {
 
 export function fetchArticle(id: string): ThunkAction<void, ArticleState, unknown, Action<string>> {
   return async (dispatch): Promise<void> => {
-    dispatch({ type: FETCH_ARTICLE, loading: true });
+    const type = FETCH_ARTICLE;
+    dispatch({ type, loading: true });
     try {
       const article = await fetch(id);
-      dispatch({ type: FETCH_ARTICLE, article });
+      dispatch({ type, article });
     } catch (error) {
-      dispatch({ type: FETCH_ARTICLE, error });
+      dispatch({ type, error });
     }
   };
 }
 
 export function removeArticle(id: string): ThunkAction<void, ArticleState, unknown, Action<string>> {
   return async (dispatch): Promise<void> => {
-    dispatch({ type: REMOVE_ARTICLE, loading: true });
+    const type = REMOVE_ARTICLE;
+    dispatch({ type, loading: true });
     try {
       await axios.delete(`/api/article/${id}`);
-      dispatch({ type: REMOVE_ARTICLE, removed: true });
+      dispatch({ type, removed: true });
     } catch (error) {
-      dispatch({ type: REMOVE_ARTICLE, error });
+      dispatch({ type, error });
     }
   };
 }
 
 export function likeArticle(id: string): ThunkAction<void, ArticleState, unknown, Action<string>> {
   return async (dispatch): Promise<void> => {
-    dispatch({ type: LIKE_ARTICLE, loading: true });
+    const type = LIKE_ARTICLE;
+    dispatch({ type, loading: true });
     try {
       await axios.post(`/api/action/like/${id}`);
       const article = await fetch(id);
-      dispatch({ type: LIKE_ARTICLE, article });
+      dispatch({ type, article });
     } catch (error) {
-      dispatch({ type: LIKE_ARTICLE, error });
+      dispatch({ type, error });
     }
   };
 }
 
 export function dislikeArticle(id: string): ThunkAction<void, ArticleState, unknown, Action<string>> {
   return async (dispatch): Promise<void> => {
-    dispatch({ type: DISLIKE_ARTICLE, loading: true });
+    const type = DISLIKE_ARTICLE;
+    dispatch({ type, loading: true });
     try {
       await axios.post(`/api/action/dislike/${id}`);
       const article = await fetch(id);
-      dispatch({ type: DISLIKE_ARTICLE, article });
+      dispatch({ type, article });
     } catch (error) {
-      dispatch({ type: DISLIKE_ARTICLE, error });
+      dispatch({ type, error });
     }
   };
 }
