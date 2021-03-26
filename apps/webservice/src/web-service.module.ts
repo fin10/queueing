@@ -14,6 +14,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ActionModule } from '@lib/sdk/action/action.module';
 import { AuthModule } from '@lib/sdk/auth/auth.module';
 import { ProfileModule } from '@lib/sdk/profile/profile.module';
+import { IssueModule } from '@lib/sdk/issue/issue.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ProfileModule } from '@lib/sdk/profile/profile.module';
     ActionModule,
     AuthModule,
     ProfileModule,
+    IssueModule,
   ],
 })
 export class WebServiceModule {}

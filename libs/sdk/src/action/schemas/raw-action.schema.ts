@@ -18,6 +18,8 @@ export class RawAction {
 
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: RawNote.name })
   readonly note!: mongoose.Types.ObjectId;
+
+  readonly _id!: mongoose.Types.ObjectId;
 }
 
 export const RawActionSchema = SchemaFactory.createForClass(RawAction);

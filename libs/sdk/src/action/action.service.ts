@@ -10,11 +10,7 @@ import { User } from '../user/schemas/user.schema';
 import { EmotionType } from './interfaces/emotion-type.interface';
 import { RawAction, RawActionDocument } from './schemas/raw-action.schema';
 import { ReportType } from './interfaces/report-type.interface';
-
-enum ActionName {
-  EMOTION = 'emotion',
-  REPORT = 'report',
-}
+import { ActionName } from './interfaces/action-name.enum';
 
 @Injectable()
 export class ActionService {
@@ -40,6 +36,10 @@ export class ActionService {
 
   async getEmotions(id: mongoose.Types.ObjectId, type: EmotionType): Promise<number> {
     return this.model.find({ note: id, name: ActionName.EMOTION, type }).countDocuments();
+  }
+
+  async getAction(id: mongoose.Types.ObjectId): Promise<RawAction> {
+    return this.model.findById(id).lean();
   }
 
   async putReport(user: User, id: mongoose.Types.ObjectId, type: ReportType): Promise<void> {
