@@ -23,7 +23,13 @@ export class IssueService {
   ) {}
 
   async postIssue(action: RawAction, note: RawNote, entities: NoteBodyEntity[]): Promise<void> {
-    const issueId = await this.createIssue(action, note, entities);
+    let issueId = await this.findIssue(note);
+    if (issueId) {
+      await this.updateIssue(issueId, action);
+    } else {
+      issueId = await this.createIssue(action, note, entities);
+    }
+
     const commentId = await this.addComment(issueId, action);
     this.logger.verbose(`Issue posted: ${issueId}, comment: ${commentId}`);
   }
@@ -49,17 +55,43 @@ export class IssueService {
     }
   }
 
+  private async findIssue(note: RawNote): Promise<string | undefined> {
+    const jql = `issuetype = Report AND summary ~ ${note._id}`;
+    const [id] = (await this.jiraService.findIssueIds(jql)) || [];
+    return id;
+  }
+
   private createIssue(action: RawAction, note: RawNote, entities: NoteBodyEntity[]) {
-    const summary = note._id.toHexString();
-    const description = `title: ${note.title}\n\n` + entities.map((entity) => entity.value).join('\n');
-    const labels = _.pairs({ user: note.userId.toHexString(), topic: note.topic, type: action.type })
+    const summary = `[${note._id}] ${note.title || 'empty title'}`;
+    const description = _.pairs({
+      title: `${note.title || 'empty title'}`,
+      user: `${note.userId}`,
+      contents: `${entities
+        .map((entity) => entity.value.trim())
+        .filter((v) => v.length)
+        .join('\n')}`,
+    })
+      .map(([k, v]) => `[${k}]\n${v}`)
+      .join('\n\n');
+
+    const labels = _.pairs({
+      user: note.userId.toHexString(),
+      topic: note.topic,
+      type: action.type,
+    })
       .filter(([, v]) => v)
       .map(([k, v]) => `${k}:${v}`);
+
     return this.jiraService.createIssue('Report', summary, description, labels);
   }
 
+  private updateIssue(issueId: string, action: RawAction) {
+    const label = `type:${action.type}`;
+    return this.jiraService.addLabel(issueId, label);
+  }
+
   private addComment(issueId: string, action: RawAction) {
-    const body = [`user: ${action.userId}`, `type: ${action.type}`].join('\n');
-    return this.jiraService.addComment(issueId, body);
+    const description = [`type: ${action.type}`, `reported by ${action.userId}`].join('\n');
+    return this.jiraService.addComment(issueId, description);
   }
 }

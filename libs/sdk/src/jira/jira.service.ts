@@ -20,6 +20,18 @@ export class JiraService {
     return this.enabled;
   }
 
+  async findIssueIds(jql: string, max = 1): Promise<string[]> {
+    if (!this.isEnabled()) throw new InternalServerErrorException('Jira service is not enabled.');
+
+    const data = {
+      jql,
+      maxResults: max,
+    };
+
+    const res = await axios.post(`${this.url}/rest/api/3/search`, data, { headers: this.makeHeaders() });
+    return res.data.issues.map((issue: { id: string }) => issue.id);
+  }
+
   async createIssue(issueType: string, summary: string, description: string, labels: string[]): Promise<string> {
     if (!this.isEnabled()) throw new InternalServerErrorException('Jira service is not enabled.');
 
@@ -41,14 +53,28 @@ export class JiraService {
     return res.data.id;
   }
 
-  async addComment(issueId: string, body: string): Promise<string> {
+  async addLabel(issueId: string, label: string): Promise<void> {
+    if (!this.isEnabled()) throw new InternalServerErrorException('Jira service is not enabled.');
+
+    const data = {
+      update: {
+        labels: [{ add: label }],
+      },
+    };
+
+    await axios.put(`${this.url}/rest/api/3/issue/${issueId}`, data, {
+      headers: this.makeHeaders(),
+    });
+  }
+
+  async addComment(issueId: string, description: string): Promise<string> {
     if (!this.isEnabled()) throw new InternalServerErrorException('Jira service is not enabled.');
 
     const data = {
       body: {
         type: 'doc',
         version: 1,
-        content: [{ type: 'paragraph', content: [{ text: body, type: 'text' }] }],
+        content: [{ type: 'paragraph', content: [{ text: description, type: 'text' }] }],
       },
     };
 
