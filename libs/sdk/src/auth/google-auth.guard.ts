@@ -17,7 +17,7 @@ export class GoogleAuthGuard extends AuthGuard('google') {
         return true;
       }
     } catch (err) {
-      this.logger.error(err.stack);
+      this.logger.error('Failed to login with google.', err.stack);
     }
 
     return false;
