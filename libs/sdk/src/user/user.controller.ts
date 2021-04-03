@@ -1,9 +1,12 @@
 import mongoose from 'mongoose';
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { PenaltyService } from './penalty.service';
 import { Restriction } from './restriction';
 import { ImposePenaltyDto } from './dto/impose-penalty.dto';
 import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
+import { UserAuthGuard } from './user-auth.guard';
+import { Roles } from './decorators/roles.decorator';
+import { Role } from './enums/role.enum';
 
 interface Response {
   readonly userId: string;
@@ -11,6 +14,8 @@ interface Response {
 }
 
 @Controller('user')
+@UseGuards(UserAuthGuard)
+@Roles(Role.Admin)
 export class UserController {
   constructor(private readonly penaltyService: PenaltyService) {}
 
