@@ -7,12 +7,17 @@ import { UserAuthGuard } from '../user/user-auth.guard';
 import { User } from '../user/schemas/user.schema';
 import mongoose from 'mongoose';
 import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
+import { PoliciesGuard } from '../policy/policies.guard';
+import { CheckPolicies } from '../policy/decorators/check-policies.decorator';
+import { CreateNotePolicyHandler } from '../policy/handlers/create-policy.handler';
 
 @Controller('comment')
 export class CommentController {
   constructor(private readonly service: CommentService) {}
 
   @UseGuards(UserAuthGuard)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new CreateNotePolicyHandler())
   @Post()
   create(@Req() req: Request, @Body() data: CreateCommentDto): Promise<mongoose.Types.ObjectId> {
     const user = req.user as User;

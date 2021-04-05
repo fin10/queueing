@@ -10,12 +10,17 @@ import { ArticlesResponse } from './interfaces/articles-response.interface';
 import { GetArticlesDto } from './dto/get-articles.dto';
 import mongoose from 'mongoose';
 import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
+import { PoliciesGuard } from '../policy/policies.guard';
+import { CheckPolicies } from '../policy/decorators/check-policies.decorator';
+import { CreateNotePolicyHandler } from '../policy/handlers/create-policy.handler';
 
 @Controller('article')
 export class ArticleController {
   constructor(private readonly service: ArticleService) {}
 
   @UseGuards(UserAuthGuard)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new CreateNotePolicyHandler())
   @Post()
   createOrUpdate(@Req() req: Request, @Body() data: CreateArticleDto): Promise<mongoose.Types.ObjectId> {
     const user = req.user as User;
