@@ -74,6 +74,10 @@ export class QueueingConfigService {
     else throw new InternalServerErrorException(`${key} should be boolean type.`);
   }
 
+  isProduction(): boolean {
+    return Environment.Production === this.getString(ConfigKey.NODE_ENV);
+  }
+
   private getValue(key: ConfigKey) {
     const value = this.config.get(key);
     this.logger.debug(`${key}: ${value}`);
