@@ -5,6 +5,7 @@ import mongoose, { Model } from 'mongoose';
 import { NotificationMessage } from './interfaces/notification-message.interface';
 import { NotificationMessageBuilder } from './notification-message.builder';
 import { NotificationDocument } from './schemas/notification.schema';
+import { Locale } from '../localization/enums/locale.enum';
 
 @Injectable()
 export class NotificationService {
@@ -13,9 +14,11 @@ export class NotificationService {
     private readonly messageBuilder: NotificationMessageBuilder,
   ) {}
 
-  async find(userId: mongoose.Types.ObjectId): Promise<NotificationMessage[]> {
+  async find(locale: Locale, userId: mongoose.Types.ObjectId): Promise<NotificationMessage[]> {
     const notifications = await this.model.find({ userId });
-    const messages = await Promise.all(notifications.map((notification) => this.messageBuilder.build(notification)));
+    const messages = await Promise.all(
+      notifications.map((notification) => this.messageBuilder.build(locale, notification)),
+    );
     return _.compact(messages);
   }
 }

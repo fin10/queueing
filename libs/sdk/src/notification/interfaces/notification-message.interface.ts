@@ -1,4 +1,5 @@
 export interface NotificationMessage {
   readonly message: string;
-  readonly detail: string;
+  readonly isViewed: boolean;
+  readonly createdAt: Date;
 }
