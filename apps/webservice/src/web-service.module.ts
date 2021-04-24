@@ -27,6 +27,11 @@ import { IssueModule } from '@lib/sdk/issue/issue.module';
       inject: [QueueingConfigService],
       useFactory: (config: QueueingConfigService) => ({
         uri: config.getString(ConfigKey.MONGODB_URI),
+        auth: {
+          user: config.getString(ConfigKey.MONGODB_USER),
+          password: config.getString(ConfigKey.MONGODB_PASSWORD),
+        },
+        authSource: config.getString(ConfigKey.MONGODB_AUTH_DB),
         useCreateIndex: true,
       }),
     }),
