@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { AppBar, Button, createStyles, Link, makeStyles, Theme, Toolbar, Typography } from '@material-ui/core';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
 import LoginDialog from './LoginDialog';
-import { Profile } from '../types';
+import { ProfileState } from '../types';
 import ProfileMenu from './ProfileMenu';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProfile } from '../redux/profile';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,16 +24,15 @@ const Header = (): React.ReactElement => {
 
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [isOpened, openLoginDialog] = useState(false);
-  const [profile, updateProfile] = useState<Profile | null>(null);
+
+  const profileState = useSelector<{ profile: ProfileState }, ProfileState>((state) => state.profile);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    axios
-      .get<Profile>('/api/profile')
-      .then((res) => updateProfile(res.data))
-      .catch(() => {
-        // ignored
-      });
-  }, []);
+    dispatch(getProfile());
+  }, [dispatch]);
+
+  if (profileState.error) console.error(profileState.error.stack);
 
   return (
     <AppBar position="static" className={classes.root}>
@@ -42,10 +42,10 @@ const Header = (): React.ReactElement => {
             {Resources.getString(StringID.HEADER_TITLE)}
           </Link>
         </Typography>
-        {profile ? (
+        {profileState.profile ? (
           <>
             <Button color="inherit" onClick={(e) => setAnchor(e.currentTarget)}>
-              {profile.name}
+              {profileState.profile.name}
             </Button>
             <ProfileMenu anchor={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)} />
           </>

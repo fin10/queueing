@@ -48,23 +48,28 @@ export interface Profile {
   readonly name: string;
 }
 
-export const FETCH_ARTICLE = 'FETCH_ARTICLE';
-export const LIKE_ARTICLE = 'LIKE_ARTICLE';
-export const DISLIKE_ARTICLE = 'DISLIKE_ARTICLE';
-export const REMOVE_ARTICLE = 'REMOVE_ARTICLE';
-
-export const FETCH_COMMENTS = 'FETCH_COMMENTS';
-export const ADD_COMMENT = 'ADD_COMMENT';
-export const REMOVE_COMMENT = 'REMOVE_COMMENT';
-export const LIKE_COMMENT = 'LIKE_COMMENT';
-export const DISLIKE_COMMENT = 'DISLIKE_COMMENT';
-
-export const POST_REPORT = 'POST_REPORT';
-
 export interface AsyncState {
   readonly loading: boolean;
   readonly error?: Error;
 }
+
+export const GET_PROFILE = 'GET_PROFILE';
+
+export interface ProfileState extends AsyncState {
+  readonly profile?: Profile;
+}
+
+export interface ProfileAction {
+  readonly type: typeof GET_PROFILE;
+  readonly loading: boolean;
+  readonly profile?: Profile;
+  readonly error?: Error;
+}
+
+export const FETCH_ARTICLE = 'FETCH_ARTICLE';
+export const LIKE_ARTICLE = 'LIKE_ARTICLE';
+export const DISLIKE_ARTICLE = 'DISLIKE_ARTICLE';
+export const REMOVE_ARTICLE = 'REMOVE_ARTICLE';
 
 export interface ArticleState extends AsyncState {
   readonly article?: NoteWithBody;
@@ -78,6 +83,12 @@ export interface ArticleAction {
   readonly removed?: boolean;
   readonly error?: Error;
 }
+
+export const FETCH_COMMENTS = 'FETCH_COMMENTS';
+export const ADD_COMMENT = 'ADD_COMMENT';
+export const REMOVE_COMMENT = 'REMOVE_COMMENT';
+export const LIKE_COMMENT = 'LIKE_COMMENT';
+export const DISLIKE_COMMENT = 'DISLIKE_COMMENT';
 
 export interface CommentState extends AsyncState {
   readonly comments: NoteWithBody[];
@@ -96,6 +107,8 @@ export interface CommentAction {
   readonly removedId?: string;
   readonly error?: Error;
 }
+
+export const POST_REPORT = 'POST_REPORT';
 
 export interface ReportAction {
   readonly type: typeof POST_REPORT;
