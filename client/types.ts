@@ -48,6 +48,12 @@ export interface Profile {
   readonly name: string;
 }
 
+export interface Notification {
+  readonly message: string;
+  readonly isViewed: boolean;
+  readonly createdAt: Date;
+}
+
 export interface AsyncState {
   readonly loading: boolean;
   readonly error?: Error;
@@ -63,6 +69,19 @@ export interface ProfileAction {
   readonly type: typeof GET_PROFILE;
   readonly loading: boolean;
   readonly profile?: Profile;
+  readonly error?: Error;
+}
+
+export const GET_NOTIFICATIONS = 'GET_NOTIFICATIONS';
+
+export interface NotificationState extends AsyncState {
+  readonly notifications: Notification[];
+}
+
+export interface NotificationAction {
+  readonly type: typeof GET_NOTIFICATIONS;
+  readonly loading: boolean;
+  readonly notifications: Notification[];
   readonly error?: Error;
 }
 
