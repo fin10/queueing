@@ -82,10 +82,7 @@ export class QueueingConfigService {
   }
 
   private getValue(key: ConfigKey) {
-    const value = this.config.get(key);
-    this.logger.debug(`${key}: ${value}`);
-
-    return value;
+    return this.config.get(key);
   }
 }
 
