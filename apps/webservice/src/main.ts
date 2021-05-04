@@ -2,14 +2,14 @@ import session from 'express-session';
 import passport from 'passport';
 import { InternalServerErrorException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { QueueingLogger } from '@lib/sdk/logger/queueing-logger.service';
 import { ConfigKey, QueueingConfigService } from '@lib/sdk/config/queueing-config.service';
 import { WebServiceModule } from './web-service.module';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 const bootstrap = async () => {
   const app = await NestFactory.create(WebServiceModule);
 
-  const logger = app.get(QueueingLogger);
+  const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
   const config = app.get(QueueingConfigService);
 
   app.use(session({ secret: config.getString(ConfigKey.AUTH_SECRET), resave: false, saveUninitialized: false }));

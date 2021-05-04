@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { QueueingConfigModule } from '@lib/sdk/config/queueing-config.module';
-import { LoggerModule } from '@lib/sdk/logger/logger.module';
 import { CommentModule } from '@lib/sdk/comment/comment.module';
 import { ArticleModule } from '@lib/sdk/article/article.module';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -10,11 +9,21 @@ import { ActionModule } from '@lib/sdk/action/action.module';
 import { DummyModule } from './dummy/dummy.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { UserModule } from '@lib/sdk/user/user.module';
+import { utilities, WinstonModule } from 'nest-winston';
+import winston from 'winston';
 
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
-    LoggerModule,
+    WinstonModule.forRoot({
+      level: 'debug',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.ms(),
+        utilities.format.nestLike('queueing'),
+      ),
+      transports: [new winston.transports.Console()],
+    }),
     QueueingConfigModule,
     MongooseModule.forRootAsync({
       imports: [QueueingConfigModule],

@@ -1,9 +1,8 @@
 import path from 'path';
-import { Module } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ScheduleModule } from '@nestjs/schedule';
 import { QueueingConfigModule } from '@lib/sdk/config/queueing-config.module';
-import { LoggerModule } from '@lib/sdk/logger/logger.module';
 import { CommentModule } from '@lib/sdk/comment/comment.module';
 import { ArticleModule } from '@lib/sdk/article/article.module';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -15,12 +14,23 @@ import { ActionModule } from '@lib/sdk/action/action.module';
 import { AuthModule } from '@lib/sdk/auth/auth.module';
 import { ProfileModule } from '@lib/sdk/profile/profile.module';
 import { IssueModule } from '@lib/sdk/issue/issue.module';
+import { utilities, WinstonModule } from 'nest-winston';
+import winston from 'winston';
+import morgan from 'morgan';
 
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
-    LoggerModule,
+    WinstonModule.forRoot({
+      level: 'debug',
+      format: winston.format.combine(
+        winston.format.timestamp({ format: 'YYYY/MM/DD HH:mm:ss.SSSZ' }),
+        winston.format.ms(),
+        utilities.format.nestLike('queueing'),
+      ),
+      transports: [new winston.transports.Console()],
+    }),
     QueueingConfigModule,
     MongooseModule.forRootAsync({
       imports: [QueueingConfigModule],
@@ -49,4 +59,17 @@ import { IssueModule } from '@lib/sdk/issue/issue.module';
     IssueModule,
   ],
 })
-export class WebServiceModule {}
+export class WebServiceModule implements NestModule {
+  private readonly logger = new Logger('HTTP');
+
+  configure(consumer: MiddlewareConsumer): void {
+    consumer
+      .apply(
+        morgan(
+          ':remote-addr ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"',
+          { stream: { write: (msg: string) => this.logger.log(msg) } },
+        ),
+      )
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}

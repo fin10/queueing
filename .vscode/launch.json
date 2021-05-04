@@ -12,7 +12,7 @@
             }
         },
         {
-            "name": "yarn:start:debug",
+            "name": "yarn start:debug",
             "request": "launch",
             "runtimeExecutable": "yarn",
             "runtimeArgs": [

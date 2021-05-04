@@ -4,11 +4,11 @@ import { UserService } from '@lib/sdk/user/user.service';
 import { ToolModule } from './tool.module';
 import { ClienDataFetcher } from './dummy/clien-data.fetcher';
 import { ArticleService } from '@lib/sdk/article/article.service';
-import { QueueingLogger } from '@lib/sdk/logger/queueing-logger.service';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 const bootstrap = async () => {
   const app = await NestFactory.create(ToolModule);
-  const logger = app.get(QueueingLogger);
+  const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
 
   try {
     const dataFetcher = app.get(ClienDataFetcher);
