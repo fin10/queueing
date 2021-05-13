@@ -1,5 +1,5 @@
 import { Restriction } from '@lib/sdk/user/restriction';
 
-export interface MessageBuilder {
+export interface MessageFactory {
   restriction(restriction: Restriction): string;
 }

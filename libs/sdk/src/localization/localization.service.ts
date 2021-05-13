@@ -1,20 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { Locale } from './enums/locale.enum';
-import { MessageBuilder } from './interfaces/message.builder';
-import { KoKrMessageBuilder } from './ko-kr-message.builder';
+import { EnumFactory } from './interfaces/enum.factory';
+import { MessageFactory } from './interfaces/message.factory';
+import { KoKrLocalizationFactory } from './ko-kr-localization.factory';
 
 @Injectable()
 export default class LocalizationService {
-  private readonly messages: { [key: string]: MessageBuilder } = {};
+  private readonly messages: { [key: string]: MessageFactory } = {};
+  private readonly enums: { [key: string]: EnumFactory } = {};
 
-  constructor(readonly koKrMessageBuilder: KoKrMessageBuilder) {
-    this.messages[Locale['ko-KR']] = koKrMessageBuilder;
+  constructor(readonly koKrLocalizationFactory: KoKrLocalizationFactory) {
+    this.messages[Locale['ko-KR']] = koKrLocalizationFactory;
+    this.enums[Locale['ko-KR']] = koKrLocalizationFactory;
   }
 
-  message(locale: Locale): MessageBuilder {
-    const builder = this.messages[locale];
-    if (!builder) throw new Error(`Not found localizations for ${locale}`);
+  message(locale: Locale): MessageFactory {
+    const factory = this.messages[locale];
+    if (!factory) throw new Error(`Not found localizations for ${locale}`);
 
-    return builder;
+    return factory;
+  }
+
+  enum(locale: Locale): EnumFactory {
+    const factory = this.enums[locale];
+    if (!factory) throw new Error(`Not found localizations for ${locale}`);
+
+    return factory;
   }
 }

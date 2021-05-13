@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, Param, Post, UseGuards, Query } from '@nestjs/common';
 import { PenaltyService } from './penalty.service';
 import { Restriction } from './restriction';
 import { ImposePenaltyDto } from './dto/impose-penalty.dto';
@@ -7,6 +7,8 @@ import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
 import { UserAuthGuard } from './user-auth.guard';
 import { Roles } from './decorators/roles.decorator';
 import { Role } from './enums/role.enum';
+import { Locale } from '../localization/enums/locale.enum';
+import { ReportType } from '../action/interfaces/report-type.interface';
 
 interface Response {
   readonly userId: string;
@@ -27,5 +29,12 @@ export class UserController {
     const { duration, reasons } = body;
     const restriction = await this.penaltyService.impose(userId, duration, reasons);
     return { userId: userId.toHexString(), restriction };
+  }
+
+  @Get('penalty/reportTypes')
+  reportTypes(
+    @Query('locale', new DefaultValuePipe(Locale['ko-KR'])) locale: Locale,
+  ): { type: ReportType; text: string }[] {
+    return this.penaltyService.getReportTypes(locale);
   }
 }
