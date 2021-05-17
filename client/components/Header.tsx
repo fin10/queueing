@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { AppBar, Button, createStyles, Link, makeStyles, Theme, Toolbar, Typography } from '@material-ui/core';
+import { useSelector } from 'react-redux';
+import {
+  AppBar,
+  Button,
+  CircularProgress,
+  createStyles,
+  Link,
+  makeStyles,
+  Theme,
+  Toolbar,
+  Typography,
+} from '@material-ui/core';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
 import LoginDialog from './LoginDialog';
-import { ProfileState } from '../types';
 import ProfileMenu from './ProfileMenu';
-import { useDispatch, useSelector } from 'react-redux';
-import { getProfile } from '../redux/profile';
+import { getProfile, ProfileState } from '../features/profile/profileSlice';
+import { useAppDispatch } from '../app/store';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,13 +36,37 @@ const Header = (): React.ReactElement => {
   const [isOpened, openLoginDialog] = useState(false);
 
   const profileState = useSelector<{ profile: ProfileState }, ProfileState>((state) => state.profile);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(getProfile());
   }, [dispatch]);
 
   if (profileState.error) console.error(profileState.error.stack);
+
+  const LoginMenu = () => {
+    if (profileState.loading) {
+      return <CircularProgress color="secondary" size={20} />;
+    } else if (profileState.profile) {
+      return (
+        <>
+          <Button color="inherit" onClick={(e) => setAnchor(e.currentTarget)}>
+            {profileState.profile.name}
+          </Button>
+          <ProfileMenu anchor={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)} />
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Button color="inherit" onClick={() => openLoginDialog(true)}>
+            {Resources.getString(StringID.HEADER_LOGIN)}
+          </Button>
+          <LoginDialog open={isOpened} onClose={() => openLoginDialog(false)} />
+        </>
+      );
+    }
+  };
 
   return (
     <AppBar position="static" className={classes.root}>
@@ -42,21 +76,7 @@ const Header = (): React.ReactElement => {
             {Resources.getString(StringID.HEADER_TITLE)}
           </Link>
         </Typography>
-        {profileState.profile ? (
-          <>
-            <Button color="inherit" onClick={(e) => setAnchor(e.currentTarget)}>
-              {profileState.profile.name}
-            </Button>
-            <ProfileMenu anchor={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)} />
-          </>
-        ) : (
-          <>
-            <Button color="inherit" onClick={() => openLoginDialog(true)}>
-              {Resources.getString(StringID.HEADER_LOGIN)}
-            </Button>
-            <LoginDialog open={isOpened} onClose={() => openLoginDialog(false)} />
-          </>
-        )}
+        <LoginMenu />
       </Toolbar>
     </AppBar>
   );
