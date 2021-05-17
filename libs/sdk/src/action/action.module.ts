@@ -6,10 +6,12 @@ import { RawAction, RawActionSchema } from './schemas/raw-action.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ActionCreatedEvent } from './events/action-created.event';
+import { LocalizationModule } from '../localization/localization.module';
 
 @Module({
   imports: [
     NoteModule,
+    LocalizationModule,
     MongooseModule.forFeatureAsync([
       {
         imports: [EventEmitter2],

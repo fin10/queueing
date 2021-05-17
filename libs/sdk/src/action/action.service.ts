@@ -11,6 +11,9 @@ import { EmotionType } from './interfaces/emotion-type.interface';
 import { RawAction, RawActionDocument } from './schemas/raw-action.schema';
 import { ReportType } from './interfaces/report-type.interface';
 import { ActionName } from './interfaces/action-name.enum';
+import { Locale } from '../localization/enums/locale.enum';
+import LocalizationService from '../localization/localization.service';
+import _ from 'underscore';
 
 @Injectable()
 export class ActionService {
@@ -19,6 +22,7 @@ export class ActionService {
   constructor(
     @InjectModel(RawAction.name) private model: Model<RawActionDocument>,
     private readonly noteService: NoteService,
+    private readonly localization: LocalizationService,
   ) {}
 
   async putEmotion(user: User, id: mongoose.Types.ObjectId, type: EmotionType): Promise<void> {
@@ -50,6 +54,13 @@ export class ActionService {
     if (action) throw new BadRequestException('Already reported');
 
     await this.model.create({ userId: user._id, name: ActionName.REPORT, type, note: note._id });
+  }
+
+  getReportTypes(locale: Locale): { code: ReportType; text: string }[] {
+    return _.values(ReportType).map((type) => ({
+      code: type,
+      text: this.localization.enum(locale).reportType(type),
+    }));
   }
 
   @OnEvent(NoteRemovedEvent.name, { nextTick: true })

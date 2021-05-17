@@ -1,4 +1,4 @@
-import { Controller, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, DefaultValuePipe, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { UserAuthGuard } from '../user/user-auth.guard';
 import { User } from '../user/schemas/user.schema';
@@ -7,6 +7,7 @@ import { EmotionType } from './interfaces/emotion-type.interface';
 import { ReportType } from './interfaces/report-type.interface';
 import mongoose from 'mongoose';
 import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
+import { Locale } from '../localization/enums/locale.enum';
 
 @UseGuards(UserAuthGuard)
 @Controller('action')
@@ -23,6 +24,13 @@ export class ActionController {
   async dislike(@Req() req: Request, @Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId): Promise<void> {
     const user = req.user as User;
     return this.action.putEmotion(user, id, EmotionType.DISLIKE);
+  }
+
+  @Get('/report/types')
+  reportTypes(
+    @Query('locale', new DefaultValuePipe(Locale['ko-KR'])) locale: Locale,
+  ): { code: ReportType; text: string }[] {
+    return this.action.getReportTypes(locale);
   }
 
   @Post('/report/:id/:type')

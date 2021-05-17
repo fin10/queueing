@@ -54,6 +54,11 @@ export interface Notification {
   readonly createdAt: Date;
 }
 
+export interface ReportType {
+  readonly code: string;
+  readonly text: string;
+}
+
 export interface AsyncState {
   readonly loading: boolean;
   readonly error?: Error;
@@ -128,9 +133,15 @@ export interface CommentAction {
 }
 
 export const POST_REPORT = 'POST_REPORT';
+export const GET_REPORT_TYPES = 'GET_REPORT_TYPES';
+
+export interface ReportState extends AsyncState {
+  readonly reportTypes: ReportType[];
+}
 
 export interface ReportAction {
-  readonly type: typeof POST_REPORT;
+  readonly type: typeof POST_REPORT | typeof GET_REPORT_TYPES;
+  readonly reportTypes: ReportType[];
   readonly loading: boolean;
   readonly error?: Error;
 }
