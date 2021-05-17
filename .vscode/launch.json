@@ -22,11 +22,11 @@
             }
         },
         {
-            "name": "yarn start:debug",
+            "name": "yarn debug",
             "request": "launch",
             "runtimeExecutable": "yarn",
             "runtimeArgs": [
-                "start:debug"
+                "debug"
             ],
             "type": "pwa-node",
             "console": "integratedTerminal",

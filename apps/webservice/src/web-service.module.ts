@@ -46,7 +46,7 @@ import morgan from 'morgan';
       }),
     }),
     ServeStaticModule.forRoot({
-      rootPath: path.resolve('dist', 'client'),
+      rootPath: path.resolve('build'),
       exclude: ['/api*'],
     }),
     CommentModule,
