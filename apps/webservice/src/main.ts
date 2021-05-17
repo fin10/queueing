@@ -23,7 +23,10 @@ const bootstrap = async () => {
   const port = config.getInteger(ConfigKey.PORT);
   if (!port) throw new InternalServerErrorException('port is not defined.');
 
+  const environment = config.getString(ConfigKey.NODE_ENV);
+
   await app.listen(port, () => {
+    logger.verbose(`Service environment: ${environment}`);
     logger.verbose(`Service listening on ${port}`);
   });
 };
