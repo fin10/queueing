@@ -1,11 +1,8 @@
 import axios from 'axios';
 import { handleError } from '../../utils/errorUtils';
+import { Profile } from './profileSlice';
 
-export interface Profile {
-  readonly name: string;
-}
-
-export async function getProfile(): Promise<Profile> {
+async function getProfile() {
   try {
     const res = await axios.get<Profile>('/api/profile');
     return res.data;
@@ -13,3 +10,7 @@ export async function getProfile(): Promise<Profile> {
     handleError(err);
   }
 }
+
+export default {
+  getProfile,
+};

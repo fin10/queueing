@@ -1,12 +1,12 @@
 import { Dialog, DialogContent, Button, DialogTitle, makeStyles, createStyles } from '@material-ui/core';
-import { Resources } from '../resources/Resources';
-import { StringID } from '../resources/StringID';
 import React from 'react';
 import qs from 'query-string';
+import { Resources } from '../../resources/Resources';
+import { StringID } from '../../resources/StringID';
 
 interface PropTypes {
-  open: boolean;
-  onClose: () => void;
+  readonly open: boolean;
+  readonly onClose: () => void;
 }
 
 const useStyles = makeStyles(() =>
@@ -17,7 +17,7 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-const LoginDialog = (props: PropTypes): React.ReactElement => {
+export default function LoginDialog(props: PropTypes) {
   const { open, onClose } = props;
 
   const classes = useStyles();
@@ -34,6 +34,4 @@ const LoginDialog = (props: PropTypes): React.ReactElement => {
       </DialogContent>
     </Dialog>
   );
-};
-
-export default LoginDialog;
+}

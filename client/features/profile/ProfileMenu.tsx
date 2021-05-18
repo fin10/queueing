@@ -1,16 +1,16 @@
 import { MenuItem, Menu } from '@material-ui/core';
-import { Resources } from '../resources/Resources';
-import { StringID } from '../resources/StringID';
 import React from 'react';
 import qs from 'query-string';
+import { Resources } from '../../resources/Resources';
+import { StringID } from '../../resources/StringID';
 
 interface PropTypes {
-  anchor: HTMLElement | null;
-  open: boolean;
-  onClose: () => void;
+  readonly anchor: HTMLElement | null;
+  readonly open: boolean;
+  readonly onClose: () => void;
 }
 
-const ProfileMenu = (props: PropTypes): React.ReactElement => {
+export default function ProfileMenu(props: PropTypes) {
   const { anchor, open, onClose } = props;
 
   const query = qs.stringify({ redirect: window.location.pathname });
@@ -22,6 +22,4 @@ const ProfileMenu = (props: PropTypes): React.ReactElement => {
       </MenuItem>
     </Menu>
   );
-};
-
-export default ProfileMenu;
+}
