@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { handleError } from '../../utils/errorUtils';
-import { Profile } from './profileSlice';
+
+export interface Profile {
+  readonly name: string;
+}
 
 async function getProfile() {
   try {

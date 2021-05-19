@@ -1,10 +1,5 @@
-import { createAsyncThunk, createSlice, isPending, isRejected, SerializedError } from '@reduxjs/toolkit';
-import { handleError } from '../../utils/errorUtils';
-import ProfileApis from './profileApis';
-
-export interface Profile {
-  readonly name: string;
-}
+import { createAsyncThunk, createSlice, SerializedError } from '@reduxjs/toolkit';
+import ProfileApis, { Profile } from './profileApis';
 
 export interface ProfileState {
   readonly loading: boolean;
@@ -12,12 +7,8 @@ export interface ProfileState {
   readonly error?: SerializedError;
 }
 
-export const getProfile = createAsyncThunk('profile/get', async () => {
-  try {
-    return await ProfileApis.getProfile();
-  } catch (error) {
-    handleError(error);
-  }
+export const getProfile = createAsyncThunk('profile/get', () => {
+  return ProfileApis.getProfile();
 });
 
 const initialState: ProfileState = {
@@ -34,19 +25,13 @@ const profileSlice = createSlice({
         state.loading = false;
         state.profile = action.payload;
       })
-      .addMatcher(
-        (action) => isPending(action),
-        (state) => {
-          state.loading = true;
-        },
-      )
-      .addMatcher(
-        (action) => isRejected(action),
-        (state, action) => {
-          state.loading = false;
-          state.error = action.error;
-        },
-      );
+      .addCase(getProfile.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error;
+      });
   },
 });
 
