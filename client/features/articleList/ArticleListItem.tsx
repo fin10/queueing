@@ -1,9 +1,9 @@
 import React from 'react';
-import { Chip, createStyles, Grid, ListItem, ListItemText, makeStyles, Theme, Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
-import { Note } from '../types';
-import { CommentAction, LikeAction, DislikeAction } from './Action';
-import { ExpireTime } from './ExpireTime';
+import { Chip, createStyles, Grid, ListItem, ListItemText, makeStyles, Theme, Typography } from '@material-ui/core';
+import { Note } from '../../types';
+import { CommentAction, LikeAction, DislikeAction } from '../../components/Action';
+import { ExpireTime } from '../../components/ExpireTime';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

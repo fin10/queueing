@@ -1,16 +1,16 @@
-import axios from 'axios';
-import qs from 'query-string';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { List, Fab, Paper } from '@material-ui/core';
 import { Create as CreateIcon } from '@material-ui/icons';
 import { Pagination, PaginationItem } from '@material-ui/lab';
-import { Logger } from '../utils/Logger';
-import { ArticlesResponse, Note } from '../types';
-import ArticleListItem from '../components/ArticleListItem';
-import { Resources } from '../resources/Resources';
-import { StringID } from '../resources/StringID';
-import { Link, useLocation } from 'react-router-dom';
+import { Logger } from '../../utils/Logger';
+import ArticleListItem from './ArticleListItem';
+import { Resources } from '../../resources/Resources';
+import { StringID } from '../../resources/StringID';
+import { fetchArticles, selectArticleList } from './articleListSlice';
+import { useAppDispatch } from '../../app/store';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const parsePage = (): number => {
+const parsePage = () => {
   try {
     const query = new URLSearchParams(useLocation().search);
     const page = query.get('page');
@@ -41,33 +41,28 @@ const parsePage = (): number => {
   return 1;
 };
 
-const ArticleListPage = (): React.ReactElement => {
+export default function ArticleListPage() {
+  const classes = useStyles();
+  const articleListState = useSelector(selectArticleList);
+  const dispatch = useAppDispatch();
+
   const page = parsePage();
 
-  const [notes, updateNotes] = useState<Note[]>([]);
-  const [totalPages, updateTotalPages] = useState<number>(0);
-  const classes = useStyles();
-
   useEffect(() => {
-    (async () => {
-      try {
-        const query = qs.stringify({ page });
-        const res = await axios.get<ArticlesResponse>(`/api/article?${query}`);
-        updateNotes(res.data.notes);
-        updateTotalPages(res.data.totalPages);
-      } catch (err) {
-        Logger.error(err);
-      }
-    })();
+    dispatch(fetchArticles(page));
   }, [page]);
+
+  if (articleListState.error) {
+    console.error(articleListState.error.stack);
+  }
 
   return (
     <>
       <Paper>
         <List dense={true} disablePadding={true}>
-          {notes.map((note) => (
-            <React.Fragment key={note.id}>
-              <ArticleListItem note={note} />
+          {articleListState.articles.map((article) => (
+            <React.Fragment key={article.id}>
+              <ArticleListItem note={article} />
             </React.Fragment>
           ))}
         </List>
@@ -81,16 +76,14 @@ const ArticleListPage = (): React.ReactElement => {
           <CreateIcon />
         </Fab>
       </Paper>
-      {totalPages > 0 && (
+      {articleListState.totalPages && (
         <Pagination
           className={classes.pagination}
           page={page}
-          count={totalPages}
+          count={articleListState.totalPages}
           renderItem={(item) => <PaginationItem component={Link} to={`?page=${item.page}`} {...item} />}
         />
       )}
     </>
   );
-};
-
-export default ArticleListPage;
+}
