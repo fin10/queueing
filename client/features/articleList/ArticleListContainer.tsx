@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { List, Fab, Paper } from '@material-ui/core';
+import { List, Fab, Paper, Backdrop, CircularProgress } from '@material-ui/core';
 import { Create as CreateIcon } from '@material-ui/icons';
 import { Pagination, PaginationItem } from '@material-ui/lab';
 import { Logger } from '../../utils/Logger';
 import ArticleListItem from './ArticleListItem';
 import { Resources } from '../../resources/Resources';
 import { StringID } from '../../resources/StringID';
-import { fetchArticles, selectArticleList } from './articleListSlice';
+import { fetchArticles, selectArticleIds, selectTotalPages } from './articleListSlice';
 import { useAppDispatch } from '../../app/store';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -26,6 +26,10 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(2),
     },
+    backdrop: {
+      zIndex: theme.zIndex.drawer + 1,
+      color: '#fff',
+    },
   }),
 );
 
@@ -41,28 +45,36 @@ const parsePage = () => {
   return 1;
 };
 
-export default function ArticleListPage() {
+export default function ArticleListContainer() {
   const classes = useStyles();
-  const articleListState = useSelector(selectArticleList);
+  const articleIds = useSelector(selectArticleIds);
+  const totalPages = useSelector(selectTotalPages);
   const dispatch = useAppDispatch();
+
+  const [loading, updateLoading] = useState(true);
 
   const page = parsePage();
 
   useEffect(() => {
-    dispatch(fetchArticles(page));
+    (async () => {
+      try {
+        updateLoading(true);
+        await dispatch(fetchArticles(page));
+      } catch (error) {
+        console.error(error.stack);
+      } finally {
+        updateLoading(false);
+      }
+    })();
   }, [page]);
-
-  if (articleListState.error) {
-    console.error(articleListState.error.stack);
-  }
 
   return (
     <>
       <Paper>
         <List dense={true} disablePadding={true}>
-          {articleListState.articles.map((article) => (
-            <React.Fragment key={article.id}>
-              <ArticleListItem note={article} />
+          {articleIds.map((id) => (
+            <React.Fragment key={id}>
+              <ArticleListItem id={id} />
             </React.Fragment>
           ))}
         </List>
@@ -76,14 +88,18 @@ export default function ArticleListPage() {
           <CreateIcon />
         </Fab>
       </Paper>
-      {articleListState.totalPages && (
+      {totalPages && (
         <Pagination
           className={classes.pagination}
           page={page}
-          count={articleListState.totalPages}
+          count={totalPages}
           renderItem={(item) => <PaginationItem component={Link} to={`?page=${item.page}`} {...item} />}
         />
       )}
+
+      <Backdrop className={classes.backdrop} open={loading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </>
   );
 }
