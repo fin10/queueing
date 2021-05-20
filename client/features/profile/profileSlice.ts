@@ -1,13 +1,15 @@
 import { createAsyncThunk, createSlice, SerializedError } from '@reduxjs/toolkit';
 import ProfileApis, { Profile } from './profileApis';
 
+const ACTION_NAME = 'profile';
+
 export interface ProfileState {
   readonly loading: boolean;
   readonly profile?: Profile;
   readonly error?: SerializedError;
 }
 
-export const getProfile = createAsyncThunk('profile/get', () => {
+export const getProfile = createAsyncThunk(`${ACTION_NAME}/get`, () => {
   return ProfileApis.getProfile();
 });
 
@@ -16,7 +18,7 @@ const initialState: ProfileState = {
 };
 
 const profileSlice = createSlice({
-  name: 'profile',
+  name: ACTION_NAME,
   initialState,
   reducers: {},
   extraReducers: (builder) => {

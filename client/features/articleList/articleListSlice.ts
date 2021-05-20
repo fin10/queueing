@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice, SerializedError } from '@reduxjs/toolkit';
 import articleListApis, { ArticleSummary } from './articleListApis';
 
+const ACTION_NAME = 'articleList';
+
 export interface ArticleListState {
   readonly loading: boolean;
   readonly articles: ArticleSummary[];
@@ -8,7 +10,7 @@ export interface ArticleListState {
   readonly error?: SerializedError;
 }
 
-export const fetchArticles = createAsyncThunk('articleList/fetch', (page: number) => {
+export const fetchArticles = createAsyncThunk(`${ACTION_NAME}/fetch`, (page: number) => {
   return articleListApis.fetchArticles(page);
 });
 
@@ -18,7 +20,7 @@ const initialState: ArticleListState = {
 };
 
 const articleListSlice = createSlice({
-  name: 'articleList',
+  name: ACTION_NAME,
   initialState,
   reducers: {},
   extraReducers: (builder) => {
