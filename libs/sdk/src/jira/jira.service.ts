@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { ConfigKey, QueueingConfigService } from '../config/queueing-config.service';
+import { EnvironmentVariables } from '../config/env.validation';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JiraService {
@@ -9,11 +10,11 @@ export class JiraService {
   private readonly username: string;
   private readonly token: string;
 
-  constructor(readonly config: QueueingConfigService) {
-    this.enabled = config.getBoolean(ConfigKey.JIRA_ENABLED);
-    this.url = config.getString(ConfigKey.JIRA_URL);
-    this.username = config.getString(ConfigKey.JIRA_USERNAME);
-    this.token = config.getString(ConfigKey.JIRA_TOKEN);
+  constructor(readonly config: ConfigService<EnvironmentVariables>) {
+    this.enabled = config.get('QUEUEING_JIRA_ENABLED');
+    this.url = config.get('QUEUEING_JIRA_URL');
+    this.username = config.get('QUEUEING_JIRA_USERNAME');
+    this.token = config.get('QUEUEING_JIRA_TOKEN');
   }
 
   isEnabled(): boolean {

@@ -1,9 +1,10 @@
 import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { OnEvent } from '@nestjs/event-emitter';
 import { Cache } from 'cache-manager';
 import moment from 'moment';
 import mongoose from 'mongoose';
-import { ConfigKey, QueueingConfigService } from '../config/queueing-config.service';
+import { EnvironmentVariables } from '../config/env.validation';
 import { NoteRemovedEvent } from './events/note-removed.event';
 import { NoteBodyEntity } from './note-body.entity';
 
@@ -11,12 +12,15 @@ import { NoteBodyEntity } from './note-body.entity';
 export class NoteBodyService {
   private readonly logger = new Logger(NoteBodyService.name);
 
-  constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache, private readonly config: QueueingConfigService) {}
+  private readonly ttl: number;
+
+  constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache, config: ConfigService<EnvironmentVariables>) {
+    this.ttl = config.get<number>('QUEUEING_NOTE_TTL');
+  }
 
   put(id: mongoose.Types.ObjectId, body: string): Promise<void> {
-    const ttl = this.config.getInteger(ConfigKey.NOTE_TTL);
     const entities = this.parseEntities(body);
-    return this.cache.set<NoteBodyEntity[]>(id.toHexString(), entities, { ttl });
+    return this.cache.set<NoteBodyEntity[]>(id.toHexString(), entities, { ttl: this.ttl });
   }
 
   remove(id: mongoose.Types.ObjectId): Promise<void> {

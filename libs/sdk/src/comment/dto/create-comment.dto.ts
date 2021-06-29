@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 
 export class CreateCommentDto {
   @IsNotEmpty()
-  @Transform((v) => mongoose.Types.ObjectId(v))
+  @Transform(({ value }) => mongoose.Types.ObjectId(value))
   readonly parentId!: mongoose.Types.ObjectId;
 
   @IsNotEmpty()

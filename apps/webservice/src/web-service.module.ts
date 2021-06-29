@@ -2,11 +2,9 @@ import path from 'path';
 import { Logger, MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ScheduleModule } from '@nestjs/schedule';
-import { QueueingConfigModule } from '@lib/sdk/config/queueing-config.module';
 import { CommentModule } from '@lib/sdk/comment/comment.module';
 import { ArticleModule } from '@lib/sdk/article/article.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigKey, QueueingConfigService } from '@lib/sdk/config/queueing-config.service';
 import { TopicModule } from '@lib/sdk/topic/topic.module';
 import { CleanerModule } from '@lib/sdk/cleaner/cleaner.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
@@ -14,6 +12,8 @@ import { ActionModule } from '@lib/sdk/action/action.module';
 import { AuthModule } from '@lib/sdk/auth/auth.module';
 import { ProfileModule } from '@lib/sdk/profile/profile.module';
 import { IssueModule } from '@lib/sdk/issue/issue.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { EnvironmentVariables, validate } from '@lib/sdk/config/env.validation';
 import { utilities, WinstonModule } from 'nest-winston';
 import winston from 'winston';
 import morgan from 'morgan';
@@ -31,17 +31,17 @@ import morgan from 'morgan';
       ),
       transports: [new winston.transports.Console()],
     }),
-    QueueingConfigModule,
+    ConfigModule.forRoot({ isGlobal: true, validate }),
     MongooseModule.forRootAsync({
-      imports: [QueueingConfigModule],
-      inject: [QueueingConfigService],
-      useFactory: (config: QueueingConfigService) => ({
-        uri: config.getString(ConfigKey.MONGODB_URI),
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService<EnvironmentVariables>) => ({
+        uri: config.get('QUEUEING_MONGODB_URI'),
         auth: {
-          user: config.getString(ConfigKey.MONGODB_USER),
-          password: config.getString(ConfigKey.MONGODB_PASSWORD),
+          user: config.get('QUEUEING_MONGODB_USER'),
+          password: config.get('QUEUEING_MONGODB_PASSWORD'),
         },
-        authSource: config.getString(ConfigKey.MONGODB_AUTH_DB),
+        authSource: config.get('QUEUEING_MONGODB_AUTH_DB'),
         useCreateIndex: true,
       }),
     }),

@@ -2,16 +2,21 @@ import moment from 'moment';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { FilterQuery } from 'mongoose';
-import { ConfigKey, QueueingConfigService } from '../config/queueing-config.service';
 import { User } from '../user/schemas/user.schema';
 import { RawNote, RawNoteDocument } from './schemas/raw-note.schema';
+import { EnvironmentVariables } from '../config/env.validation';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class NoteService {
+  private readonly ttl: number;
+
   constructor(
     @InjectModel(RawNote.name) private readonly model: mongoose.PaginateModel<RawNoteDocument>,
-    private readonly config: QueueingConfigService,
-  ) {}
+    config: ConfigService<EnvironmentVariables>,
+  ) {
+    this.ttl = config.get('QUEUEING_NOTE_TTL');
+  }
 
   async createWithParentId(user: User, parentId: mongoose.Types.ObjectId): Promise<mongoose.Types.ObjectId> {
     const parent = await this.model.findById(parentId);
@@ -98,7 +103,6 @@ export class NoteService {
   }
 
   private getExpireTime(): Date {
-    const ttl = this.config.getInteger(ConfigKey.NOTE_TTL);
-    return moment.utc().add(ttl, 's').toDate();
+    return moment.utc().add(this.ttl, 's').toDate();
   }
 }

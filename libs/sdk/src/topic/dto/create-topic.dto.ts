@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 
 export class CreateTopicDto {
   @IsNotEmpty()
-  @Transform((v) => mongoose.Types.ObjectId(v))
+  @Transform(({ value }) => mongoose.Types.ObjectId(value))
   userId!: mongoose.Types.ObjectId;
 
   @IsNotEmpty()

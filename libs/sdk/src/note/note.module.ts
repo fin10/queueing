@@ -2,13 +2,13 @@ import redisStore from 'cache-manager-ioredis';
 import paginate from 'mongoose-paginate-v2';
 import { CacheModule, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { QueueingConfigModule } from '../config/queueing-config.module';
-import { ConfigKey, QueueingConfigService } from '../config/queueing-config.service';
 import { NoteService } from './note.service';
 import { RawNote, RawNoteSchema } from './schemas/raw-note.schema';
 import { NoteBodyService } from './note-body.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { NoteRemovedEvent } from './events/note-removed.event';
+import { EnvironmentVariables } from '../config/env.validation';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -32,16 +32,16 @@ import { NoteRemovedEvent } from './events/note-removed.event';
       },
     ]),
     CacheModule.registerAsync({
-      imports: [QueueingConfigModule],
-      inject: [QueueingConfigService],
-      useFactory: (config: QueueingConfigService) => {
-        const redisEnabled = config.getBoolean(ConfigKey.REDIS_ENABLED);
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService<EnvironmentVariables>) => {
+        const redisEnabled = config.get<boolean>('QUEUEING_REDIS_ENABLED');
         if (!redisEnabled) return { store: 'memory' };
 
         return {
           store: redisStore,
-          host: config.getString(ConfigKey.REDIS_HOST),
-          port: config.getInteger(ConfigKey.REDIS_PORT),
+          host: config.get('QUEUEING_REDIS_HOST'),
+          port: config.get('QUEUEING_REDIS_PORT'),
         };
       },
     }),

@@ -6,7 +6,7 @@ import moment, { Duration } from 'moment';
 
 export class ImposePenaltyDto {
   @IsNotEmpty()
-  @Transform((value: string) => {
+  @Transform(({ value }) => {
     const duration = moment.duration(value);
     if (duration.asSeconds() === 0) throw new BadRequestException(`Invalid duration format: ${value}`);
     return duration;
