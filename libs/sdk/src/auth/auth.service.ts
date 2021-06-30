@@ -1,17 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { User } from '../user/schemas/user.schema';
+import { Injectable, Logger } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(private readonly userService: UserService) {}
 
-  async validateUser(provider: string, key: string): Promise<User> {
-    let user = await this.userService.findUser({ provider, key });
-    if (!user) {
-      user = await this.userService.createUser(provider, key);
-    }
+  async validateUser(provider: string, key: string) {
+    const user = await this.userService.findUser({ provider, key });
+    if (user) return user;
 
-    return user;
+    this.logger.verbose(`User not registered: ${provider}:${key}`);
+    return this.userService.createUser(provider, key);
   }
 }
