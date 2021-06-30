@@ -6,26 +6,26 @@ import { LocalAuthGuard } from './local-auth.guard';
 @Controller('auth')
 export class AuthController {
   @Get('logout')
-  logout(@Req() req: Request, @Query('redirect') redirect = '/', @Res() res: Response): void {
+  logout(@Req() req: Request, @Query('redirect') redirect = '/', @Res() res: Response) {
     req.logOut();
     res.redirect(redirect);
   }
 
   @UseGuards(LocalAuthGuard)
   @Get('local')
-  loginWithLocal(@Query('redirect') redirect = '/', @Res() res: Response): void {
+  loginWithLocal(@Query('redirect') redirect = '/', @Res() res: Response) {
     res.redirect(redirect);
   }
 
   @UseGuards(GoogleAuthGuard)
   @Get('google')
-  loginWithGoogle(@Query('redirect') redirect = '/', @Res() res: Response): void {
+  loginWithGoogle(@Query('redirect') redirect = '/', @Res() res: Response) {
     res.redirect(redirect);
   }
 
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
-  handleGoogleCallback(@Query('state') redirect = '/', @Res() res: Response): void {
+  handleGoogleCallback(@Query('state') redirect = '/', @Res() res: Response) {
     res.redirect(redirect);
   }
 }
