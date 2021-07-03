@@ -1,60 +1,61 @@
 import _ from 'underscore';
-import { Mutex } from 'async-mutex';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { NoteService } from '../note/note.service';
-import { CreateTopicDto } from './dto/create-topic.dto';
 import { RawTopic, RawTopicDocument } from './schemas/topic.schema';
 import { User } from '../user/schemas/user.schema';
+import { MongoErrorCode } from '../exceptions/mongo-error.code';
 
 @Injectable()
 export class TopicService {
-  private readonly mutex = new Mutex();
+  private readonly logger = new Logger(TopicService.name);
 
   constructor(
     @InjectModel(RawTopic.name) private readonly model: Model<RawTopicDocument>,
     private readonly noteService: NoteService,
   ) {}
 
-  async create(data: CreateTopicDto): Promise<RawTopic> {
-    const topic = new this.model(data);
-    await topic.save();
+  async getTopics() {
+    const topics = await this.getTopicsWithCount();
 
-    return topic;
-  }
-
-  async getTopics(): Promise<RawTopic[]> {
-    return _.chain(await this.getTopicsWithCount())
+    return _.chain(topics)
       .filter(({ count }) => count)
-      .sortBy((topic) => -(topic.count || 0))
+      .sortBy((topic: RawTopic) => -(topic.count || 0))
       .value();
   }
 
-  async getOrCreate(user: User, name: string): Promise<RawTopic> {
-    return this.mutex.runExclusive(async () => {
-      const rawTopic = await this.model.findOne({ name }).lean();
-      if (rawTopic) return rawTopic;
+  async getOrCreate(user: User, name: string) {
+    const exists = await this.model.exists({ name });
+    if (!exists) {
+      try {
+        await this.model.create({ userId: user._id, name });
+      } catch (err) {
+        if (err.code === MongoErrorCode.DUPLICATE_KEY) {
+          this.logger.warn(`Topic already exists: ${name}`);
+        } else {
+          this.logger.error(`Failed to create topic: ${name}`, err.stack);
+          throw err;
+        }
+      }
+    }
 
-      return this.create({ userId: user._id, name });
-    });
+    return this.model.findOne({ name }).lean();
   }
 
-  async removeEmptyTopics(): Promise<number> {
-    const topics = _.chain(await this.getTopicsWithCount())
-      .filter(({ count = 0 }) => count === 0)
-      .value();
+  async removeEmptyTopics() {
+    const topics = (await this.getTopicsWithCount()).filter(({ count = 0 }) => count === 0);
 
-    Promise.all(topics.map((topic) => this.model.deleteOne({ _id: topic._id })));
+    Promise.all(topics.map((topic: RawTopic) => this.model.deleteOne({ _id: topic._id })));
 
     return topics.length;
   }
 
-  private async getTopicsWithCount(): Promise<RawTopic[]> {
-    const topics: RawTopic[] = await this.model.find().lean();
+  private async getTopicsWithCount() {
+    const topics = await this.model.find().lean();
 
     return Promise.all(
-      topics.map(async (topic) => {
+      topics.map(async (topic: RawTopicDocument) => {
         const count = await this.noteService.count({ topic: topic.name });
         return { ...topic, count };
       }),
