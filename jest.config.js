@@ -1,6 +1,6 @@
 module.exports = {
   moduleFileExtensions: ['js', 'json', 'ts'],
-  moduleDirectories: ['./', 'node_modules'],
+  moduleDirectories: ['node_modules'],
   testRegex: '.*\\.spec\\.ts$',
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
@@ -8,4 +8,7 @@ module.exports = {
   collectCoverageFrom: ['**/*.(t|j)s'],
   coverageDirectory: './coverage',
   testEnvironment: 'node',
+  moduleNameMapper: {
+    '@lib/sdk/(.*)': '<rootDir>/libs/sdk/src/$1',
+  },
 };
