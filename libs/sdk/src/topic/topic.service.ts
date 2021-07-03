@@ -17,11 +17,12 @@ export class TopicService {
   ) {}
 
   async getTopics() {
-    const topics = await this.getTopicsWithCount();
+    const topics: RawTopicDocument[] = await this.model.find().lean();
+    const countMap = await this.getCountMap(topics);
 
     return _.chain(topics)
-      .filter(({ count }) => count)
-      .sortBy((topic: RawTopic) => -(topic.count || 0))
+      .filter(({ name }) => countMap[name])
+      .sortBy(({ name }) => -(countMap[name] || 0))
       .value();
   }
 
@@ -44,21 +45,18 @@ export class TopicService {
   }
 
   async removeEmptyTopics() {
-    const topics = (await this.getTopicsWithCount()).filter(({ count = 0 }) => count === 0);
+    const topics: RawTopicDocument[] = await this.model.find().lean();
+    const countMap = await this.getCountMap(topics);
 
-    Promise.all(topics.map((topic: RawTopic) => this.model.deleteOne({ _id: topic._id })));
+    Promise.all(topics.filter(({ name }) => !countMap[name]).map((topic) => this.model.deleteOne({ _id: topic._id })));
 
     return topics.length;
   }
 
-  private async getTopicsWithCount() {
-    const topics = await this.model.find().lean();
+  private async getCountMap(topics: RawTopic[]) {
+    const names = topics.map(({ name }) => name);
+    const counts = await Promise.all(names.map(async (name) => this.noteService.count({ topic: name })));
 
-    return Promise.all(
-      topics.map(async (topic: RawTopicDocument) => {
-        const count = await this.noteService.count({ topic: topic.name });
-        return { ...topic, count };
-      }),
-    );
+    return _.object(names, counts);
   }
 }

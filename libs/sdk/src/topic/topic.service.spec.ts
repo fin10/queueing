@@ -11,6 +11,8 @@ describe(TopicService.name, () => {
   let mongod: MongoMemoryServer;
   let service: TopicService;
 
+  const mockNoteService = { count: async () => 0 };
+
   beforeEach(async () => {
     mongod = await MongoMemoryServer.create();
 
@@ -23,7 +25,7 @@ describe(TopicService.name, () => {
         TopicService,
         {
           provide: NoteService,
-          useValue: { count: async () => 0 },
+          useValue: mockNoteService,
         },
       ],
     }).compile();
@@ -54,5 +56,31 @@ describe(TopicService.name, () => {
       expect(user._id).toStrictEqual(actual.userId);
       expect(name).toBe(actual.name);
     });
+  });
+
+  it('get topics with no notes', async () => {
+    const user = { _id: new mongoose.Types.ObjectId() } as User;
+    const name = 'test';
+    await service.getOrCreate(user, name);
+
+    const topics = await service.getTopics();
+    expect(topics.length).toBe(0);
+  });
+
+  it('get topics', async () => {
+    const user = { _id: new mongoose.Types.ObjectId() } as User;
+    const name = 'test';
+    await service.getOrCreate(user, name);
+
+    const spy = jest.spyOn(mockNoteService, 'count').mockResolvedValue(1);
+
+    try {
+      const topics = await service.getTopics();
+      expect(topics.length).toBe(1);
+      expect(topics[0].userId).toStrictEqual(user._id);
+      expect(topics[0].name).toBe(name);
+    } finally {
+      spy.mockRestore();
+    }
   });
 });
