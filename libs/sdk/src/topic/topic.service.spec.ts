@@ -58,27 +58,25 @@ describe(TopicService.name, () => {
     });
   });
 
-  it('get topics with no notes', async () => {
-    const user = { _id: new mongoose.Types.ObjectId() } as User;
-    const name = 'test';
-    await service.getOrCreate(user, name);
-
-    const topics = await service.getTopics();
-    expect(topics.length).toBe(0);
-  });
-
   it('get topics', async () => {
     const user = { _id: new mongoose.Types.ObjectId() } as User;
     const name = 'test';
     await service.getOrCreate(user, name);
 
+    const topics = await service.getTopics();
+    expect(topics.length).toBe(1);
+  });
+
+  it('get note counts by topics', async () => {
+    const user = { _id: new mongoose.Types.ObjectId() } as User;
+    const name = 'test';
+    const topic = await service.getOrCreate(user, name);
+
     const spy = jest.spyOn(mockNoteService, 'count').mockResolvedValue(1);
 
     try {
-      const topics = await service.getTopics();
-      expect(topics.length).toBe(1);
-      expect(topics[0].userId).toStrictEqual(user._id);
-      expect(topics[0].name).toBe(name);
+      const counts = await service.getNoteCountsByTopic([topic]);
+      expect(counts[name]).toBe(1);
     } finally {
       spy.mockRestore();
     }

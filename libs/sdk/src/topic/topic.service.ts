@@ -16,17 +16,18 @@ export class TopicService {
     private readonly noteService: NoteService,
   ) {}
 
-  async getTopics() {
-    const topics: TopicDocument[] = await this.model.find().lean();
-    const counts = await this.getNoteCountsByTopic(topics);
-
-    return _.chain(topics)
-      .filter(({ name }) => counts[name])
-      .sortBy(({ name }) => -(counts[name] || 0))
-      .value();
+  getTopics(): Promise<TopicDocument[]> {
+    return this.model.find().lean();
   }
 
-  async getOrCreate(user: User, name: string) {
+  async getNoteCountsByTopic(topics: Topic[]) {
+    const names = topics.map(({ name }) => name);
+    const counts = await Promise.all(names.map((name) => this.noteService.count({ topic: name })));
+
+    return _.object(names, counts);
+  }
+
+  async getOrCreate(user: User, name: string): Promise<TopicDocument> {
     const exists = await this.model.exists({ name });
     if (!exists) {
       try {
@@ -53,12 +54,5 @@ export class TopicService {
     await Promise.all(shouldDelete.map((topic) => this.model.deleteOne({ _id: topic._id })));
 
     return shouldDelete.length;
-  }
-
-  private async getNoteCountsByTopic(topics: Topic[]) {
-    const names = topics.map(({ name }) => name);
-    const counts = await Promise.all(names.map(async (name) => this.noteService.count({ topic: name })));
-
-    return _.object(names, counts);
   }
 }
