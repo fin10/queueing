@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { NoteService } from '../note/note.service';
-import { RawTopic, RawTopicDocument } from './schemas/topic.schema';
+import { Topic, TopicDocument } from './schemas/topic.schema';
 import { User } from '../user/schemas/user.schema';
 import { MongoErrorCode } from '../exceptions/mongo-error.code';
 
@@ -12,12 +12,12 @@ export class TopicService {
   private readonly logger = new Logger(TopicService.name);
 
   constructor(
-    @InjectModel(RawTopic.name) private readonly model: Model<RawTopicDocument>,
+    @InjectModel(Topic.name) private readonly model: Model<TopicDocument>,
     private readonly noteService: NoteService,
   ) {}
 
   async getTopics() {
-    const topics: RawTopicDocument[] = await this.model.find().lean();
+    const topics: TopicDocument[] = await this.model.find().lean();
     const counts = await this.getNoteCountsByTopic(topics);
 
     return _.chain(topics)
@@ -45,7 +45,7 @@ export class TopicService {
   }
 
   async removeEmptyTopics() {
-    const topics: RawTopicDocument[] = await this.model.find().lean();
+    const topics: TopicDocument[] = await this.model.find().lean();
     const counts = await this.getNoteCountsByTopic(topics);
 
     const shouldDelete = topics.filter(({ name }) => !counts[name]);
@@ -55,7 +55,7 @@ export class TopicService {
     return shouldDelete.length;
   }
 
-  private async getNoteCountsByTopic(topics: RawTopic[]) {
+  private async getNoteCountsByTopic(topics: Topic[]) {
     const names = topics.map(({ name }) => name);
     const counts = await Promise.all(names.map(async (name) => this.noteService.count({ topic: name })));
 

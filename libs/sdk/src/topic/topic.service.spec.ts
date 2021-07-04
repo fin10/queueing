@@ -4,7 +4,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import { NoteService } from '../note/note.service';
 import { User } from '../user/schemas/user.schema';
-import { RawTopic, RawTopicSchema } from './schemas/topic.schema';
+import { Topic, TopicSchema } from './schemas/topic.schema';
 import { TopicService } from './topic.service';
 
 describe(TopicService.name, () => {
@@ -19,7 +19,7 @@ describe(TopicService.name, () => {
     const module = await Test.createTestingModule({
       imports: [
         MongooseModule.forRoot(mongod.getUri(), { useCreateIndex: true }),
-        MongooseModule.forFeature([{ name: RawTopic.name, schema: RawTopicSchema }]),
+        MongooseModule.forFeature([{ name: Topic.name, schema: TopicSchema }]),
       ],
       providers: [
         TopicService,

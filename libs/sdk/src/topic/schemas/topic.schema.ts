@@ -2,10 +2,10 @@ import { User } from '@lib/sdk/user/schemas/user.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 
-export type RawTopicDocument = RawTopic & Document;
+export type TopicDocument = Topic & Document;
 
 @Schema({ timestamps: true })
-export class RawTopic {
+export class Topic {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
   readonly userId: mongoose.Types.ObjectId;
 
@@ -15,4 +15,4 @@ export class RawTopic {
   readonly _id: string;
 }
 
-export const RawTopicSchema = SchemaFactory.createForClass(RawTopic);
+export const TopicSchema = SchemaFactory.createForClass(Topic);
