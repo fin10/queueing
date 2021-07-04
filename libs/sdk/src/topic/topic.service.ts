@@ -18,11 +18,11 @@ export class TopicService {
 
   async getTopics() {
     const topics: RawTopicDocument[] = await this.model.find().lean();
-    const countMap = await this.getCountMap(topics);
+    const counts = await this.getNoteCountsByTopic(topics);
 
     return _.chain(topics)
-      .filter(({ name }) => countMap[name])
-      .sortBy(({ name }) => -(countMap[name] || 0))
+      .filter(({ name }) => counts[name])
+      .sortBy(({ name }) => -(counts[name] || 0))
       .value();
   }
 
@@ -46,14 +46,16 @@ export class TopicService {
 
   async removeEmptyTopics() {
     const topics: RawTopicDocument[] = await this.model.find().lean();
-    const countMap = await this.getCountMap(topics);
+    const counts = await this.getNoteCountsByTopic(topics);
 
-    Promise.all(topics.filter(({ name }) => !countMap[name]).map((topic) => this.model.deleteOne({ _id: topic._id })));
+    const shouldDelete = topics.filter(({ name }) => !counts[name]);
 
-    return topics.length;
+    await Promise.all(shouldDelete.map((topic) => this.model.deleteOne({ _id: topic._id })));
+
+    return shouldDelete.length;
   }
 
-  private async getCountMap(topics: RawTopic[]) {
+  private async getNoteCountsByTopic(topics: RawTopic[]) {
     const names = topics.map(({ name }) => name);
     const counts = await Promise.all(names.map(async (name) => this.noteService.count({ topic: name })));
 

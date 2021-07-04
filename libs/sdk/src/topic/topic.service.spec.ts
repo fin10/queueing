@@ -83,4 +83,13 @@ describe(TopicService.name, () => {
       spy.mockRestore();
     }
   });
+
+  it('remove empty topics', async () => {
+    const user = { _id: new mongoose.Types.ObjectId() } as User;
+    const name = 'test';
+    await service.getOrCreate(user, name);
+
+    const count = await service.removeEmptyTopics();
+    expect(count).toBe(1);
+  });
 });
