@@ -6,13 +6,11 @@ export type TopicDocument = Topic & Document;
 
 @Schema({ timestamps: true })
 export class Topic {
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
+  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: User.name })
   readonly userId: mongoose.Types.ObjectId;
 
   @Prop({ required: true, unique: true, trim: true })
   readonly name: string;
-
-  readonly _id: string;
 }
 
 export const TopicSchema = SchemaFactory.createForClass(Topic);
