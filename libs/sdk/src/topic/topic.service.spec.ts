@@ -13,6 +13,14 @@ describe(TopicService.name, () => {
 
   const mockNoteService = { count: async () => 0 };
 
+  const createTestUser = () => {
+    return { _id: new mongoose.Types.ObjectId() } as User;
+  };
+
+  const createTestTopic = (name = 'test') => {
+    return service.getOrCreate(createTestUser(), name);
+  };
+
   beforeEach(async () => {
     mongod = await MongoMemoryServer.create();
 
@@ -38,50 +46,49 @@ describe(TopicService.name, () => {
   });
 
   it('create topic', async () => {
-    const user = { _id: new mongoose.Types.ObjectId() } as User;
-    const name = 'test';
+    const user = createTestUser();
 
-    const topic = await service.getOrCreate(user, name);
+    const topic = await service.getOrCreate(user, 'test');
+
     expect(topic.userId).toStrictEqual(user._id);
-    expect(topic.name).toBe(name);
+    expect(topic.name).toBe('test');
   });
 
   it('create duplicate topic', async () => {
-    const user = { _id: new mongoose.Types.ObjectId() } as User;
-    const name = 'test';
+    const user = createTestUser();
 
-    const actuals = await Promise.all([service.getOrCreate(user, name), service.getOrCreate(user, name)]);
+    const actuals = await Promise.all([
+      service.getOrCreate(user, 'test'),
+      service.getOrCreate(user, 'test'),
+      service.getOrCreate(user, 'test'),
+    ]);
 
     actuals.forEach((actual) => {
       expect(user._id).toStrictEqual(actual.userId);
-      expect(name).toBe(actual.name);
+      expect('test').toBe(actual.name);
     });
   });
 
   it('get topics', async () => {
-    const user = { _id: new mongoose.Types.ObjectId() } as User;
-    const name = 'test';
-    await service.getOrCreate(user, name);
+    const topic = await createTestTopic();
 
     const topics = await service.getTopics();
     expect(topics.length).toBe(1);
+    expect(topics[0].userId).toStrictEqual(topic.userId);
+    expect(topics[0].name).toBe(topic.name);
   });
 
   it('get note counts by topics', async () => {
-    const user = { _id: new mongoose.Types.ObjectId() } as User;
-    const name = 'test';
-    const topic = await service.getOrCreate(user, name);
+    const topic = await createTestTopic();
 
     jest.spyOn(mockNoteService, 'count').mockResolvedValueOnce(1);
 
     const counts = await service.getNoteCountsByTopic([topic]);
-    expect(counts[name]).toBe(1);
+    expect(counts[topic.name]).toBe(1);
   });
 
   it('remove empty topics', async () => {
-    const user = { _id: new mongoose.Types.ObjectId() } as User;
-    const name = 'test';
-    await service.getOrCreate(user, name);
+    await createTestTopic();
 
     const count = await service.removeEmptyTopics();
     expect(count).toBe(1);

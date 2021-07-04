@@ -22,15 +22,12 @@ describe(TopicController.name, () => {
   });
 
   it('get topics', async () => {
-    const name = 'test';
-    const count = 1;
-
-    jest.spyOn(mockTopicService, 'getTopics').mockResolvedValueOnce([{ name }]);
-    jest.spyOn(mockTopicService, 'getNoteCountsByTopic').mockResolvedValueOnce({ [name]: count });
+    jest.spyOn(mockTopicService, 'getTopics').mockResolvedValueOnce([{ name: 'test' }]);
+    jest.spyOn(mockTopicService, 'getNoteCountsByTopic').mockResolvedValueOnce({ test: 1 });
 
     const topics = await controller.getTopics();
     expect(topics.length).toBe(1);
-    expect(topics[0].name).toBe(name);
-    expect(topics[0].count).toBe(count);
+    expect(topics[0].name).toBe('test');
+    expect(topics[0].count).toBe(1);
   });
 });
