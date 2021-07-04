@@ -72,14 +72,10 @@ describe(TopicService.name, () => {
     const name = 'test';
     const topic = await service.getOrCreate(user, name);
 
-    const spy = jest.spyOn(mockNoteService, 'count').mockResolvedValue(1);
+    jest.spyOn(mockNoteService, 'count').mockResolvedValueOnce(1);
 
-    try {
-      const counts = await service.getNoteCountsByTopic([topic]);
-      expect(counts[name]).toBe(1);
-    } finally {
-      spy.mockRestore();
-    }
+    const counts = await service.getNoteCountsByTopic([topic]);
+    expect(counts[name]).toBe(1);
   });
 
   it('remove empty topics', async () => {
