@@ -10,9 +10,7 @@ interface PropTypes {
   readonly onClose: () => void;
 }
 
-export default function ProfileMenu(props: PropTypes) {
-  const { anchor, open, onClose } = props;
-
+export default function ProfileMenu({ anchor, open, onClose }: PropTypes) {
   const query = qs.stringify({ redirect: window.location.pathname });
 
   return (

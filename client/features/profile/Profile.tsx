@@ -1,4 +1,6 @@
 import { CircularProgress, Button } from '@material-ui/core';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { Logger } from '@nestjs/common';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
@@ -10,25 +12,28 @@ import ProfileMenu from './ProfileMenu';
 
 export function Profile() {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const [loading, updateLoading] = useState(false);
   const [loginDialogOpened, updateLoginDialogOpened] = useState(false);
-  const profileState = useSelector(selectProfile);
+  const profile = useSelector(selectProfile);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(getProfile());
+    updateLoading(true);
+    dispatch(getProfile())
+      .then(unwrapResult)
+      .catch((err) => Logger.error(err))
+      .finally(() => updateLoading(false));
   }, [dispatch]);
 
-  if (profileState.error) console.error(profileState.error.stack);
-
-  if (profileState.loading) {
+  if (loading) {
     return <CircularProgress color="secondary" size={20} />;
   }
 
-  if (profileState.profile) {
+  if (profile) {
     return (
       <>
         <Button color="inherit" onClick={(e) => setAnchor(e.currentTarget)}>
-          {profileState.profile.name}
+          {profile.name}
         </Button>
         <ProfileMenu anchor={anchor} open={!!anchor} onClose={() => setAnchor(null)} />
       </>

@@ -1,20 +1,23 @@
-import { createAsyncThunk, createSlice, SerializedError } from '@reduxjs/toolkit';
-import ProfileApis, { Profile } from './profileApis';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { RootState } from 'client/app/store';
+import ProfileApis, { Profile } from './profileAPI';
 
 const ACTION_NAME = 'profile';
 
 export interface ProfileState {
-  readonly loading: boolean;
-  readonly profile?: Profile;
-  readonly error?: SerializedError;
+  readonly profile: Profile;
 }
 
-export const getProfile = createAsyncThunk(`${ACTION_NAME}/get`, () => {
-  return ProfileApis.getProfile();
+export const getProfile = createAsyncThunk(`${ACTION_NAME}/get`, async (_, { rejectWithValue }) => {
+  try {
+    return await ProfileApis.getProfile();
+  } catch (err) {
+    rejectWithValue(err);
+  }
 });
 
 const initialState: ProfileState = {
-  loading: true,
+  profile: undefined,
 };
 
 const profileSlice = createSlice({
@@ -22,21 +25,12 @@ const profileSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder
-      .addCase(getProfile.fulfilled, (state, action) => {
-        state.loading = false;
-        state.profile = action.payload;
-      })
-      .addCase(getProfile.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(getProfile.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error;
-      });
+    builder.addCase(getProfile.fulfilled, (state, action) => {
+      state.profile = action.payload;
+    });
   },
 });
 
-export const selectProfile = (state: { profile: ProfileState }) => state.profile;
+export const selectProfile = (state: RootState) => state.profile.profile;
 
 export default profileSlice.reducer;

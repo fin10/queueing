@@ -17,9 +17,7 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-export default function LoginDialog(props: PropTypes) {
-  const { open, onClose } = props;
-
+export default function LoginDialog({ open, onClose }: PropTypes) {
   const classes = useStyles();
 
   const query = qs.stringify({ redirect: window.location.pathname });
