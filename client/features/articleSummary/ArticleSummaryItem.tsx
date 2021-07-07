@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../app/store';
 import { CommentAction, LikeAction, DislikeAction } from '../../components/Action';
 import { ExpireTime } from '../../components/ExpireTime';
-import { selectArticleById } from './articlesSlice';
+import { selectArticleSummaryById } from './articleSummarySlice';
 
 interface PropTypes {
   readonly id: string;
@@ -19,45 +19,45 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function ArticleListItem(props: PropTypes) {
+export default function ArticleSummaryItem(props: PropTypes) {
   const { id } = props;
-  const article = useSelector((state: RootState) => selectArticleById(state, id));
+  const summary = useSelector((state: RootState) => selectArticleSummaryById(state, id));
   const classes = useStyles();
 
   return (
-    <ListItem button component={Link} to={`/article/${article.id}`} divider={true}>
+    <ListItem button component={Link} to={`/article/${summary.id}`} divider={true}>
       <ListItemText
         primary={
           <Grid container spacing={1} alignItems="center">
             <Grid item xs={8}>
-              <Chip variant="outlined" size="small" label={article.topic} />
+              <Chip variant="outlined" size="small" label={summary.topic} />
             </Grid>
 
             <Grid item xs={4}>
               <Typography align="right" color="textSecondary" variant="body2">
-                <ExpireTime expireTime={article.expireTime} />
+                <ExpireTime expireTime={summary.expireTime} />
               </Typography>
             </Grid>
 
             <Grid item xs={12}>
-              <Typography>{article.title}</Typography>
+              <Typography>{summary.title}</Typography>
             </Grid>
 
             <Grid item xs={6}>
               <span className={classes.marginRight}>
-                <CommentAction comments={article.children} />
+                <CommentAction comments={summary.children} />
               </span>
               <span className={classes.marginRight}>
-                <LikeAction likes={article.like} />
+                <LikeAction likes={summary.like} />
               </span>
               <span>
-                <DislikeAction dislikes={article.dislike} />
+                <DislikeAction dislikes={summary.dislike} />
               </span>
             </Grid>
 
             <Grid item xs={6}>
               <Typography align="right" color="textSecondary" variant="body2">
-                {article.user}
+                {summary.user}
               </Typography>
             </Grid>
           </Grid>

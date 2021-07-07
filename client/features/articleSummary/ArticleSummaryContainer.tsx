@@ -7,10 +7,10 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Logger } from '../../utils/Logger';
-import ArticleListItem from './ArticleListItem';
+import ArticleSummaryItem from './ArticleSummaryItem';
 import { Resources } from '../../resources/Resources';
 import { StringID } from '../../resources/StringID';
-import { fetchArticles, selectArticleIds, selectTotalPages } from './articlesSlice';
+import { fetchArticleSummaries, selectArticleSummaryIds, selectTotalPages } from './articleSummarySlice';
 import { useAppDispatch } from '../../app/store';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -46,9 +46,9 @@ const parsePage = () => {
   return 1;
 };
 
-export default function ArticlesContainer() {
+export default function ArticleSummaryContainer() {
   const classes = useStyles();
-  const articleIds = useSelector(selectArticleIds);
+  const articleIds = useSelector(selectArticleSummaryIds);
   const totalPages = useSelector(selectTotalPages);
   const dispatch = useAppDispatch();
 
@@ -58,9 +58,9 @@ export default function ArticlesContainer() {
 
   useEffect(() => {
     updateLoading(true);
-    dispatch(fetchArticles(page))
+    dispatch(fetchArticleSummaries(page))
       .then(unwrapResult)
-      .catch((err) => console.error(err.stack))
+      .catch((err) => Logger.error(err))
       .finally(() => updateLoading(false));
   }, [page]);
 
@@ -70,7 +70,7 @@ export default function ArticlesContainer() {
         <List dense={true} disablePadding={true}>
           {articleIds.map((id) => (
             <React.Fragment key={id}>
-              <ArticleListItem id={id} />
+              <ArticleSummaryItem id={id} />
             </React.Fragment>
           ))}
         </List>

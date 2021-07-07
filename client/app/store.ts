@@ -6,11 +6,11 @@ import article from '../redux/article';
 import comment from '../redux/comment';
 import report from '../redux/report';
 import profileReducer from '../features/profile/profileSlice';
-import articlesReducer from '../features/articles/articlesSlice';
+import articleSummaryReducer from '../features/articleSummary/articleSummarySlice';
 
 const rootReducer = combineReducers({
   profile: profileReducer,
-  articles: articlesReducer,
+  articleSummary: articleSummaryReducer,
   notification,
   article,
   comment,

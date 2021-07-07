@@ -14,7 +14,7 @@ export interface ArticleSummary {
   readonly user: string;
 }
 
-export interface ArticleList {
+export interface ArticleSummaryResponse {
   readonly page: number;
   readonly totalPages: number;
   readonly notes: ArticleSummary[];
@@ -22,7 +22,7 @@ export interface ArticleList {
 
 async function fetch(page: number) {
   const query = qs.stringify({ page });
-  const res = await axios.get<ArticleList>(`/api/article?${query}`);
+  const res = await axios.get<ArticleSummaryResponse>(`/api/article?${query}`);
   return res.data;
 }
 
