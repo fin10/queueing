@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { unwrapResult } from '@reduxjs/toolkit';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { List, Fab, Paper, Backdrop, CircularProgress } from '@material-ui/core';
 import { Create as CreateIcon } from '@material-ui/icons';
 import { Pagination, PaginationItem } from '@material-ui/lab';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { Logger } from '../../utils/Logger';
 import ArticleListItem from './ArticleListItem';
 import { Resources } from '../../resources/Resources';
@@ -56,16 +57,11 @@ export default function ArticlesContainer() {
   const page = parsePage();
 
   useEffect(() => {
-    (async () => {
-      try {
-        updateLoading(true);
-        await dispatch(fetchArticles(page));
-      } catch (error) {
-        console.error(error.stack);
-      } finally {
-        updateLoading(false);
-      }
-    })();
+    updateLoading(true);
+    dispatch(fetchArticles(page))
+      .then(unwrapResult)
+      .catch((err) => console.error(err.stack))
+      .finally(() => updateLoading(false));
   }, [page]);
 
   return (

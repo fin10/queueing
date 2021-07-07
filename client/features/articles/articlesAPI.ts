@@ -1,6 +1,5 @@
 import axios from 'axios';
 import qs from 'qs';
-import { handleError } from '../../utils/errorUtils';
 
 export interface ArticleSummary {
   readonly id: string;
@@ -22,13 +21,9 @@ export interface ArticleList {
 }
 
 async function fetch(page: number) {
-  try {
-    const query = qs.stringify({ page });
-    const res = await axios.get<ArticleList>(`/api/article?${query}`);
-    return res.data;
-  } catch (err) {
-    handleError(err);
-  }
+  const query = qs.stringify({ page });
+  const res = await axios.get<ArticleList>(`/api/article?${query}`);
+  return res.data;
 }
 
 export default {
