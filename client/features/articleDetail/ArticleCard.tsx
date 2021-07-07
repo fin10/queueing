@@ -15,7 +15,7 @@ import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
 import { DislikeAction, LikeAction } from 'client/components/Action';
 import { ExpireTime } from 'client/components/ExpireTime';
-import ArticleDetailBody from './NoteBody';
+import ArticleDetailBody from './ArticleDetailBody';
 import { ArticleDetail } from './articleDetailAPI';
 
 const useStyles = makeStyles((theme: Theme) =>

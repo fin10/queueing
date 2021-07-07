@@ -13,7 +13,7 @@ import React from 'react';
 import { DislikeAction, LikeAction } from './Action';
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
-import ArticleDetailBody from 'client/features/articleDetail/NoteBody';
+import ArticleDetailBody from 'client/features/articleDetail/ArticleDetailBody';
 import { NoteWithBody } from 'client/types';
 import { ArticleBodyEntity } from 'client/features/articleDetail/articleDetailAPI';
 
