@@ -11,10 +11,11 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import { DislikeAction, LikeAction } from './Action';
-import { Resources } from '../resources/Resources';
-import { StringID } from '../resources/StringID';
-import NoteBody from './NoteBody';
-import { NoteWithBody } from '../types';
+import { Resources } from 'client/resources/Resources';
+import { StringID } from 'client/resources/StringID';
+import ArticleDetailBody from 'client/features/articleDetail/NoteBody';
+import { NoteWithBody } from 'client/types';
+import { ArticleBodyEntity } from 'client/features/articleDetail/articleDetailAPI';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -46,7 +47,7 @@ const CommentCard = (props: PropTypes): React.ReactElement => {
         <Typography gutterBottom variant="subtitle2" color="textSecondary">
           {note.user}
         </Typography>
-        <NoteBody body={note.body} />
+        <ArticleDetailBody body={(note.body as unknown) as ArticleBodyEntity[]} />
       </CardContent>
       <CardActions className={classes.actions}>
         <ButtonGroup size="small" color="primary">

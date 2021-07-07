@@ -1,6 +1,6 @@
 import { createStyles, Link, makeStyles, Typography } from '@material-ui/core';
-import { EntityType, NoteBodyEntity } from '../types';
 import React from 'react';
+import { ArticleBodyEntity, EntityType } from './articleDetailAPI';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -27,7 +27,7 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-const NoteBody = (props: { body: NoteBodyEntity[] }): React.ReactElement => {
+const ArticleDetailBody = (props: { body: ArticleBodyEntity[] }): React.ReactElement => {
   const { body } = props;
   const classes = useStyles();
 
@@ -67,4 +67,4 @@ const NoteBody = (props: { body: NoteBodyEntity[] }): React.ReactElement => {
   );
 };
 
-export default NoteBody;
+export default ArticleDetailBody;

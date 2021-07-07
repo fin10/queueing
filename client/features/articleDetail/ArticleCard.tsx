@@ -11,12 +11,12 @@ import {
   Theme,
   Typography,
 } from '@material-ui/core';
-import { Resources } from '../resources/Resources';
-import { StringID } from '../resources/StringID';
-import { NoteWithBody } from '../types';
-import { DislikeAction, LikeAction } from './Action';
-import { ExpireTime } from './ExpireTime';
-import NoteBody from './NoteBody';
+import { Resources } from 'client/resources/Resources';
+import { StringID } from 'client/resources/StringID';
+import { DislikeAction, LikeAction } from 'client/components/Action';
+import { ExpireTime } from 'client/components/ExpireTime';
+import ArticleDetailBody from './NoteBody';
+import { ArticleDetail } from './articleDetailAPI';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,12 +37,11 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface PropTypes {
-  readonly note: NoteWithBody;
-  readonly onActionClick: (action: string, id: string) => void;
+  readonly note: ArticleDetail;
+  readonly onActionClick?: (action: string, id: string) => void;
 }
 
-const ArticleCard = (props: PropTypes): React.ReactElement => {
-  const { note, onActionClick } = props;
+const ArticleCard = ({ note, onActionClick }: PropTypes): React.ReactElement => {
   const classes = useStyles();
 
   return (
@@ -59,11 +58,11 @@ const ArticleCard = (props: PropTypes): React.ReactElement => {
               <ExpireTime expireTime={note.expireTime} />
             </Typography>
           </div>
-          <NoteBody body={note.body} />
+          <ArticleDetailBody body={note.body} />
         </CardContent>
         <CardActions className={classes.actions}>
           <ButtonGroup size="small" color="primary">
-            <Button className={classes.button} onClick={() => onActionClick('REPORT', note.id)}>
+            <Button className={classes.button} onClick={() => onActionClick && onActionClick('REPORT', note.id)}>
               {Resources.getString(StringID.ACTION_REPORT)}
             </Button>
 
@@ -82,10 +81,10 @@ const ArticleCard = (props: PropTypes): React.ReactElement => {
               <DislikeAction dislikes={note.dislike} />
             </Button>
 
-            <Button className={classes.button} onClick={() => onActionClick('UPDATE', note.id)}>
+            <Button className={classes.button} onClick={() => onActionClick && onActionClick('UPDATE', note.id)}>
               {Resources.getString(StringID.ACTION_UPDATE)}
             </Button>
-            <Button className={classes.button} onClick={() => onActionClick('DELETE', note.id)}>
+            <Button className={classes.button} onClick={() => onActionClick && onActionClick('DELETE', note.id)}>
               {Resources.getString(StringID.ACTION_DELETE)}
             </Button>
           </ButtonGroup>

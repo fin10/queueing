@@ -5,16 +5,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { ArticleState, CommentState } from '../types';
-import ArticleCard from '../components/ArticleCard';
-import InputComment from '../components/InputComment';
-import CommentCard from '../components/CommentCard';
-import { dislikeArticle, fetchArticle, likeArticle, removeArticle } from '../redux/article';
-import { dislikeComment, fetchComments, likeComment } from '../redux/comment';
-import { Resources } from '../resources/Resources';
-import ConfirmDialog from '../components/ConfirmDialog';
-import ReportDialog from '../components/ReportDialog';
-import { StringID } from '../resources/StringID';
-import { postReport } from '../redux/report';
+import ArticleCard from 'client/features/articleDetail/ArticleCard';
+import InputComment from 'client/components/InputComment';
+import CommentCard from 'client/components/CommentCard';
+import { dislikeArticle, fetchArticle, likeArticle, removeArticle } from 'client/redux/article';
+import { dislikeComment, fetchComments, likeComment } from 'client/redux/comment';
+import { Resources } from 'client/resources/Resources';
+import ConfirmDialog from 'client/components/ConfirmDialog';
+import ReportDialog from 'client/components/ReportDialog';
+import { StringID } from 'client/resources/StringID';
+import { postReport } from 'client/redux/report';
+import { ArticleDetail } from 'client/features/articleDetail/articleDetailAPI';
 
 const ArticlePage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
@@ -92,7 +93,7 @@ const ArticlePage = (): React.ReactElement => {
 
   return (
     <>
-      <ArticleCard note={articleState.article} onActionClick={handleArticleAction} />
+      <ArticleCard note={(articleState.article as unknown) as ArticleDetail} onActionClick={handleArticleAction} />
 
       {commentState.comments.map((comment) => (
         <React.Fragment key={comment.id}>

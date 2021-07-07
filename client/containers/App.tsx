@@ -2,9 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Container, createStyles, makeStyles, Theme } from '@material-ui/core';
 import EditArticlePage from './EditArticlePage';
-import ArticleSummaryContainer from '../features/articleSummary/ArticleSummaryContainer';
-import ArticlePage from './ArticlePage';
-import Header from '../components/Header';
+import Header from 'client/components/Header';
+import ArticleSummaryContainer from 'client/features/articleSummary/ArticleSummaryContainer';
+import ArticleDetailContainer from 'client/features/articleDetail/ArticleDetailContainer';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,7 +29,7 @@ const App = (): React.ReactElement => {
               <EditArticlePage />
             </Route>
             <Route path="/article/:id">
-              <ArticlePage />
+              <ArticleDetailContainer />
             </Route>
             <Route path="/">
               <ArticleSummaryContainer />

@@ -21,6 +21,9 @@
     "test:cov": "jest --coverage",
     "test:e2e": "jest --config ./apps/webservice/test/jest-e2e.json"
   },
+  "alias": {
+    "client": "./client"
+  },
   "dependencies": {
     "@babel/runtime": "^7.12.5",
     "@casl/ability": "^5.2.2",
