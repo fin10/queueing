@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../app/store';
 import { CommentAction, LikeAction, DislikeAction } from '../../components/Action';
 import { ExpireTime } from '../../components/ExpireTime';
-import { selectArticleById } from './articleListSlice';
+import { selectArticleById } from './articlesSlice';
 
 interface PropTypes {
   readonly id: string;

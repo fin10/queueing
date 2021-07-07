@@ -21,7 +21,7 @@ export interface ArticleList {
   readonly notes: ArticleSummary[];
 }
 
-async function fetchArticles(page: number) {
+async function fetch(page: number) {
   try {
     const query = qs.stringify({ page });
     const res = await axios.get<ArticleList>(`/api/article?${query}`);
@@ -32,5 +32,5 @@ async function fetchArticles(page: number) {
 }
 
 export default {
-  fetchArticles,
+  fetch,
 };

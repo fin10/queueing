@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Container, createStyles, makeStyles, Theme } from '@material-ui/core';
 import EditArticlePage from './EditArticlePage';
-import ArticleListContainer from '../features/articleList/ArticleListContainer';
+import ArticlesContainer from '../features/articles/ArticlesContainer';
 import ArticlePage from './ArticlePage';
 import Header from '../components/Header';
 
@@ -32,7 +32,7 @@ const App = (): React.ReactElement => {
               <ArticlePage />
             </Route>
             <Route path="/">
-              <ArticleListContainer />
+              <ArticlesContainer />
             </Route>
           </Switch>
         </Router>

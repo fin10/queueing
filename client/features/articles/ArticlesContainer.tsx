@@ -9,7 +9,7 @@ import { Logger } from '../../utils/Logger';
 import ArticleListItem from './ArticleListItem';
 import { Resources } from '../../resources/Resources';
 import { StringID } from '../../resources/StringID';
-import { fetchArticles, selectArticleIds, selectTotalPages } from './articleListSlice';
+import { fetchArticles, selectArticleIds, selectTotalPages } from './articlesSlice';
 import { useAppDispatch } from '../../app/store';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -45,7 +45,7 @@ const parsePage = () => {
   return 1;
 };
 
-export default function ArticleListContainer() {
+export default function ArticlesContainer() {
   const classes = useStyles();
   const articleIds = useSelector(selectArticleIds);
   const totalPages = useSelector(selectTotalPages);
