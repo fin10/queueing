@@ -1,4 +1,4 @@
-export enum ActionName {
+export const enum ActionName {
   EMOTION = 'emotion',
   REPORT = 'report',
 }

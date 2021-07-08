@@ -8,7 +8,7 @@ import { NoteRemovedEvent } from '../note/events/note-removed.event';
 import { NoteService } from '../note/note.service';
 import { User } from '../user/schemas/user.schema';
 import { EmotionType } from './interfaces/emotion-type.interface';
-import { RawAction, RawActionDocument } from './schemas/raw-action.schema';
+import { Action, ActionDocument } from './schemas/action.schema';
 import { ReportType } from './interfaces/report-type.interface';
 import { ActionName } from './interfaces/action-name.enum';
 import { Locale } from '../localization/enums/locale.enum';
@@ -20,36 +20,40 @@ export class ActionService {
   private readonly logger = new Logger(ActionService.name);
 
   constructor(
-    @InjectModel(RawAction.name) private model: Model<RawActionDocument>,
+    @InjectModel(Action.name) private model: Model<ActionDocument>,
     private readonly noteService: NoteService,
     private readonly localization: LocalizationService,
   ) {}
 
-  async putEmotion(user: User, id: mongoose.Types.ObjectId, type: EmotionType) {
-    const note = await this.noteService.getNote(id);
-    if (!note) throw new NotFoundException(`Note not found with ${id}`);
+  async putEmotion(user: User, noteId: mongoose.Types.ObjectId, type: EmotionType) {
+    const note = await this.noteService.getNote(noteId);
+    if (!note) throw new NotFoundException(`Note not found with ${noteId}`);
 
-    const action = await this.model.findOne({ userId: user._id, name: ActionName.EMOTION, note: note._id });
+    const action = await this.model.findOne({ userId: user._id, name: ActionName.EMOTION, noteId: note._id });
     if (action) {
       if (action.type !== type) {
-        this.logger.debug(`Emotion type will be changed to ${type} from ${action.type} on ${id}`);
+        this.logger.debug(`Emotion type will be changed to ${type} from ${action.type} on ${noteId}`);
         await action.updateOne({ type });
       }
     } else {
-      await this.model.create({ userId: user._id, name: ActionName.EMOTION, type, note: note._id });
+      await this.model.create({ userId: user._id, name: ActionName.EMOTION, type, noteId: note._id });
     }
 
-    return this.getEmotions(id);
+    return this.getEmotionCounts(noteId);
   }
 
-  async getEmotions(id: mongoose.Types.ObjectId) {
-    const likes = await this.model.count({ note: id, name: ActionName.EMOTION, type: EmotionType.LIKE });
-    const dislikes = await this.model.count({ note: id, name: ActionName.EMOTION, type: EmotionType.DISLIKE });
+  async getEmotionCounts(noteId: mongoose.Types.ObjectId) {
+    const likes: number = await this.model.count({ noteId, name: ActionName.EMOTION, type: EmotionType.LIKE });
+    const dislikes: number = await this.model.count({
+      noteId,
+      name: ActionName.EMOTION,
+      type: EmotionType.DISLIKE,
+    });
 
     return { likes, dislikes };
   }
 
-  async getAction(id: mongoose.Types.ObjectId): Promise<RawAction> {
+  async getAction(id: mongoose.Types.ObjectId): Promise<ActionDocument> {
     return this.model.findById(id).lean();
   }
 
@@ -57,7 +61,7 @@ export class ActionService {
     const note = await this.noteService.getNote(id);
     if (!note) throw new NotFoundException();
 
-    const action = await this.model.findOne({ userId: user._id, name: ActionName.REPORT, note: note._id });
+    const action = await this.model.findOne({ userId: user._id, name: ActionName.REPORT, noteId: note._id });
     if (action) throw new BadRequestException('Already reported');
 
     await this.model.create({ userId: user._id, name: ActionName.REPORT, type, note: note._id });
@@ -73,7 +77,7 @@ export class ActionService {
   @OnEvent(NoteRemovedEvent.name, { nextTick: true })
   async onNoteRemoved(event: NoteRemovedEvent): Promise<void> {
     const start = moment();
-    const result = await this.model.deleteMany({ note: event.getId() });
+    const result = await this.model.deleteMany({ noteId: event.getId() });
     if (result.n) {
       this.logger.debug(`Removed actions (${result.n}) with ${event.getId()} in ${moment().diff(start, 'ms')}ms`);
     }

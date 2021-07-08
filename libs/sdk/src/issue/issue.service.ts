@@ -8,7 +8,7 @@ import { NoteBodyService } from '../note/note-body.service';
 import { NoteService } from '../note/note.service';
 import { RawNote } from '../note/schemas/raw-note.schema';
 import { JiraService } from '../jira/jira.service';
-import { RawAction } from '../action/schemas/raw-action.schema';
+import { Action } from '../action/schemas/action.schema';
 import { ActionService } from '../action/action.service';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class IssueService {
     private readonly jiraService: JiraService,
   ) {}
 
-  async postIssue(action: RawAction, note: RawNote, entities: NoteBodyEntity[]): Promise<void> {
+  async postIssue(action: Action, note: RawNote, entities: NoteBodyEntity[]): Promise<void> {
     let issueId = await this.findIssue(note);
     if (issueId) {
       await this.updateIssue(issueId, action);
@@ -43,8 +43,8 @@ export class IssueService {
       const action = await this.actionService.getAction(event.id);
       if (!action) throw new NotFoundException(`Action not found with: ${event.id}`);
 
-      const note = await this.noteService.getNote(action.note);
-      if (!note) throw new NotFoundException(`Note not found with ${action.note}`);
+      const note = await this.noteService.getNote(action.noteId);
+      if (!note) throw new NotFoundException(`Note not found with ${action.noteId}`);
 
       const body = await this.noteBodyService.get(note._id);
       if (!body) throw new NotFoundException(`${note._id} has been expired.`);
@@ -61,7 +61,7 @@ export class IssueService {
     return id;
   }
 
-  private createIssue(action: RawAction, note: RawNote, entities: NoteBodyEntity[]) {
+  private createIssue(action: Action, note: RawNote, entities: NoteBodyEntity[]) {
     const summary = `[${note._id}] ${note.title || 'empty title'}`;
     const description = _.pairs({
       title: `${note.title || 'empty title'}`,
@@ -85,12 +85,12 @@ export class IssueService {
     return this.jiraService.createIssue('Report', summary, description, labels);
   }
 
-  private updateIssue(issueId: string, action: RawAction) {
+  private updateIssue(issueId: string, action: Action) {
     const label = `type:${action.type}`;
     return this.jiraService.addLabel(issueId, label);
   }
 
-  private addComment(issueId: string, action: RawAction) {
+  private addComment(issueId: string, action: Action) {
     const description = [`type: ${action.type}`, `reported by ${action.userId}`].join('\n');
     return this.jiraService.addComment(issueId, description);
   }

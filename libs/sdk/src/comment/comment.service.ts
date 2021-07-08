@@ -54,7 +54,7 @@ export class CommentService {
     }
 
     const profile = this.profileService.getProfile(rawNote.userId);
-    const { likes, dislikes } = await this.actionService.getEmotions(rawNote._id);
+    const { likes, dislikes } = await this.actionService.getEmotionCounts(rawNote._id);
 
     return Note.instantiate(profile, rawNote, 0, likes, dislikes, body);
   }
@@ -73,7 +73,7 @@ export class CommentService {
           }
 
           const profile = this.profileService.getProfile(rawNote.userId);
-          const { likes, dislikes } = await this.actionService.getEmotions(rawNote._id);
+          const { likes, dislikes } = await this.actionService.getEmotionCounts(rawNote._id);
 
           return Note.instantiate(profile, rawNote, 0, likes, dislikes, body);
         }),

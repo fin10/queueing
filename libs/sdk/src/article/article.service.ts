@@ -81,7 +81,7 @@ export class ArticleService {
   private async populate(rawNote: RawNote, body?: NoteBodyEntity[]): Promise<Note> {
     const profile = this.profileService.getProfile(rawNote.userId);
     const comments = await this.noteService.count({ parent: rawNote._id });
-    const { likes, dislikes } = await this.actionService.getEmotions(rawNote._id);
+    const { likes, dislikes } = await this.actionService.getEmotionCounts(rawNote._id);
 
     return Note.instantiate(profile, { ...rawNote }, comments, likes, dislikes, body);
   }
