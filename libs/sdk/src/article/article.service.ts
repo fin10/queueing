@@ -6,7 +6,6 @@ import { NoteService } from '../note/note.service';
 import { TopicService } from '../topic/topic.service';
 import { RawNote } from '../note/schemas/raw-note.schema';
 import { ActionService } from '../action/action.service';
-import { EmotionType } from '../action/interfaces/emotion-type.interface';
 import { User } from '../user/schemas/user.schema';
 import { ArticlesResponse } from './interfaces/articles-response.interface';
 import { NoteBodyEntity } from '../note/note-body.entity';
@@ -82,9 +81,8 @@ export class ArticleService {
   private async populate(rawNote: RawNote, body?: NoteBodyEntity[]): Promise<Note> {
     const profile = this.profileService.getProfile(rawNote.userId);
     const comments = await this.noteService.count({ parent: rawNote._id });
-    const like = await this.actionService.getEmotions(rawNote._id, EmotionType.LIKE);
-    const dislike = await this.actionService.getEmotions(rawNote._id, EmotionType.DISLIKE);
+    const { likes, dislikes } = await this.actionService.getEmotions(rawNote._id);
 
-    return Note.instantiate(profile, { ...rawNote }, comments, like, dislike, body);
+    return Note.instantiate(profile, { ...rawNote }, comments, likes, dislikes, body);
   }
 }

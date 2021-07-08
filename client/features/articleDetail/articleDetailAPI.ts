@@ -27,13 +27,9 @@ export interface ArticleDetail {
   readonly body: ArticleBodyEntity[];
 }
 
-export interface LikeActionResponse {
+export interface EmotionActionResponse {
   readonly id: string;
   readonly likes: number;
-}
-
-export interface DislikeActionResponse {
-  readonly id: string;
   readonly dislikes: number;
 }
 
@@ -43,12 +39,12 @@ async function fetch(id: string) {
 }
 
 async function like(id: string) {
-  const res = await axios.post<LikeActionResponse>(`/api/action/like/${id}`);
+  const res = await axios.post<EmotionActionResponse>(`/api/action/like/${id}`);
   return res.data;
 }
 
 async function dislike(id: string) {
-  const res = await axios.post<DislikeActionResponse>(`/api/action/dislike/${id}`);
+  const res = await axios.post<EmotionActionResponse>(`/api/action/dislike/${id}`);
   return res.data;
 }
 

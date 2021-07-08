@@ -8,7 +8,6 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { Note } from '../note/dto/note.dto';
 import { NoteRemovedEvent } from '../note/events/note-removed.event';
 import { ActionService } from '../action/action.service';
-import { EmotionType } from '../action/interfaces/emotion-type.interface';
 import { User } from '../user/schemas/user.schema';
 import { ProfileService } from '../profile/profile.service';
 import mongoose from 'mongoose';
@@ -55,10 +54,9 @@ export class CommentService {
     }
 
     const profile = this.profileService.getProfile(rawNote.userId);
-    const like = await this.actionService.getEmotions(rawNote._id, EmotionType.LIKE);
-    const dislike = await this.actionService.getEmotions(rawNote._id, EmotionType.DISLIKE);
+    const { likes, dislikes } = await this.actionService.getEmotions(rawNote._id);
 
-    return Note.instantiate(profile, rawNote, 0, like, dislike, body);
+    return Note.instantiate(profile, rawNote, 0, likes, dislikes, body);
   }
 
   async getComments(parentId: mongoose.Types.ObjectId): Promise<Note[]> {
@@ -75,10 +73,9 @@ export class CommentService {
           }
 
           const profile = this.profileService.getProfile(rawNote.userId);
-          const like = await this.actionService.getEmotions(rawNote._id, EmotionType.LIKE);
-          const dislike = await this.actionService.getEmotions(rawNote._id, EmotionType.DISLIKE);
+          const { likes, dislikes } = await this.actionService.getEmotions(rawNote._id);
 
-          return Note.instantiate(profile, rawNote, 0, like, dislike, body);
+          return Note.instantiate(profile, rawNote, 0, likes, dislikes, body);
         }),
       ),
     );

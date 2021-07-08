@@ -45,22 +45,18 @@ const articleDetailSlice = createSlice({
     builder.addCase(fetchArticleDetail.fulfilled, (state, action) => {
       state.byId[action.payload.id] = action.payload;
     });
-    builder.addCase(likeArticle.fulfilled, (state, action) => {
-      const article = state.byId[action.payload.id];
-      if (!article) {
-        Logger.warn(`Article Detail not loaded: ${action.payload.id}`);
-        return;
-      }
-      article.like = action.payload.likes;
-    });
-    builder.addCase(dislikeArticle.fulfilled, (state, action) => {
-      const article = state.byId[action.payload.id];
-      if (!article) {
-        Logger.warn(`Article Detail not loaded: ${action.payload.id}`);
-        return;
-      }
-      article.dislike = action.payload.dislikes;
-    });
+    builder.addMatcher(
+      (action) => action.type === likeArticle.fulfilled.type || action.type === dislikeArticle.fulfilled.type,
+      (state, action) => {
+        const article = state.byId[action.payload.id];
+        if (!article) {
+          Logger.warn(`Article Detail not loaded: ${action.payload.id}`);
+          return;
+        }
+        article.like = action.payload.likes;
+        article.dislike = action.payload.dislikes;
+      },
+    );
   },
 });
 

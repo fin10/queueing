@@ -17,15 +17,15 @@ export class ActionController {
   @Post('/like/:id')
   async like(@Req() req: Request, @Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId) {
     const user = req.user as User;
-    const likes = await this.action.putEmotion(user, id, EmotionType.LIKE);
-    return { id, likes };
+    const emotions = await this.action.putEmotion(user, id, EmotionType.LIKE);
+    return { id, ...emotions };
   }
 
   @Post('/dislike/:id')
   async dislike(@Req() req: Request, @Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId) {
     const user = req.user as User;
-    const dislikes = await this.action.putEmotion(user, id, EmotionType.DISLIKE);
-    return { id, dislikes };
+    const emotions = await this.action.putEmotion(user, id, EmotionType.DISLIKE);
+    return { id, ...emotions };
   }
 
   @Get('/report/types')

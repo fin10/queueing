@@ -39,11 +39,14 @@ export class ActionService {
       await this.model.create({ userId: user._id, name: ActionName.EMOTION, type, note: note._id });
     }
 
-    return this.getEmotions(id, type);
+    return this.getEmotions(id);
   }
 
-  async getEmotions(id: mongoose.Types.ObjectId, type: EmotionType): Promise<number> {
-    return this.model.count({ note: id, name: ActionName.EMOTION, type });
+  async getEmotions(id: mongoose.Types.ObjectId) {
+    const likes = await this.model.count({ note: id, name: ActionName.EMOTION, type: EmotionType.LIKE });
+    const dislikes = await this.model.count({ note: id, name: ActionName.EMOTION, type: EmotionType.DISLIKE });
+
+    return { likes, dislikes };
   }
 
   async getAction(id: mongoose.Types.ObjectId): Promise<RawAction> {
