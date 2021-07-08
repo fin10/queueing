@@ -15,7 +15,6 @@ import ConfirmDialog from 'client/components/ConfirmDialog';
 import ReportDialog from 'client/components/ReportDialog';
 import { StringID } from 'client/resources/StringID';
 import { postReport } from 'client/redux/report';
-import { ArticleDetail } from 'client/features/articleDetail/articleDetailAPI';
 
 const ArticlePage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
