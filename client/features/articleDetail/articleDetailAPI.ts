@@ -32,6 +32,11 @@ export interface LikeActionResponse {
   readonly likes: number;
 }
 
+export interface DislikeActionResponse {
+  readonly id: string;
+  readonly dislikes: number;
+}
+
 async function fetch(id: string) {
   const res = await axios.get<ArticleDetail>(`/api/article/${id}`);
   return res.data;
@@ -42,7 +47,13 @@ async function like(id: string) {
   return res.data;
 }
 
+async function dislike(id: string) {
+  const res = await axios.post<DislikeActionResponse>(`/api/action/dislike/${id}`);
+  return res.data;
+}
+
 export default {
   fetch,
   like,
+  dislike,
 };

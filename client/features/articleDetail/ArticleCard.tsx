@@ -18,7 +18,7 @@ import { ExpireTime } from 'client/components/ExpireTime';
 import ArticleDetailBody from './ArticleDetailBody';
 import { RootState, useAppDispatch } from 'client/app/store';
 import { useSelector } from 'react-redux';
-import { likeArticle, selectArticleDetailById } from './articleDetailSlice';
+import { dislikeArticle, likeArticle, selectArticleDetailById } from './articleDetailSlice';
 import { AsyncThunkAction, unwrapResult } from '@reduxjs/toolkit';
 import { Logger } from 'client/utils/Logger';
 
@@ -68,14 +68,15 @@ export default function ArticleCard({ id }: PropTypes): React.ReactElement {
         action = likeArticle(id);
         break;
       case ActionType.DISLIKE:
+        action = dislikeArticle(id);
         break;
       case ActionType.UPDATE:
         break;
       case ActionType.DELETE:
         break;
+      default:
+        throw new Error(`Not supported action type: ${elm.currentTarget.id}`);
     }
-
-    if (!action) return;
 
     dispatch(action)
       .then(unwrapResult)

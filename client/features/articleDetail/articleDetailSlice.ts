@@ -25,6 +25,14 @@ export const likeArticle = createAsyncThunk(`${ACTION_NAME}/like`, async (id: st
   }
 });
 
+export const dislikeArticle = createAsyncThunk(`${ACTION_NAME}/dislike`, async (id: string, { rejectWithValue }) => {
+  try {
+    return await articleDetailAPI.dislike(id);
+  } catch (err) {
+    return rejectWithValue(err);
+  }
+});
+
 const initialState: ArticleDetailState = {
   byId: {},
 };
@@ -44,6 +52,14 @@ const articleDetailSlice = createSlice({
         return;
       }
       article.like = action.payload.likes;
+    });
+    builder.addCase(dislikeArticle.fulfilled, (state, action) => {
+      const article = state.byId[action.payload.id];
+      if (!article) {
+        Logger.warn(`Article Detail not loaded: ${action.payload.id}`);
+        return;
+      }
+      article.dislike = action.payload.dislikes;
     });
   },
 });
