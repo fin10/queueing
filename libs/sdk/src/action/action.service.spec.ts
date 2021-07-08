@@ -6,7 +6,7 @@ import LocalizationService from '../localization/localization.service';
 import { NoteService } from '../note/note.service';
 import { User } from '../user/schemas/user.schema';
 import { ActionService } from './action.service';
-import { EmotionType } from './interfaces/emotion-type.interface';
+import { EmotionType } from './enums/emotion-type.enum';
 import { Action, ActionSchema } from './schemas/action.schema';
 
 describe(ActionService.name, () => {

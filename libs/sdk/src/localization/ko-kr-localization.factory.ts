@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ReportType } from '../action/interfaces/report-type.interface';
+import { ReportType } from '../action/enums/report-type.enum';
 import { Restriction } from '../user/restriction';
 import { EnumFactory } from './interfaces/enum.factory';
 import { MessageFactory } from './interfaces/message.factory';

@@ -1,4 +1,4 @@
-import { ReportType } from '@lib/sdk/action/interfaces/report-type.interface';
+import { ReportType } from '@lib/sdk/action/enums/report-type.enum';
 import { BadRequestException } from '@nestjs/common';
 import { Transform } from 'class-transformer';
 import { ArrayNotEmpty, IsEnum, IsNotEmpty } from 'class-validator';

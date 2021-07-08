@@ -2,7 +2,7 @@ import _ from 'underscore';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ActionCreatedEvent } from '../action/events/action-created.event';
-import { ActionName } from '../action/interfaces/action-name.enum';
+import { ActionName } from '../action/enums/action-name.enum';
 import { NoteBodyEntity } from '../note/note-body.entity';
 import { NoteBodyService } from '../note/note-body.service';
 import { NoteService } from '../note/note.service';
