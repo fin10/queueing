@@ -32,7 +32,7 @@ export class ActionService {
     const action = await this.model.findOne({ userId: user._id, name: ActionName.EMOTION, noteId: note._id });
     if (action) {
       if (action.type !== type) {
-        this.logger.debug(`Emotion type will be changed to ${type} from ${action.type} on ${noteId}`);
+        this.logger.debug(`Emotion type will be changed to ${type} from ${action.type} on note(${noteId})`);
         await action.updateOne({ type });
       }
     } else {
