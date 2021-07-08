@@ -93,7 +93,7 @@ const ArticlePage = (): React.ReactElement => {
 
   return (
     <>
-      <ArticleCard note={(articleState.article as unknown) as ArticleDetail} onActionClick={handleArticleAction} />
+      <ArticleCard id={id} />
 
       {commentState.comments.map((comment) => (
         <React.Fragment key={comment.id}>

@@ -3,15 +3,14 @@ import { Alert } from '@material-ui/lab';
 import { unwrapResult } from '@reduxjs/toolkit';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
 import ArticleCard from 'client/features/articleDetail/ArticleCard';
 import ConfirmDialog from 'client/components/ConfirmDialog';
 import InputComment from 'client/components/InputComment';
 import ReportDialog from 'client/components/ReportDialog';
-import { fetchArticleDetail, selectArticleDetailById } from './articleDetailSlice';
-import { RootState, useAppDispatch } from 'client/app/store';
+import { fetchArticleDetail } from './articleDetailSlice';
+import { useAppDispatch } from 'client/app/store';
 import { Logger } from 'client/utils/Logger';
 
 export default function ArticleDetailContainer() {
@@ -22,7 +21,6 @@ export default function ArticleDetailContainer() {
   const [isAlertOpened, openAlert] = useState(false);
   const [, updateLoading] = useState(false);
 
-  const article = useSelector((state: RootState) => selectArticleDetailById(state, id));
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -33,17 +31,13 @@ export default function ArticleDetailContainer() {
       .finally(() => updateLoading(false));
   }, [dispatch]);
 
-  if (!article) {
-    return <div />;
-  }
-
   const dummyFunction = () => {
     return;
   };
 
   return (
     <>
-      <ArticleCard note={article} />
+      <ArticleCard id={id} />
 
       <InputComment parentId={id} />
 

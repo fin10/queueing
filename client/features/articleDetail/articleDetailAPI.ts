@@ -27,11 +27,22 @@ export interface ArticleDetail {
   readonly body: ArticleBodyEntity[];
 }
 
+export interface LikeActionResponse {
+  readonly id: string;
+  readonly like: number;
+}
+
 async function fetch(id: string) {
   const res = await axios.get<ArticleDetail>(`/api/article/${id}`);
   return res.data;
 }
 
+async function like(id: string) {
+  const res = await axios.get<LikeActionResponse>(`/api/action/like/${id}`);
+  return res.data;
+}
+
 export default {
   fetch,
+  like,
 };
