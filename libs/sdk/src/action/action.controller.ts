@@ -15,15 +15,17 @@ export class ActionController {
   constructor(private readonly action: ActionService) {}
 
   @Post('/like/:id')
-  async like(@Req() req: Request, @Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId): Promise<void> {
+  async like(@Req() req: Request, @Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId) {
     const user = req.user as User;
-    return this.action.putEmotion(user, id, EmotionType.LIKE);
+    const likes = await this.action.putEmotion(user, id, EmotionType.LIKE);
+    return { id, likes };
   }
 
   @Post('/dislike/:id')
-  async dislike(@Req() req: Request, @Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId): Promise<void> {
+  async dislike(@Req() req: Request, @Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId) {
     const user = req.user as User;
-    return this.action.putEmotion(user, id, EmotionType.DISLIKE);
+    const dislikes = await this.action.putEmotion(user, id, EmotionType.DISLIKE);
+    return { id, dislikes };
   }
 
   @Get('/report/types')

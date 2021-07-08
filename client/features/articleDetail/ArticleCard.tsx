@@ -40,16 +40,16 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface PropTypes {
-  readonly id: string;
-}
-
 const enum ActionType {
   REPORT = 'action-type-report',
   LIKE = 'action-type-like',
   DISLIKE = 'action-type-dislike',
   UPDATE = 'action-type-update',
   DELETE = 'action-type-delete',
+}
+
+interface PropTypes {
+  readonly id: string;
 }
 
 export default function ArticleCard({ id }: PropTypes): React.ReactElement {
@@ -81,6 +81,8 @@ export default function ArticleCard({ id }: PropTypes): React.ReactElement {
       .then(unwrapResult)
       .catch((err) => Logger.error(err));
   };
+
+  if (!article) return <div />;
 
   return (
     <>

@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { BadRequestException, ForbiddenException, Logger } from '@nestjs/common';
+import { BadRequestException, Logger } from '@nestjs/common';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
@@ -25,21 +25,25 @@ export class ActionService {
     private readonly localization: LocalizationService,
   ) {}
 
-  async putEmotion(user: User, id: mongoose.Types.ObjectId, type: EmotionType): Promise<void> {
+  async putEmotion(user: User, id: mongoose.Types.ObjectId, type: EmotionType) {
     const note = await this.noteService.getNote(id);
-    if (!note) throw new NotFoundException();
+    if (!note) throw new NotFoundException(`Note not found with ${id}`);
 
-    const action = await this.model.findOne({ name: ActionName.EMOTION, note: note._id });
+    const action = await this.model.findOne({ userId: user._id, name: ActionName.EMOTION, note: note._id });
     if (action) {
-      if (!action.userId.equals(user._id)) throw new ForbiddenException();
-      if (action.type !== type) await action.updateOne({ type });
+      if (action.type !== type) {
+        this.logger.debug(`Emotion type will be changed to ${type} from ${action.type} on ${id}`);
+        await action.updateOne({ type });
+      }
     } else {
       await this.model.create({ userId: user._id, name: ActionName.EMOTION, type, note: note._id });
     }
+
+    return this.getEmotions(id, type);
   }
 
   async getEmotions(id: mongoose.Types.ObjectId, type: EmotionType): Promise<number> {
-    return this.model.find({ note: id, name: ActionName.EMOTION, type }).countDocuments();
+    return this.model.count({ note: id, name: ActionName.EMOTION, type });
   }
 
   async getAction(id: mongoose.Types.ObjectId): Promise<RawAction> {

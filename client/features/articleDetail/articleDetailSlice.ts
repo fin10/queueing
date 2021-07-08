@@ -43,7 +43,7 @@ const articleDetailSlice = createSlice({
         Logger.warn(`Article Detail not loaded: ${action.payload.id}`);
         return;
       }
-      article.like = action.payload.like;
+      article.like = action.payload.likes;
     });
   },
 });

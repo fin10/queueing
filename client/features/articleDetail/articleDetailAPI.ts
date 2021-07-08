@@ -29,7 +29,7 @@ export interface ArticleDetail {
 
 export interface LikeActionResponse {
   readonly id: string;
-  readonly like: number;
+  readonly likes: number;
 }
 
 async function fetch(id: string) {
@@ -38,7 +38,7 @@ async function fetch(id: string) {
 }
 
 async function like(id: string) {
-  const res = await axios.get<LikeActionResponse>(`/api/action/like/${id}`);
+  const res = await axios.post<LikeActionResponse>(`/api/action/like/${id}`);
   return res.data;
 }
 
