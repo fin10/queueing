@@ -31,9 +31,11 @@ export class ArticleController {
 
   @UseGuards(UserAuthGuard)
   @Delete(':id')
-  remove(@Req() req: Request, @Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId): Promise<void> {
+  async remove(@Req() req: Request, @Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId) {
     const user = req.user as User;
-    return this.service.remove(user, id);
+    await this.service.remove(user, id);
+
+    return { id };
   }
 
   @Get(':id')
