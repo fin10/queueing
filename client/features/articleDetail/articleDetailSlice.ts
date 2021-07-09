@@ -17,6 +17,14 @@ export const fetchArticleDetail = createAsyncThunk(`${ACTION_NAME}/fetch`, async
   }
 });
 
+export const removeArticle = createAsyncThunk(`${ACTION_NAME}/remove`, async (id: string, { rejectWithValue }) => {
+  try {
+    return await articleDetailAPI.remove(id);
+  } catch (err) {
+    return rejectWithValue(err.message);
+  }
+});
+
 export const likeArticle = createAsyncThunk(`${ACTION_NAME}/like`, async (id: string, { rejectWithValue }) => {
   try {
     return await articleDetailAPI.like(id);
@@ -44,6 +52,13 @@ const articleDetailSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchArticleDetail.fulfilled, (state, action) => {
       state.byId[action.payload.id] = action.payload;
+    });
+    builder.addCase(removeArticle.fulfilled, (state, action) => {
+      if (!state.byId[action.payload.id]) {
+        Logger.warn(`Article Detail not loaded: ${action.payload.id}`);
+        return;
+      }
+      delete state.byId[action.payload.id];
     });
     builder.addMatcher(
       (action) => action.type === likeArticle.fulfilled.type || action.type === dislikeArticle.fulfilled.type,

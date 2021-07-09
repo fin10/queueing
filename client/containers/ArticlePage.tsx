@@ -11,7 +11,7 @@ import CommentCard from 'client/components/CommentCard';
 import { dislikeArticle, fetchArticle, likeArticle, removeArticle } from 'client/redux/article';
 import { dislikeComment, fetchComments, likeComment } from 'client/redux/comment';
 import { Resources } from 'client/resources/Resources';
-import ConfirmDialog from 'client/components/ConfirmDialog';
+import ConfirmDialog from 'client/common/ConfirmDialog';
 import ReportDialog from 'client/components/ReportDialog';
 import { StringID } from 'client/resources/StringID';
 import { postReport } from 'client/redux/report';

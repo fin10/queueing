@@ -1,4 +1,7 @@
 import axios from 'axios';
+import { Resources } from 'client/resources/Resources';
+import { StringID } from 'client/resources/StringID';
+import { StatusCodes } from 'http-status-codes';
 
 export const enum EntityType {
   STRING = 'string',
@@ -27,8 +30,11 @@ export interface ArticleDetail {
   readonly body: ArticleBodyEntity[];
 }
 
-export interface EmotionActionResponse {
+export interface ActionResponse {
   readonly id: string;
+}
+
+export interface EmotionActionResponse extends ActionResponse {
   readonly likes: number;
   readonly dislikes: number;
 }
@@ -36,6 +42,21 @@ export interface EmotionActionResponse {
 async function fetch(id: string) {
   const res = await axios.get<ArticleDetail>(`/api/article/${id}`);
   return res.data;
+}
+
+async function remove(id: string) {
+  try {
+    const res = await axios.delete<ActionResponse>(`/api/article/${id}`);
+    return res.data;
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      switch (err.response.status) {
+        case StatusCodes.FORBIDDEN:
+          throw new Error(Resources.getString(StringID.ERROR_FORBIDDEN_TO_REMOVE_ARTICLE));
+      }
+    }
+    throw err;
+  }
 }
 
 async function like(id: string) {
@@ -50,6 +71,7 @@ async function dislike(id: string) {
 
 export default {
   fetch,
+  remove,
   like,
   dislike,
 };

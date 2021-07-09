@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   ButtonGroup,
@@ -13,13 +13,14 @@ import {
 } from '@material-ui/core';
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
+import ConfirmDialog from 'client/common/ConfirmDialog';
 import { DislikeAction, LikeAction } from 'client/components/Action';
 import { ExpireTime } from 'client/components/ExpireTime';
 import ArticleDetailBody from './ArticleDetailBody';
 import { RootState, useAppDispatch } from 'client/app/store';
 import { useSelector } from 'react-redux';
-import { dislikeArticle, likeArticle, selectArticleDetailById } from './articleDetailSlice';
-import { AsyncThunkAction, unwrapResult } from '@reduxjs/toolkit';
+import { dislikeArticle, likeArticle, removeArticle, selectArticleDetailById } from './articleDetailSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
 import { Logger } from 'client/utils/Logger';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -46,41 +47,48 @@ const enum ActionType {
   DISLIKE = 'action-type-dislike',
   UPDATE = 'action-type-update',
   DELETE = 'action-type-delete',
+  DELETE_CONFIRMED = 'action-type-delete-confirmed',
 }
 
 interface PropTypes {
   readonly id: string;
 }
 
-export default function ArticleCard({ id }: PropTypes): React.ReactElement {
+export default function ArticleCard({ id }: PropTypes) {
   const classes = useStyles();
   const dispatch = useAppDispatch();
+
+  const [isRemoveDialogOpened, openRemoveDialog] = useState(false);
 
   const article = useSelector((state: RootState) => selectArticleDetailById(state, id));
 
   const handlActionClick = (elm: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    let action: AsyncThunkAction<unknown, string, unknown> = null;
-
     switch (elm.currentTarget.id) {
       case ActionType.REPORT:
         break;
       case ActionType.LIKE:
-        action = likeArticle(id);
+        dispatch(likeArticle(id))
+          .then(unwrapResult)
+          .catch((err) => Logger.error(err));
         break;
       case ActionType.DISLIKE:
-        action = dislikeArticle(id);
+        dispatch(dislikeArticle(id))
+          .then(unwrapResult)
+          .catch((err) => Logger.error(err));
         break;
       case ActionType.UPDATE:
         break;
       case ActionType.DELETE:
+        openRemoveDialog(true);
+        break;
+      case ActionType.DELETE_CONFIRMED:
+        dispatch(removeArticle(id))
+          .then(unwrapResult)
+          .catch((err) => Logger.error(err));
         break;
       default:
         throw new Error(`Not supported action type: ${elm.currentTarget.id}`);
     }
-
-    dispatch(action)
-      .then(unwrapResult)
-      .catch((err) => Logger.error(err));
   };
 
   if (!article) return <div />;
@@ -133,6 +141,15 @@ export default function ArticleCard({ id }: PropTypes): React.ReactElement {
           </ButtonGroup>
         </CardActions>
       </Card>
+
+      <ConfirmDialog
+        id={ActionType.DELETE_CONFIRMED}
+        open={isRemoveDialogOpened}
+        onClose={() => openRemoveDialog(false)}
+        contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_ARTICLE)}
+        positiveText={Resources.getString(StringID.ACTION_DELETE)}
+        onPositiveClick={handlActionClick}
+      />
     </>
   );
 }

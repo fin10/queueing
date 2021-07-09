@@ -4,16 +4,15 @@ import { StringID } from '../resources/StringID';
 import React from 'react';
 
 interface PropTypes {
-  open: boolean;
-  onClose: () => void;
-  contentText: string;
-  positiveText: string;
-  onPositiveClick: () => void;
+  readonly id?: string;
+  readonly open: boolean;
+  readonly onClose: () => void;
+  readonly contentText: string;
+  readonly positiveText: string;
+  readonly onPositiveClick?: (elm: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
-const ConfirmDialog = (props: PropTypes): React.ReactElement => {
-  const { open, onClose, contentText, positiveText, onPositiveClick } = props;
-
+export default function ConfirmDialog({ id, open, onClose, contentText, positiveText, onPositiveClick }: PropTypes) {
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
       <DialogContent>
@@ -23,12 +22,10 @@ const ConfirmDialog = (props: PropTypes): React.ReactElement => {
         <Button onClick={onClose} color="primary">
           {Resources.getString(StringID.ACTION_CANCEL)}
         </Button>
-        <Button onClick={() => onPositiveClick()} color="primary" autoFocus>
+        <Button id={id} onClick={onPositiveClick} color="primary" autoFocus>
           {positiveText}
         </Button>
       </DialogActions>
     </Dialog>
   );
-};
-
-export default ConfirmDialog;
+}
