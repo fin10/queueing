@@ -1,6 +1,5 @@
 import { CircularProgress, Button } from '@material-ui/core';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { Logger } from '@nestjs/common';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
@@ -9,6 +8,7 @@ import { StringID } from '../../resources/StringID';
 import { selectProfile, getProfile } from './profileSlice';
 import LoginDialog from './LoginDialog';
 import ProfileMenu from './ProfileMenu';
+import { Logger } from 'client/utils/Logger';
 
 export function Profile() {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
