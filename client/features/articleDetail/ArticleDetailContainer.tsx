@@ -17,16 +17,13 @@ export default function ArticleDetailContainer() {
 
   const [isReportDialogOpened, openReportDialog] = useState(false);
   const [isAlertOpened, openAlert] = useState(false);
-  const [, updateLoading] = useState(false);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    updateLoading(true);
     dispatch(fetchArticleDetail(id))
       .then(unwrapResult)
-      .catch((err) => Logger.error(err))
-      .finally(() => updateLoading(false));
+      .catch((err) => Logger.error(err));
   }, [dispatch]);
 
   const dummyFunction = () => {
