@@ -22,6 +22,7 @@ import { useSelector } from 'react-redux';
 import { dislikeArticle, likeArticle, removeArticle, selectArticleDetailById } from './articleDetailSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { Logger } from 'client/utils/Logger';
+import ErrorDialog from 'client/common/ErrorDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -58,6 +59,7 @@ export default function ArticleCard({ id }: PropTypes) {
   const classes = useStyles();
   const dispatch = useAppDispatch();
 
+  const [errorDialogState, setErrorDialogState] = useState<{ open: boolean; message?: string }>({ open: false });
   const [isRemoveDialogOpened, openRemoveDialog] = useState(false);
 
   const article = useSelector((state: RootState) => selectArticleDetailById(state, id));
@@ -84,7 +86,8 @@ export default function ArticleCard({ id }: PropTypes) {
       case ActionType.DELETE_CONFIRMED:
         dispatch(removeArticle(id))
           .then(unwrapResult)
-          .catch((err) => Logger.error(err));
+          .catch((rejectedValue) => setErrorDialogState({ open: true, message: rejectedValue }))
+          .finally(() => openRemoveDialog(false));
         break;
       default:
         throw new Error(`Not supported action type: ${elm.currentTarget.id}`);
@@ -149,6 +152,12 @@ export default function ArticleCard({ id }: PropTypes) {
         contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_ARTICLE)}
         positiveText={Resources.getString(StringID.ACTION_DELETE)}
         onPositiveClick={handlActionClick}
+      />
+
+      <ErrorDialog
+        open={errorDialogState.open}
+        onClose={() => setErrorDialogState({ open: false })}
+        errorMessage={errorDialogState.message}
       />
     </>
   );
