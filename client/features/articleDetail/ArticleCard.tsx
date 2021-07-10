@@ -89,8 +89,10 @@ export default function ArticleCard({ id }: PropTypes) {
         dispatch(removeArticle(id))
           .then(unwrapResult)
           .then(() => history.push('/'))
-          .catch((rejectedValue) => setErrorDialogState({ open: true, message: rejectedValue }))
-          .finally(() => openRemoveDialog(false));
+          .catch((rejectedValue) => {
+            openRemoveDialog(false);
+            setErrorDialogState({ open: true, message: rejectedValue });
+          });
         break;
       default:
         throw new Error(`Not supported action type: ${elm.currentTarget.id}`);
