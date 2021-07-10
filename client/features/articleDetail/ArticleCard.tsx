@@ -23,6 +23,7 @@ import { dislikeArticle, likeArticle, removeArticle, selectArticleDetailById } f
 import { unwrapResult } from '@reduxjs/toolkit';
 import { Logger } from 'client/utils/Logger';
 import ErrorDialog from 'client/common/ErrorDialog';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -57,6 +58,7 @@ interface PropTypes {
 
 export default function ArticleCard({ id }: PropTypes) {
   const classes = useStyles();
+  const history = useHistory();
   const dispatch = useAppDispatch();
 
   const [errorDialogState, setErrorDialogState] = useState<{ open: boolean; message?: string }>({ open: false });
@@ -86,6 +88,7 @@ export default function ArticleCard({ id }: PropTypes) {
       case ActionType.DELETE_CONFIRMED:
         dispatch(removeArticle(id))
           .then(unwrapResult)
+          .then(() => history.push('/'))
           .catch((rejectedValue) => setErrorDialogState({ open: true, message: rejectedValue }))
           .finally(() => openRemoveDialog(false));
         break;
