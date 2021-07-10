@@ -13,6 +13,7 @@ import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
 import { PoliciesGuard } from '../policy/policies.guard';
 import { CheckPolicies } from '../policy/decorators/check-policies.decorator';
 import { CreateNotePolicyHandler } from '../policy/handlers/create-policy.handler';
+import { DeleteNotePolicyHandler } from '../policy/handlers/delete--note-policy.handler';
 
 @Controller('article')
 export class ArticleController {
@@ -30,10 +31,11 @@ export class ArticleController {
   }
 
   @UseGuards(UserAuthGuard)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new DeleteNotePolicyHandler())
   @Delete(':id')
-  async remove(@Req() req: Request, @Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId) {
-    const user = req.user as User;
-    await this.service.remove(user, id);
+  async remove(@Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId) {
+    await this.service.remove(id);
 
     return { id };
   }

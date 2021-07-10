@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { NoteBodyService } from '../note/note-body.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { Note } from '../note/dto/note.dto';
@@ -45,10 +45,9 @@ export class ArticleService {
     return id;
   }
 
-  async remove(user: User, id: mongoose.Types.ObjectId): Promise<void> {
+  async remove(id: mongoose.Types.ObjectId): Promise<void> {
     const note = await this.noteService.getNote(id);
     if (!note) throw new NotFoundException();
-    if (!note.userId.equals(user._id)) throw new ForbiddenException();
 
     return this.noteService.remove(id);
   }

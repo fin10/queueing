@@ -22,7 +22,9 @@ export class CaslAbilityFactory {
   createForUser(user: User): Ability<[Action, Subjects]> {
     const { can, cannot, build } = new AbilityBuilder<Ability<[Action, Subjects]>>(Ability as AbilityClass<AppAbility>);
 
-    if (user.roles.includes(Role.Admin)) {
+    if (!user) {
+      can(Action.Read, 'all');
+    } else if (user.roles.includes(Role.Admin)) {
       can(Action.Manage, 'all');
     } else {
       can(Action.Create, 'all');
@@ -31,7 +33,7 @@ export class CaslAbilityFactory {
       can(Action.Delete, RawNote, { userId: user._id });
     }
 
-    if (user.restriction && moment.utc().isBefore(user.restriction.period)) {
+    if (user?.restriction && moment.utc().isBefore(user.restriction.period)) {
       cannot(Action.Create, 'all');
     }
 
