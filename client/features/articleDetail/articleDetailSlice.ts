@@ -17,6 +17,17 @@ export const fetchArticleDetail = createAsyncThunk(`${ACTION_NAME}/fetch`, async
   }
 });
 
+export const updateArticle = createAsyncThunk(
+  `${ACTION_NAME}/update`,
+  async (payload: { id: string; topic: string; title: string; body: string }, { rejectWithValue }) => {
+    try {
+      return await articleDetailAPI.update(payload.id, payload.topic, payload.title, payload.body);
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  },
+);
+
 export const removeArticle = createAsyncThunk(`${ACTION_NAME}/remove`, async (id: string, { rejectWithValue }) => {
   try {
     return await articleDetailAPI.remove(id);
@@ -51,6 +62,9 @@ const articleDetailSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchArticleDetail.fulfilled, (state, action) => {
+      state.byId[action.payload.id] = action.payload;
+    });
+    builder.addCase(updateArticle.fulfilled, (state, action) => {
       state.byId[action.payload.id] = action.payload;
     });
     builder.addCase(removeArticle.fulfilled, (state, action) => {

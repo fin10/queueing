@@ -23,7 +23,7 @@ export class ArticleController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies(new CreateNotePolicyHandler())
   @Post()
-  createOrUpdate(@Req() req: Request, @Body() data: CreateArticleDto): Promise<mongoose.Types.ObjectId> {
+  createOrUpdate(@Req() req: Request, @Body() data: CreateArticleDto) {
     const user = req.user as User;
 
     if (data.id) return this.service.update(user, data.id, data);

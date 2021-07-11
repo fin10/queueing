@@ -44,6 +44,21 @@ async function fetch(id: string) {
   return res.data;
 }
 
+async function update(id: string, topic: string, title: string, body: string) {
+  try {
+    const res = await axios.post<ArticleDetail>('/api/article', { id, topic, title, body });
+    return res.data;
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      switch (err.response.status) {
+        case StatusCodes.FORBIDDEN:
+          throw new Error(Resources.getString(StringID.ERROR_FORBIDDEN_TO_UPDATE_ARTICLE));
+      }
+    }
+    throw err;
+  }
+}
+
 async function remove(id: string) {
   try {
     const res = await axios.delete<ActionResponse>(`/api/article/${id}`);
@@ -71,6 +86,7 @@ async function dislike(id: string) {
 
 export default {
   fetch,
+  update,
   remove,
   like,
   dislike,

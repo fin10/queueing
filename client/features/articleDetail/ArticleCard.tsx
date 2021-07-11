@@ -24,6 +24,7 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { Logger } from 'client/utils/Logger';
 import ErrorDialog from 'client/common/ErrorDialog';
 import { useHistory } from 'react-router-dom';
+import qs from 'query-string';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -81,6 +82,7 @@ export default function ArticleCard({ id }: PropTypes) {
           .catch((err) => Logger.error(err));
         break;
       case ActionType.UPDATE:
+        history.push(`/article/new?${qs.stringify({ id })}`);
         break;
       case ActionType.DELETE:
         openRemoveDialog(true);

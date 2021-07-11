@@ -24,17 +24,17 @@ export class ArticleService {
     private readonly profileService: ProfileService,
   ) {}
 
-  async create(user: User, data: CreateArticleDto): Promise<mongoose.Types.ObjectId> {
+  async create(user: User, data: CreateArticleDto) {
     const { topic, title, body } = data;
 
     const rawTopic = await this.topicService.getOrCreate(user, topic);
     const id = await this.noteService.create(user, rawTopic.name, title);
     await this.bodyService.put(id, body);
 
-    return id;
+    return this.getArticle(id);
   }
 
-  async update(user: User, id: mongoose.Types.ObjectId, data: CreateArticleDto): Promise<mongoose.Types.ObjectId> {
+  async update(user: User, id: mongoose.Types.ObjectId, data: CreateArticleDto) {
     const { topic, title, body } = data;
 
     const rawTopic = await this.topicService.getOrCreate(user, topic);
@@ -42,7 +42,7 @@ export class ArticleService {
     await this.bodyService.remove(id);
     await this.bodyService.put(id, body);
 
-    return id;
+    return this.getArticle(id);
   }
 
   async remove(id: mongoose.Types.ObjectId): Promise<void> {

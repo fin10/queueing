@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Container, createStyles, makeStyles, Theme } from '@material-ui/core';
-import EditArticlePage from './EditArticlePage';
 import Header from 'client/components/Header';
 import ArticleSummaryContainer from 'client/features/articleSummary/ArticleSummaryContainer';
 import ArticleDetailContainer from 'client/features/articleDetail/ArticleDetailContainer';
+import EditArticleDetailContainer from 'client/features/articleDetail/EditArticleDetailContainer';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,7 +26,7 @@ const App = (): React.ReactElement => {
         <Router>
           <Switch>
             <Route exact path="/article/new">
-              <EditArticlePage />
+              <EditArticleDetailContainer />
             </Route>
             <Route path="/article/:id">
               <ArticleDetailContainer />
