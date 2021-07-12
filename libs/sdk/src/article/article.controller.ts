@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { Note } from '../note/dto/note.dto';
 import { ArticleService } from './article.service';
@@ -12,8 +12,10 @@ import mongoose from 'mongoose';
 import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
 import { PoliciesGuard } from '../policy/policies.guard';
 import { CheckPolicies } from '../policy/decorators/check-policies.decorator';
-import { CreateNotePolicyHandler } from '../policy/handlers/create-policy.handler';
-import { DeleteNotePolicyHandler } from '../policy/handlers/delete--note-policy.handler';
+import { CreateNotePolicyHandler } from '../policy/handlers/create-note-policy.handler';
+import { DeleteNotePolicyHandler } from '../policy/handlers/delete-note-policy.handler';
+import { UpdateNotePolicyHandler } from '../policy/handlers/update-policy.handler';
+import { UpdateArticleDto } from './dto/update-article.dto';
 
 @Controller('article')
 export class ArticleController {
@@ -23,11 +25,22 @@ export class ArticleController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies(new CreateNotePolicyHandler())
   @Post()
-  createOrUpdate(@Req() req: Request, @Body() data: CreateArticleDto) {
+  create(@Req() req: Request, @Body() dto: CreateArticleDto) {
     const user = req.user as User;
+    return this.service.create(user, dto);
+  }
 
-    if (data.id) return this.service.update(user, data.id, data);
-    return this.service.create(user, data);
+  @UseGuards(UserAuthGuard)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new UpdateNotePolicyHandler())
+  @Put(':id')
+  update(
+    @Req() req: Request,
+    @Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId,
+    @Body() dto: UpdateArticleDto,
+  ) {
+    const user = req.user as User;
+    return this.service.update(user, id, dto);
   }
 
   @UseGuards(UserAuthGuard)

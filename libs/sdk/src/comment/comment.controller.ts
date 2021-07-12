@@ -9,7 +9,7 @@ import mongoose from 'mongoose';
 import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
 import { PoliciesGuard } from '../policy/policies.guard';
 import { CheckPolicies } from '../policy/decorators/check-policies.decorator';
-import { CreateNotePolicyHandler } from '../policy/handlers/create-policy.handler';
+import { CreateNotePolicyHandler } from '../policy/handlers/create-note-policy.handler';
 
 @Controller('comment')
 export class CommentController {

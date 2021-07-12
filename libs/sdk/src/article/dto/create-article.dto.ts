@@ -1,18 +1,12 @@
-import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsOptional } from 'class-validator';
-import mongoose from 'mongoose';
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateArticleDto {
-  @IsOptional()
-  @Transform(({ value }) => value && mongoose.Types.ObjectId(value))
-  readonly id?: mongoose.Types.ObjectId;
+  @IsNotEmpty()
+  readonly topic: string;
 
   @IsNotEmpty()
-  readonly topic!: string;
+  readonly title: string;
 
   @IsNotEmpty()
-  readonly title!: string;
-
-  @IsNotEmpty()
-  readonly body!: string;
+  readonly body: string;
 }

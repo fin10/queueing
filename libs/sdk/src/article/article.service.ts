@@ -11,6 +11,7 @@ import { ArticlesResponse } from './interfaces/articles-response.interface';
 import { NoteBodyEntity } from '../note/note-body.entity';
 import { ProfileService } from '../profile/profile.service';
 import mongoose from 'mongoose';
+import { UpdateArticleDto } from './dto/update-article.dto';
 
 @Injectable()
 export class ArticleService {
@@ -24,9 +25,7 @@ export class ArticleService {
     private readonly profileService: ProfileService,
   ) {}
 
-  async create(user: User, data: CreateArticleDto) {
-    const { topic, title, body } = data;
-
+  async create(user: User, { topic, title, body }: CreateArticleDto) {
     const rawTopic = await this.topicService.getOrCreate(user, topic);
     const id = await this.noteService.create(user, rawTopic.name, title);
     await this.bodyService.put(id, body);
@@ -34,9 +33,7 @@ export class ArticleService {
     return this.getArticle(id);
   }
 
-  async update(user: User, id: mongoose.Types.ObjectId, data: CreateArticleDto) {
-    const { topic, title, body } = data;
-
+  async update(user: User, id: mongoose.Types.ObjectId, { topic, title, body }: UpdateArticleDto) {
     const rawTopic = await this.topicService.getOrCreate(user, topic);
     await this.noteService.update(id, rawTopic.name, title);
     await this.bodyService.remove(id);
