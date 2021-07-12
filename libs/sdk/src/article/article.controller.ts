@@ -1,14 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req } from '@nestjs/common';
-import { CreateArticleDto } from './dto/create-article.dto';
-import { Note } from '../note/dto/note.dto';
-import { ArticleService } from './article.service';
-import { UseGuards } from '@nestjs/common';
-import { UserAuthGuard } from '../user/user-auth.guard';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
-import { User } from '../user/schemas/user.schema';
-import { ArticlesResponse } from './interfaces/articles-response.interface';
-import { GetArticlesDto } from './dto/get-articles.dto';
 import mongoose from 'mongoose';
+import { CreateArticleDto } from './dto/create-article.dto';
+import { ArticleService } from './article.service';
+import { UserAuthGuard } from '../user/user-auth.guard';
+import { User } from '../user/schemas/user.schema';
+import { GetArticlesDto } from './dto/get-articles.dto';
 import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
 import { PoliciesGuard } from '../policy/policies.guard';
 import { CheckPolicies } from '../policy/decorators/check-policies.decorator';
@@ -54,12 +51,12 @@ export class ArticleController {
   }
 
   @Get(':id')
-  getNote(@Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId): Promise<Note> {
+  getArticleDetail(@Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId) {
     return this.service.getArticle(id);
   }
 
   @Get()
-  getNotes(@Query() query: GetArticlesDto): Promise<ArticlesResponse> {
+  getArticleSummaries(@Query() query: GetArticlesDto) {
     return this.service.getArticles(query.page, query.pageSize);
   }
 }
