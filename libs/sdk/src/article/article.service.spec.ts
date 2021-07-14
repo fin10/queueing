@@ -14,10 +14,15 @@ describe(ArticleService.name, () => {
   const mockTopicService = { getOrCreate: async () => undefined };
   const mockNoteService = {
     create: async () => undefined,
+    update: async () => undefined,
     getNote: async () => undefined,
     count: async () => undefined,
   };
-  const mockBodyService = { put: async () => undefined, get: async () => undefined };
+  const mockBodyService = {
+    put: async () => undefined,
+    get: async () => undefined,
+    remove: async () => undefined,
+  };
   const mockProfileService = { getProfile: async () => undefined };
   const mockActionService = { getEmotionCounts: async () => undefined };
 
@@ -55,5 +60,26 @@ describe(ArticleService.name, () => {
     expect(created.title).toBe(data.title);
     expect(created.topic).toBe(data.topic);
     expect(created.body).toStrictEqual([data.body]);
+  });
+
+  it('update an article', async () => {
+    const user = {} as User;
+    const nickname = 'test-user';
+    const data = { title: 'updated-title', topic: 'updated-topic', body: 'updated-body' };
+    const noteId = new mongoose.Types.ObjectId();
+
+    jest.spyOn(mockTopicService, 'getOrCreate').mockResolvedValueOnce({ name: data.topic });
+    jest.spyOn(mockNoteService, 'create').mockResolvedValueOnce(new mongoose.Types.ObjectId());
+    jest.spyOn(mockNoteService, 'getNote').mockResolvedValueOnce({ _id: noteId, title: data.title, topic: data.topic });
+    jest.spyOn(mockNoteService, 'count').mockResolvedValueOnce(0);
+    jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
+    jest.spyOn(mockProfileService, 'getProfile').mockResolvedValueOnce({ name: nickname });
+    jest.spyOn(mockActionService, 'getEmotionCounts').mockResolvedValueOnce({ likes: 0, dislikes: 0 });
+
+    const updated = await service.update(user, noteId, data);
+    expect(updated.id).toBe(noteId);
+    expect(updated.title).toBe(data.title);
+    expect(updated.topic).toBe(data.topic);
+    expect(updated.body).toStrictEqual([data.body]);
   });
 });

@@ -29,9 +29,9 @@ export class ArticleService {
     return this.getArticle(id);
   }
 
-  async update(user: User, id: mongoose.Types.ObjectId, { topic, title, body }: UpdateArticleDto) {
-    const rawTopic = await this.topicService.getOrCreate(user, topic);
-    await this.noteService.update(id, rawTopic.name, title);
+  async update(user: User, id: mongoose.Types.ObjectId, { topic: topicName, title, body }: UpdateArticleDto) {
+    const topic = await this.topicService.getOrCreate(user, topicName);
+    await this.noteService.update(id, topic.name, title);
     await this.bodyService.remove(id);
     await this.bodyService.put(id, body);
 
