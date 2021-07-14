@@ -43,8 +43,8 @@ export class ActionService {
   }
 
   async getEmotionCounts(noteId: mongoose.Types.ObjectId) {
-    const likes: number = await this.model.count({ noteId, name: ActionName.EMOTION, type: EmotionType.LIKE });
-    const dislikes: number = await this.model.count({
+    const likes: number = await this.model.countDocuments({ noteId, name: ActionName.EMOTION, type: EmotionType.LIKE });
+    const dislikes: number = await this.model.countDocuments({
       noteId,
       name: ActionName.EMOTION,
       type: EmotionType.DISLIKE,
