@@ -48,10 +48,10 @@ export default function ArticleSummaryItem(props: PropTypes) {
                 <CommentAction comments={summary.children} />
               </span>
               <span className={classes.marginRight}>
-                <LikeAction likes={summary.like} />
+                <LikeAction likes={summary.likes} />
               </span>
               <span>
-                <DislikeAction dislikes={summary.dislike} />
+                <DislikeAction dislikes={summary.dislikes} />
               </span>
             </Grid>
 

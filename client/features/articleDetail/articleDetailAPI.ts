@@ -24,8 +24,8 @@ export interface ArticleDetail {
   readonly updated: Date;
   readonly expireTime: Date;
   readonly children: number;
-  readonly like: number;
-  readonly dislike: number;
+  readonly likes: number;
+  readonly dislikes: number;
   readonly user: string;
   readonly body: ArticleBodyEntity[];
 }

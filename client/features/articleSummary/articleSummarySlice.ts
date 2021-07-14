@@ -33,8 +33,8 @@ const articleSummarySlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchArticleSummaries.fulfilled, (state, action) => {
-      const ids = action.payload.notes.map(({ id }) => id);
-      state.byId = _.object(ids, action.payload.notes);
+      const ids = action.payload.summaries.map(({ id }) => id);
+      state.byId = _.object(ids, action.payload.summaries);
       state.allIds = ids;
       state.totalPages = action.payload.totalPages;
     });

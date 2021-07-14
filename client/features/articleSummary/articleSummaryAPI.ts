@@ -9,15 +9,15 @@ export interface ArticleSummary {
   readonly updated: Date;
   readonly expireTime: Date;
   readonly children: number;
-  readonly like: number;
-  readonly dislike: number;
+  readonly likes: number;
+  readonly dislikes: number;
   readonly user: string;
 }
 
 export interface ArticleSummaryResponse {
   readonly page: number;
   readonly totalPages: number;
-  readonly notes: ArticleSummary[];
+  readonly summaries: ArticleSummary[];
 }
 
 async function fetch(page: number) {

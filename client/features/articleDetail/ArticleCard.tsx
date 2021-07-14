@@ -131,7 +131,7 @@ export default function ArticleCard({ id }: PropTypes) {
               aria-label={Resources.getString(StringID.ACTION_LIKE)}
               onClick={handlActionClick}
             >
-              <LikeAction likes={article.like} />
+              <LikeAction likes={article.likes} />
             </Button>
             <Button
               id={ActionType.DISLIKE}
@@ -139,7 +139,7 @@ export default function ArticleCard({ id }: PropTypes) {
               aria-label={Resources.getString(StringID.ACTION_DISLIKE)}
               onClick={handlActionClick}
             >
-              <DislikeAction dislikes={article.dislike} />
+              <DislikeAction dislikes={article.dislikes} />
             </Button>
 
             <Button id={ActionType.UPDATE} className={classes.button} onClick={handlActionClick}>
