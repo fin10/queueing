@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import mongoose from 'mongoose';
 import { NoteBodyService } from '../note/note-body.service';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -13,8 +13,6 @@ import { ArticleSummary } from './interfaces/article-summary.interface';
 
 @Injectable()
 export class ArticleService {
-  private readonly logger = new Logger(ArticleService.name);
-
   constructor(
     private readonly topicService: TopicService,
     private readonly noteService: NoteService,
@@ -23,9 +21,9 @@ export class ArticleService {
     private readonly profileService: ProfileService,
   ) {}
 
-  async create(user: User, { topic, title, body }: CreateArticleDto) {
-    const rawTopic = await this.topicService.getOrCreate(user, topic);
-    const id = await this.noteService.create(user, rawTopic.name, title);
+  async create(user: User, { topic: topicName, title, body }: CreateArticleDto) {
+    const topic = await this.topicService.getOrCreate(user, topicName);
+    const id = await this.noteService.create(user, topic.name, title);
     await this.bodyService.put(id, body);
 
     return this.getArticle(id);
