@@ -4,12 +4,12 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { TextField, Button } from '@material-ui/core';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useAppDispatch } from 'client/app/store';
-import { fetchArticleDetail, updateArticle } from './articleDetailSlice';
-import { Logger } from 'client/utils/Logger';
+import { createArticle, fetchArticleDetail, updateArticle } from './articleDetailSlice';
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
 import InputTopic from 'client/components/InputTopic';
 import { ArticleBodyEntity } from './articleDetailAPI';
+import ErrorDialog from 'client/common/ErrorDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,6 +31,7 @@ export default function EditArticleDetailContainer() {
   const [title, updateTitle] = useState('');
   const [topic, updateTopic] = useState('');
   const [body, updateBody] = useState('');
+  const [errorDialogState, setErrorDialogState] = useState<{ open: boolean; message?: string }>({ open: false });
 
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -44,7 +45,7 @@ export default function EditArticleDetailContainer() {
           updateTopic(article.topic);
           updateBody(convertArticleBodyToString(article.body));
         })
-        .catch((err) => Logger.error(err));
+        .catch((rejectedValue) => setErrorDialogState({ open: true, message: rejectedValue }));
     }, [dispatch]);
   }
 
@@ -66,10 +67,12 @@ export default function EditArticleDetailContainer() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    dispatch(updateArticle({ id, topic, title, body }))
+    const action = id ? updateArticle({ id, topic, title, body }) : createArticle({ topic, title, body });
+
+    dispatch(action)
       .then(unwrapResult)
       .then((updated) => history.push(`/article/${updated.id}`))
-      .catch((err) => Logger.error(err));
+      .catch((rejectedValue) => setErrorDialogState({ open: true, message: rejectedValue }));
   };
 
   return (
@@ -101,6 +104,12 @@ export default function EditArticleDetailContainer() {
       <Button variant="contained" size="large" color="primary" type="submit" fullWidth>
         {id ? Resources.getString(StringID.ACTION_UPDATE) : Resources.getString(StringID.ACTION_SUBMIT)}
       </Button>
+
+      <ErrorDialog
+        open={errorDialogState.open}
+        onClose={() => setErrorDialogState({ open: false })}
+        errorMessage={errorDialogState.message}
+      />
     </form>
   );
 }

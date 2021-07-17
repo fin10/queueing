@@ -44,13 +44,32 @@ async function fetch(id: string) {
   return res.data;
 }
 
-async function update(id: string, topic: string, title: string, body: string) {
+async function create(topic: string, title: string, body: string) {
   try {
-    const res = await axios.post<ArticleDetail>('/api/article', { id, topic, title, body });
+    const res = await axios.post<ArticleDetail>('/api/article', { topic, title, body });
     return res.data;
   } catch (err) {
     if (axios.isAxiosError(err)) {
       switch (err.response.status) {
+        case StatusCodes.UNAUTHORIZED:
+          throw new Error(Resources.getString(StringID.ERROR_UNAUTHORIZED));
+        case StatusCodes.FORBIDDEN:
+          throw new Error(Resources.getString(StringID.ERROR_FORBIDDEN_TO_CREATE_ARTICLE));
+      }
+    }
+    throw err;
+  }
+}
+
+async function update(id: string, topic: string, title: string, body: string) {
+  try {
+    const res = await axios.put<ArticleDetail>(`/api/article/${id}`, { topic, title, body });
+    return res.data;
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      switch (err.response.status) {
+        case StatusCodes.UNAUTHORIZED:
+          throw new Error(Resources.getString(StringID.ERROR_UNAUTHORIZED));
         case StatusCodes.FORBIDDEN:
           throw new Error(Resources.getString(StringID.ERROR_FORBIDDEN_TO_UPDATE_ARTICLE));
       }
@@ -86,6 +105,7 @@ async function dislike(id: string) {
 
 export default {
   fetch,
+  create,
   update,
   remove,
   like,
