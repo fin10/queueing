@@ -18,8 +18,7 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 export class ArticleController {
   constructor(private readonly service: ArticleService) {}
 
-  @UseGuards(UserAuthGuard)
-  @UseGuards(PoliciesGuard)
+  @UseGuards(UserAuthGuard, PoliciesGuard)
   @CheckPolicies(new CreateNotePolicyHandler())
   @Post()
   create(@Req() req: Request, @Body() dto: CreateArticleDto) {
@@ -27,8 +26,7 @@ export class ArticleController {
     return this.service.create(user, dto);
   }
 
-  @UseGuards(UserAuthGuard)
-  @UseGuards(PoliciesGuard)
+  @UseGuards(UserAuthGuard, PoliciesGuard)
   @CheckPolicies(new UpdateNotePolicyHandler())
   @Put(':id')
   update(
@@ -40,8 +38,7 @@ export class ArticleController {
     return this.service.update(user, id, dto);
   }
 
-  @UseGuards(UserAuthGuard)
-  @UseGuards(PoliciesGuard)
+  @UseGuards(UserAuthGuard, PoliciesGuard)
   @CheckPolicies(new DeleteNotePolicyHandler())
   @Delete(':id')
   async remove(@Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId) {
