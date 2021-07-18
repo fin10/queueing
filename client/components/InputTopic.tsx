@@ -61,6 +61,7 @@ const InputTopic = (props: PropTypes): React.ReactElement => {
           className={props.className}
           label={Resources.getString(StringID.EDIT_ARTICLE_TOPIC)}
           variant="outlined"
+          required
         />
       )}
     />

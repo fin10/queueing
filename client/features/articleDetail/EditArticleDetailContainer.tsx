@@ -83,6 +83,7 @@ export default function EditArticleDetailContainer() {
         className={classes.margin}
         id="title"
         variant="outlined"
+        required
         fullWidth
         onChange={handleChange}
         value={title}
@@ -94,6 +95,7 @@ export default function EditArticleDetailContainer() {
         id="body"
         variant="outlined"
         fullWidth
+        required
         multiline
         rows={20}
         onChange={handleChange}
