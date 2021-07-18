@@ -3,7 +3,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { FilterQuery } from 'mongoose';
 import { User } from '../user/schemas/user.schema';
-import { RawNote, RawNoteDocument } from './schemas/raw-note.schema';
+import { Note, NoteDocument } from './schemas/raw-note.schema';
 import { EnvironmentVariables } from '../config/env.validation';
 import { ConfigService } from '@nestjs/config';
 
@@ -12,7 +12,7 @@ export class NoteService {
   private readonly ttl: number;
 
   constructor(
-    @InjectModel(RawNote.name) private readonly model: mongoose.PaginateModel<RawNoteDocument>,
+    @InjectModel(Note.name) private readonly model: mongoose.PaginateModel<NoteDocument>,
     config: ConfigService<EnvironmentVariables>,
   ) {
     this.ttl = config.get('QUEUEING_NOTE_TTL');
@@ -51,11 +51,11 @@ export class NoteService {
     return note.updateOne({ topic, title });
   }
 
-  async getNote(id: mongoose.Types.ObjectId): Promise<RawNote | null> {
+  async getNote(id: mongoose.Types.ObjectId): Promise<Note | null> {
     return this.getValidNotes().findOne({ _id: id }).lean();
   }
 
-  async getNotes<T>(filter: FilterQuery<T>, sorting?: string): Promise<RawNote[]> {
+  async getNotes<T>(filter: FilterQuery<T>, sorting?: string): Promise<Note[]> {
     return this.getValidNotes().find(filter).sort(sorting).lean();
   }
 
@@ -64,7 +64,7 @@ export class NoteService {
     page: number,
     limit: number,
     sorting?: string,
-  ): Promise<mongoose.PaginateResult<RawNote>> {
+  ): Promise<mongoose.PaginateResult<Note>> {
     const query = { expireTime: { $gt: moment.utc().toDate() }, ...filter };
     const options = { page, limit, sort: sorting, lean: true };
     return this.model.paginate(query, options);

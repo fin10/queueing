@@ -2,10 +2,10 @@ import { User } from '@lib/sdk/user/schemas/user.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 
-export type RawNoteDocument = RawNote & Document;
+export type NoteDocument = Note & Document;
 
 @Schema({ timestamps: true })
-export class RawNote {
+export class Note {
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: User.name })
   readonly userId!: mongoose.Types.ObjectId;
 
@@ -15,7 +15,7 @@ export class RawNote {
   @Prop()
   readonly title?: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: RawNote.name })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Note.name })
   readonly parent?: mongoose.Types.ObjectId;
 
   @Prop({ required: true })
@@ -26,4 +26,4 @@ export class RawNote {
   readonly updatedAt!: Date;
 }
 
-export const RawNoteSchema = SchemaFactory.createForClass(RawNote);
+export const NoteSchema = SchemaFactory.createForClass(Note);

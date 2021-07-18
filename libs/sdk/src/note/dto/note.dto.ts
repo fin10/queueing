@@ -1,6 +1,6 @@
 import { Profile } from '@lib/sdk/profile/profile.service';
 import mongoose from 'mongoose';
-import { RawNote } from '../../note/schemas/raw-note.schema';
+import { Note as RawNote } from '../../note/schemas/raw-note.schema';
 import { NoteBodyEntity } from '../note-body.entity';
 
 export class Note {
