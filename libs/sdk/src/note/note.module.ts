@@ -3,7 +3,7 @@ import paginate from 'mongoose-paginate-v2';
 import { CacheModule, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { NoteService } from './note.service';
-import { Note, NoteSchema } from './schemas/raw-note.schema';
+import { Note, NoteDocument, NoteSchema } from './schemas/note.schema';
 import { NoteBodyService } from './note-body.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { NoteRemovedEvent } from './events/note-removed.event';
@@ -22,7 +22,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
           schema.plugin(paginate);
 
-          schema.post('remove', (doc: Note) => {
+          schema.post('remove', (doc: NoteDocument) => {
             eventEmitter.emit(NoteRemovedEvent.name, new NoteRemovedEvent(doc._id));
           });
 

@@ -20,10 +20,6 @@ export class Note {
 
   @Prop({ required: true })
   readonly expireTime!: Date;
-
-  readonly _id!: mongoose.Types.ObjectId;
-  readonly createdAt!: Date;
-  readonly updatedAt!: Date;
 }
 
 export const NoteSchema = SchemaFactory.createForClass(Note);

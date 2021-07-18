@@ -6,7 +6,7 @@ import { ActionName } from '../action/enums/action-name.enum';
 import { NoteBodyEntity } from '../note/note-body.entity';
 import { NoteBodyService } from '../note/note-body.service';
 import { NoteService } from '../note/note.service';
-import { Note } from '../note/schemas/raw-note.schema';
+import { NoteDocument } from '../note/schemas/note.schema';
 import { JiraService } from '../jira/jira.service';
 import { Action } from '../action/schemas/action.schema';
 import { ActionService } from '../action/action.service';
@@ -22,7 +22,7 @@ export class IssueService {
     private readonly jiraService: JiraService,
   ) {}
 
-  async postIssue(action: Action, note: Note, entities: NoteBodyEntity[]): Promise<void> {
+  async postIssue(action: Action, note: NoteDocument, entities: NoteBodyEntity[]): Promise<void> {
     let issueId = await this.findIssue(note);
     if (issueId) {
       await this.updateIssue(issueId, action);
@@ -55,13 +55,13 @@ export class IssueService {
     }
   }
 
-  private async findIssue(note: Note): Promise<string | undefined> {
+  private async findIssue(note: NoteDocument): Promise<string | undefined> {
     const jql = `issuetype = Report AND summary ~ ${note._id}`;
     const [id] = (await this.jiraService.findIssueIds(jql)) || [];
     return id;
   }
 
-  private createIssue(action: Action, note: Note, entities: NoteBodyEntity[]) {
+  private createIssue(action: Action, note: NoteDocument, entities: NoteBodyEntity[]) {
     const summary = `[${note._id}] ${note.title || 'empty title'}`;
     const description = _.pairs({
       title: `${note.title || 'empty title'}`,

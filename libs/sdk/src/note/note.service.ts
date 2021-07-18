@@ -3,7 +3,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { FilterQuery } from 'mongoose';
 import { User } from '../user/schemas/user.schema';
-import { Note, NoteDocument } from './schemas/raw-note.schema';
+import { Note, NoteDocument } from './schemas/note.schema';
 import { EnvironmentVariables } from '../config/env.validation';
 import { ConfigService } from '@nestjs/config';
 
@@ -51,11 +51,11 @@ export class NoteService {
     return note.updateOne({ topic, title });
   }
 
-  async getNote(id: mongoose.Types.ObjectId): Promise<Note | null> {
+  async getNote(id: mongoose.Types.ObjectId): Promise<NoteDocument | null> {
     return this.getValidNotes().findOne({ _id: id }).lean();
   }
 
-  async getNotes<T>(filter: FilterQuery<T>, sorting?: string): Promise<Note[]> {
+  async getNotes<T>(filter: FilterQuery<T>, sorting?: string): Promise<NoteDocument[]> {
     return this.getValidNotes().find(filter).sort(sorting).lean();
   }
 

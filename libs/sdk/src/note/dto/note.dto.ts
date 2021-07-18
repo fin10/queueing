@@ -1,6 +1,6 @@
 import { Profile } from '@lib/sdk/profile/profile.service';
 import mongoose from 'mongoose';
-import { Note as RawNote } from '../../note/schemas/raw-note.schema';
+import { NoteDocument } from '../schemas/note.schema';
 import { NoteBodyEntity } from '../note-body.entity';
 
 export class Note {
@@ -21,7 +21,7 @@ export class Note {
 
   static instantiate(
     profile: Profile,
-    rawNote: RawNote,
+    rawNote: NoteDocument,
     children: number,
     like: number,
     dislike: number,
@@ -33,8 +33,8 @@ export class Note {
       rawNote.title || null,
       body || null,
       rawNote.parent || null,
-      rawNote.createdAt,
-      rawNote.updatedAt,
+      rawNote.get('createdAt'),
+      rawNote.get('updatedAt'),
       rawNote.expireTime,
       children,
       like,

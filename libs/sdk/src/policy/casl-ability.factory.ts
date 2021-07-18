@@ -1,7 +1,7 @@
 import { Ability, AbilityBuilder, AbilityClass, ExtractSubjectType, InferSubjects } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
 import moment from 'moment';
-import { Note } from '../note/schemas/raw-note.schema';
+import { Note } from '../note/schemas/note.schema';
 import { Role } from '../user/enums/role.enum';
 import { User } from '../user/schemas/user.schema';
 
