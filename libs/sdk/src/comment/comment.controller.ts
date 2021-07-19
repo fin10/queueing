@@ -8,21 +8,23 @@ import mongoose from 'mongoose';
 import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
 import { PoliciesGuard } from '../policy/policies.guard';
 import { CheckPolicies } from '../policy/decorators/check-policies.decorator';
-import { CreateNotePolicyHandler } from '../policy/handlers/create-note-policy.handler';
+import { CreateCommentPolicyHandler } from '../policy/handlers/create-comment-policy.handler';
+import { DeleteCommentPolicyHandler } from '../policy/handlers/delete-comment-policy.handler';
 
 @Controller('comment')
 export class CommentController {
   constructor(private readonly service: CommentService) {}
 
   @UseGuards(UserAuthGuard, PoliciesGuard)
-  @CheckPolicies(new CreateNotePolicyHandler())
+  @CheckPolicies(new CreateCommentPolicyHandler())
   @Post()
   create(@Req() req: Request, @Body() data: CreateCommentDto) {
     const user = req.user as User;
     return this.service.create(user, data);
   }
 
-  @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard, PoliciesGuard)
+  @CheckPolicies(new DeleteCommentPolicyHandler())
   @Delete(':id')
   async remove(@Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId) {
     await this.service.remove(id);

@@ -1,6 +1,7 @@
 import { Ability, AbilityBuilder, AbilityClass, ExtractSubjectType, InferSubjects } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
 import moment from 'moment';
+import { Comment } from '../comment/schemas/comment.schema';
 import { Note } from '../note/schemas/note.schema';
 import { Role } from '../user/enums/role.enum';
 import { User } from '../user/schemas/user.schema';
@@ -13,7 +14,7 @@ export const enum Action {
   Delete = 'delete',
 }
 
-type Subjects = InferSubjects<typeof Note | typeof User> | 'all';
+type Subjects = InferSubjects<typeof Note | typeof User | typeof Comment> | 'all';
 
 export type AppAbility = Ability<[Action, Subjects]>;
 
@@ -31,14 +32,13 @@ export class CaslAbilityFactory {
       can(Action.Read, 'all');
       can(Action.Update, Note, { userId: user._id });
       can(Action.Delete, Note, { userId: user._id });
+      can(Action.Delete, Comment, { userId: user._id });
     }
 
     if (user?.restriction && moment.utc().isBefore(user.restriction.period)) {
       cannot(Action.Create, 'all');
     }
 
-    return build({
-      detectSubjectType: (item) => item.constructor as ExtractSubjectType<Subjects>,
-    });
+    return build({ detectSubjectType: (item) => item.constructor as ExtractSubjectType<Subjects> });
   }
 }
