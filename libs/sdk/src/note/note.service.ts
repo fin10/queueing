@@ -64,7 +64,7 @@ export class NoteService {
     page: number,
     limit: number,
     sorting?: string,
-  ): Promise<mongoose.PaginateResult<Note>> {
+  ): Promise<mongoose.PaginateResult<NoteDocument>> {
     const query = { expireTime: { $gt: moment.utc().toDate() }, ...filter };
     const options = { page, limit, sort: sorting, lean: true };
     return this.model.paginate(query, options);
