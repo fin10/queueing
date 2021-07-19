@@ -77,11 +77,12 @@ describe('ArticleService', () => {
       .mockResolvedValueOnce({ _id: noteId, title: data.title, topic: data.topic, get: jest.fn() });
     jest.spyOn(mockNoteService, 'count').mockResolvedValueOnce(0);
     jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
-    jest.spyOn(mockProfileService, 'getProfile').mockResolvedValueOnce({ name: nickname });
+    jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: nickname });
     jest.spyOn(mockActionService, 'getEmotionCounts').mockResolvedValueOnce({ likes: 0, dislikes: 0 });
 
     const updated = await service.update(user, noteId, data);
     expect(updated.id).toBe(noteId);
+    expect(updated.creator).toBe(nickname);
     expect(updated.title).toBe(data.title);
     expect(updated.topic).toBe(data.topic);
     expect(updated.body).toStrictEqual([data.body]);
