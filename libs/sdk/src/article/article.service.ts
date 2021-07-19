@@ -51,8 +51,8 @@ export class ArticleService {
 
     const body = await this.bodyService.get(note._id);
     if (!body) {
-      this.noteService.remove(note._id);
-      throw new NotFoundException(`Article(${id}) has been expired with.`);
+      await note.remove();
+      throw new NotFoundException(`Article(${id}) has been expired.`);
     }
 
     const profile = this.profileService.getProfile(note.userId);
