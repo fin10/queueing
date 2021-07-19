@@ -8,23 +8,23 @@ import { NoteBodyService } from '../note/note-body.service';
 import { NoteService } from '../note/note.service';
 import { ProfileService } from '../profile/profile.service';
 
-describe(ArticleService.name, () => {
+describe('ArticleService', () => {
   let service: ArticleService;
 
-  const mockTopicService = { getOrCreate: async () => undefined };
+  const mockTopicService = { getOrCreate: jest.fn() };
   const mockNoteService = {
-    create: async () => undefined,
-    update: async () => undefined,
-    getNote: async () => undefined,
-    count: async () => undefined,
+    create: jest.fn(),
+    update: jest.fn(),
+    getNote: jest.fn(),
+    count: jest.fn(),
   };
   const mockBodyService = {
-    put: async () => undefined,
-    get: async () => undefined,
-    remove: async () => undefined,
+    put: jest.fn(),
+    get: jest.fn(),
+    remove: jest.fn(),
   };
-  const mockProfileService = { getProfile: async () => undefined };
-  const mockActionService = { getEmotionCounts: async () => undefined };
+  const mockProfileService = { getProfile: jest.fn() };
+  const mockActionService = { getEmotionCounts: jest.fn() };
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -49,7 +49,9 @@ describe(ArticleService.name, () => {
 
     jest.spyOn(mockTopicService, 'getOrCreate').mockResolvedValueOnce({ name: data.topic });
     jest.spyOn(mockNoteService, 'create').mockResolvedValueOnce(new mongoose.Types.ObjectId());
-    jest.spyOn(mockNoteService, 'getNote').mockResolvedValueOnce({ _id: noteId, title: data.title, topic: data.topic });
+    jest
+      .spyOn(mockNoteService, 'getNote')
+      .mockResolvedValueOnce({ _id: noteId, title: data.title, topic: data.topic, get: jest.fn() });
     jest.spyOn(mockNoteService, 'count').mockResolvedValueOnce(0);
     jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
     jest.spyOn(mockProfileService, 'getProfile').mockResolvedValueOnce({ name: nickname });
@@ -70,7 +72,9 @@ describe(ArticleService.name, () => {
 
     jest.spyOn(mockTopicService, 'getOrCreate').mockResolvedValueOnce({ name: data.topic });
     jest.spyOn(mockNoteService, 'create').mockResolvedValueOnce(new mongoose.Types.ObjectId());
-    jest.spyOn(mockNoteService, 'getNote').mockResolvedValueOnce({ _id: noteId, title: data.title, topic: data.topic });
+    jest
+      .spyOn(mockNoteService, 'getNote')
+      .mockResolvedValueOnce({ _id: noteId, title: data.title, topic: data.topic, get: jest.fn() });
     jest.spyOn(mockNoteService, 'count').mockResolvedValueOnce(0);
     jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
     jest.spyOn(mockProfileService, 'getProfile').mockResolvedValueOnce({ name: nickname });
