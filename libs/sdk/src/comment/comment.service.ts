@@ -84,6 +84,7 @@ export class CommentService {
 
     return {
       id: comment._id,
+      articleId: comment.parent,
       creator: profile.name,
       body,
       created: comment.get('createdAt'),
