@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { FilterQuery } from 'mongoose';
 import { User } from '../user/schemas/user.schema';
@@ -18,21 +18,7 @@ export class NoteService {
     this.ttl = config.get('QUEUEING_NOTE_TTL');
   }
 
-  async createWithParentId(user: User, parentId: mongoose.Types.ObjectId): Promise<mongoose.Types.ObjectId> {
-    const parent = await this.model.findById(parentId);
-    if (!parent) throw new BadRequestException(`${parentId} not found.`);
-
-    const note = new this.model({
-      userId: user._id,
-      parent: parent._id,
-      expireTime: parent.expireTime,
-    });
-    await note.save();
-
-    return note._id;
-  }
-
-  async create(user: User, topic: string, title: string): Promise<mongoose.Types.ObjectId> {
+  async create(user: User, topic: string, title: string) {
     const note = new this.model({
       userId: user._id,
       topic,
@@ -44,7 +30,7 @@ export class NoteService {
     return note._id;
   }
 
-  async update(id: mongoose.Types.ObjectId, topic: string, title: string): Promise<void> {
+  async update(id: mongoose.Types.ObjectId, topic: string, title: string) {
     const note = await this.model.findById(id);
     if (!note) throw new NotFoundException(`Note not found with ${id}`);
 
