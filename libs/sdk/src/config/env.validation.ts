@@ -38,7 +38,7 @@ export class EnvironmentVariables {
 
   @IsNumber()
   @IsPositive()
-  readonly QUEUEING_TOPIC_MAX_LENGTH = 15;
+  readonly QUEUEING_TOPIC_MAX_LENGTH = 30;
 
   @IsString()
   @IsNotEmpty()

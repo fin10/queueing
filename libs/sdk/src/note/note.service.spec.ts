@@ -12,6 +12,14 @@ describe('NoteService', () => {
   let mongod: MongoMemoryServer;
   let service: NoteService;
 
+  const mockConfigService = {
+    get: (key: string) => {
+      if (key === 'QUEUEING_NOTE_TTL') return 10;
+      else if (key === 'QUEUEING_TOPIC_MAX_LENGTH') return 30;
+      else if (key === 'QUEUEING_TITLE_MAX_LENGTH') return 50;
+    },
+  };
+
   beforeEach(async () => {
     mongod = await MongoMemoryServer.create();
 
@@ -24,7 +32,7 @@ describe('NoteService', () => {
         NoteService,
         {
           provide: ConfigService,
-          useValue: { get: () => 10 },
+          useValue: mockConfigService,
         },
       ],
     }).compile();
