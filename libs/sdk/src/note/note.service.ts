@@ -34,14 +34,14 @@ export class NoteService {
     const note = await this.model.findById(id);
     if (!note) throw new NotFoundException(`Note not found with ${id}`);
 
-    return note.updateOne({ topic, title });
+    await note.updateOne({ topic, title });
   }
 
   async getNote(id: mongoose.Types.ObjectId): Promise<NoteDocument | null> {
     return this.getValidNotes().findOne({ _id: id }).lean();
   }
 
-  async getNotes<T>(filter: FilterQuery<T>, sorting?: string): Promise<NoteDocument[]> {
+  async getNotes<T>(filter?: FilterQuery<T>, sorting?: string): Promise<NoteDocument[]> {
     return this.getValidNotes().find(filter).sort(sorting).lean();
   }
 
@@ -63,18 +63,16 @@ export class NoteService {
     await note.remove();
   }
 
-  async removeExpiredNotes() {
-    const expiredNotes = await this.model
-      .find({ expireTime: { $lte: moment.utc().toDate() } })
-      .select('_id')
-      .exec();
+  async removeExpiredNotes(date = moment.utc().toDate()) {
+    const filter = { expireTime: { $lte: date } };
 
-    expiredNotes.forEach((note) => note.remove());
+    const count = await this.count(filter);
+    await this.model.deleteMany(filter);
 
-    return expiredNotes.length;
+    return count;
   }
 
-  async count<T>(filter: FilterQuery<T>) {
+  async count<T>(filter: FilterQuery<T>): Promise<number> {
     return this.getValidNotes().countDocuments(filter).lean();
   }
 
