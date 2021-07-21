@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -11,7 +12,13 @@ describe(TopicService.name, () => {
   let mongod: MongoMemoryServer;
   let service: TopicService;
 
-  const mockNoteService = { count: async () => 0 };
+  const mockNoteService = { count: jest.fn() };
+
+  const mockConfigService = {
+    get: (key: string) => {
+      if (key === 'QUEUEING_TOPIC_MAX_LENGTH') return 30;
+    },
+  };
 
   const createTestUser = () => {
     return { _id: new mongoose.Types.ObjectId() } as User;
@@ -31,10 +38,8 @@ describe(TopicService.name, () => {
       ],
       providers: [
         TopicService,
-        {
-          provide: NoteService,
-          useValue: mockNoteService,
-        },
+        { provide: NoteService, useValue: mockNoteService },
+        { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compile();
 
