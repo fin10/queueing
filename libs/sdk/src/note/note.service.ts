@@ -56,20 +56,14 @@ export class NoteService {
     return this.model.paginate(query, options);
   }
 
-  async remove(id: mongoose.Types.ObjectId): Promise<void> {
+  async remove(id: mongoose.Types.ObjectId) {
     const note = await this.model.findById(id);
     if (!note) throw new NotFoundException(`Note not found with ${id}`);
-    return note.remove();
+
+    await note.remove();
   }
 
-  async removeChildren(parentId: mongoose.Types.ObjectId): Promise<number> {
-    const children = await this.model.find({ parent: parentId });
-    children.forEach((child) => child.remove());
-
-    return children.length;
-  }
-
-  async removeExpiredNotes(): Promise<number> {
+  async removeExpiredNotes() {
     const expiredNotes = await this.model
       .find({ expireTime: { $lte: moment.utc().toDate() } })
       .select('_id')
@@ -80,7 +74,7 @@ export class NoteService {
     return expiredNotes.length;
   }
 
-  async count<T>(filter: FilterQuery<T>): Promise<number> {
+  async count<T>(filter: FilterQuery<T>) {
     return this.getValidNotes().countDocuments(filter).lean();
   }
 

@@ -9,14 +9,11 @@ export class Note {
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: User.name })
   readonly userId!: mongoose.Types.ObjectId;
 
-  @Prop()
-  readonly topic?: string;
+  @Prop({ required: true, type: String })
+  readonly topic: string;
 
-  @Prop()
-  readonly title?: string;
-
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Note.name })
-  readonly parent?: mongoose.Types.ObjectId;
+  @Prop({ required: true, type: String, trim: true, maxlength: 50 })
+  readonly title: string;
 
   @Prop({ required: true })
   readonly expireTime!: Date;
