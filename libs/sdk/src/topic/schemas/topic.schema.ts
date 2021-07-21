@@ -9,7 +9,7 @@ export class Topic {
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: User.name })
   readonly userId: mongoose.Types.ObjectId;
 
-  @Prop({ required: true, unique: true, trim: true, maxlength: 15 })
+  @Prop({ required: true, unique: true, trim: true })
   readonly name: string;
 }
 
