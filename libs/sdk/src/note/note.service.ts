@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { FilterQuery } from 'mongoose';
 import { User } from '../user/schemas/user.schema';
@@ -10,15 +10,22 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class NoteService {
   private readonly ttl: number;
+  private readonly topicMaxLength: number;
+  private readonly titleMaxLength: number;
 
   constructor(
     @InjectModel(Note.name) private readonly model: mongoose.PaginateModel<NoteDocument>,
     config: ConfigService<EnvironmentVariables>,
   ) {
-    this.ttl = config.get('QUEUEING_NOTE_TTL');
+    this.ttl = config.get<number>('QUEUEING_NOTE_TTL');
+    this.topicMaxLength = config.get<number>('QUEUEING_TOPIC_MAX_LENGTH');
+    this.titleMaxLength = config.get<number>('QUEUEING_TITLE_MAX_LENGTH');
   }
 
   async create(user: User, topic: string, title: string) {
+    this.validateTopic(topic);
+    this.validateTitle(title);
+
     const note = new this.model({
       userId: user._id,
       topic,
@@ -31,6 +38,9 @@ export class NoteService {
   }
 
   async update(id: mongoose.Types.ObjectId, topic: string, title: string) {
+    this.validateTopic(topic);
+    this.validateTitle(title);
+
     const note = await this.model.findById(id);
     if (!note) throw new NotFoundException(`Note not found with ${id}`);
 
@@ -82,5 +92,17 @@ export class NoteService {
 
   private getExpireTime(): Date {
     return moment.utc().add(this.ttl, 's').toDate();
+  }
+
+  private validateTopic(topic: string) {
+    if (topic.length > this.topicMaxLength) {
+      throw new PayloadTooLargeException(`Length of 'topic' should be lower then ${this.topicMaxLength}`);
+    }
+  }
+
+  private validateTitle(title: string) {
+    if (title.length > this.titleMaxLength) {
+      throw new PayloadTooLargeException(`Length of 'title' should be lower then ${this.titleMaxLength}`);
+    }
   }
 }

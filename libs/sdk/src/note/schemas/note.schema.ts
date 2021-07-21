@@ -12,7 +12,7 @@ export class Note {
   @Prop({ required: true, type: String })
   readonly topic: string;
 
-  @Prop({ required: true, type: String, trim: true, maxlength: 50 })
+  @Prop({ required: true, type: String, trim: true })
   readonly title: string;
 
   @Prop({ required: true })

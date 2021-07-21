@@ -1,4 +1,4 @@
-import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, Logger, PayloadTooLargeException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { OnEvent } from '@nestjs/event-emitter';
 import { Cache } from 'cache-manager';
@@ -13,12 +13,18 @@ export class NoteBodyService {
   private readonly logger = new Logger(NoteBodyService.name);
 
   private readonly ttl: number;
+  private readonly maxLength: number;
 
   constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache, config: ConfigService<EnvironmentVariables>) {
     this.ttl = config.get<number>('QUEUEING_NOTE_TTL');
+    this.maxLength = config.get<number>('QUEUEING_NOTE_MAX_LENGTH');
   }
 
   put(id: mongoose.Types.ObjectId, body: string): Promise<void> {
+    if (body.length > this.maxLength) {
+      throw new PayloadTooLargeException(`Length of 'body' should be lower then ${this.maxLength}`);
+    }
+
     const entities = this.parseEntities(body);
     return this.cache.set<NoteBodyEntity[]>(id.toHexString(), entities, { ttl: this.ttl });
   }

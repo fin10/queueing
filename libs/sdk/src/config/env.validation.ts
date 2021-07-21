@@ -1,6 +1,15 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { plainToClass, Transform } from 'class-transformer';
-import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Min, validateSync } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  validateSync,
+} from 'class-validator';
 
 export enum Environment {
   Development = 'development',
@@ -16,8 +25,20 @@ export class EnvironmentVariables {
   readonly PORT: number;
 
   @IsNumber()
-  @Min(0)
-  readonly QUEUEING_NOTE_TTL: number;
+  @IsPositive()
+  readonly QUEUEING_NOTE_TTL = 3600;
+
+  @IsNumber()
+  @IsPositive()
+  readonly QUEUEING_NOTE_MAX_LENGTH = 2000;
+
+  @IsNumber()
+  @IsPositive()
+  readonly QUEUEING_TITLE_MAX_LENGTH = 50;
+
+  @IsNumber()
+  @IsPositive()
+  readonly QUEUEING_TOPIC_MAX_LENGTH = 15;
 
   @IsString()
   @IsNotEmpty()
