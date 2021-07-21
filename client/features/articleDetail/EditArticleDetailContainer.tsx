@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { TextField, Button } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useAppDispatch } from 'client/app/store';
 import { createArticle, fetchArticleDetail, updateArticle } from './articleDetailSlice';
@@ -10,6 +10,8 @@ import { StringID } from 'client/resources/StringID';
 import InputTopic from 'client/components/InputTopic';
 import { ArticleBodyEntity } from './articleDetailAPI';
 import ErrorDialog from 'client/common/ErrorDialog';
+import { BODY_MAX_LENGTH, TITLE_MAX_LENGTH } from 'client/constants';
+import { MaxLengthTextField } from 'client/common/MaxLengthTextField';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -79,7 +81,7 @@ export default function EditArticleDetailContainer() {
     <form onSubmit={handleSubmit}>
       <InputTopic className={classes.margin} value={topic} onInputChange={handleTopicChange} />
 
-      <TextField
+      <MaxLengthTextField
         className={classes.margin}
         id="title"
         variant="outlined"
@@ -88,9 +90,10 @@ export default function EditArticleDetailContainer() {
         onChange={handleChange}
         value={title}
         label={Resources.getString(StringID.EDIT_ARTICLE_TITLE)}
+        maxLength={TITLE_MAX_LENGTH}
       />
 
-      <TextField
+      <MaxLengthTextField
         className={classes.margin}
         id="body"
         variant="outlined"
@@ -101,6 +104,7 @@ export default function EditArticleDetailContainer() {
         onChange={handleChange}
         value={body}
         label={Resources.getString(StringID.EDIT_ARTICLE_BODY)}
+        maxLength={BODY_MAX_LENGTH}
       />
 
       <Button variant="contained" size="large" color="primary" type="submit" fullWidth>

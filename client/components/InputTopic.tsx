@@ -3,9 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
 import Autocomplete, { AutocompleteInputChangeReason, createFilterOptions } from '@material-ui/lab/Autocomplete';
-import { TextField, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { Topic } from '../types';
 import { Logger } from '../utils/Logger';
+import { MaxLengthTextField } from 'client/common/MaxLengthTextField';
+import { TOPIC_NAME_MAX_LENGTH } from 'client/constants';
 
 interface PropTypes {
   className?: string;
@@ -56,12 +58,13 @@ const InputTopic = (props: PropTypes): React.ReactElement => {
         </Typography>
       )}
       renderInput={(params) => (
-        <TextField
+        <MaxLengthTextField
           {...params}
           className={props.className}
           label={Resources.getString(StringID.EDIT_ARTICLE_TOPIC)}
           variant="outlined"
           required
+          maxLength={TOPIC_NAME_MAX_LENGTH}
         />
       )}
     />
