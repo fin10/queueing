@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsPort,
   IsPositive,
   IsString,
   validateSync,
@@ -21,23 +22,28 @@ export class EnvironmentVariables {
   @IsEnum(Environment)
   readonly NODE_ENV: Environment;
 
-  @IsNumber()
-  readonly PORT: number;
+  @IsString()
+  @IsPort()
+  readonly PORT: string;
 
   @IsNumber()
   @IsPositive()
+  @Transform((params) => Number.parseInt(params.value))
   readonly QUEUEING_NOTE_TTL = 3600;
 
   @IsNumber()
   @IsPositive()
+  @Transform((params) => Number.parseInt(params.value))
   readonly QUEUEING_NOTE_MAX_LENGTH = 2000;
 
   @IsNumber()
   @IsPositive()
+  @Transform((params) => Number.parseInt(params.value))
   readonly QUEUEING_TITLE_MAX_LENGTH = 50;
 
   @IsNumber()
   @IsPositive()
+  @Transform((params) => Number.parseInt(params.value))
   readonly QUEUEING_TOPIC_MAX_LENGTH = 30;
 
   @IsString()
