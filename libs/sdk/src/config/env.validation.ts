@@ -34,7 +34,7 @@ export class EnvironmentVariables {
   @IsNumber()
   @IsPositive()
   @Transform((params) => Number.parseInt(params.value))
-  readonly QUEUEING_NOTE_MAX_LENGTH = 2000;
+  readonly QUEUEING_NOTE_MAX_LENGTH = 5000;
 
   @IsNumber()
   @IsPositive()
