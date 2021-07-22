@@ -1,22 +1,29 @@
 import { InputAdornment, TextField, TextFieldProps } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-type PropTypes = { readonly maxLength: number } & TextFieldProps;
+type PropTypes = { readonly value?: string; readonly maxLength: number } & TextFieldProps;
 
 export const MaxLengthTextField = React.forwardRef<HTMLDivElement, PropTypes>(function MaxLengthTextField(
   props: PropTypes,
   ref,
 ) {
-  const { maxLength, onChange } = props;
-  const [suffix, updateSuffix] = useState(`0 / ${maxLength}`);
+  const { value, maxLength, onChange } = props;
+  const [suffix, updateSuffix] = useState('');
   const [error, updateError] = useState(false);
 
+  const calcurateSuffix = (length = 0) => {
+    updateSuffix(`${length} / ${maxLength}`);
+    updateError(length > maxLength);
+  };
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const curLength = event.target.value.length;
-    updateSuffix(`${curLength} / ${maxLength}`);
-    updateError(curLength > maxLength);
+    calcurateSuffix(event.target.value.length);
     onChange && onChange(event);
   };
+
+  useEffect(() => {
+    calcurateSuffix(value?.length);
+  }, [value]);
 
   return (
     <TextField
