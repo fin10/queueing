@@ -48,11 +48,11 @@ export class NoteService {
   }
 
   async getNote(id: mongoose.Types.ObjectId): Promise<NoteDocument | null> {
-    return this.getValidNotes().findOne({ _id: id }).lean();
+    return this.getValidNotes().findOne({ _id: id });
   }
 
   async getNotes<T>(filter?: FilterQuery<T>, sorting?: string): Promise<NoteDocument[]> {
-    return this.getValidNotes().find(filter).sort(sorting).lean();
+    return this.getValidNotes().find(filter).sort(sorting);
   }
 
   async paginateNotes<T>(
@@ -62,7 +62,7 @@ export class NoteService {
     sorting?: string,
   ): Promise<mongoose.PaginateResult<NoteDocument>> {
     const query = { expireTime: { $gt: moment.utc().toDate() }, ...filter };
-    const options = { page, limit, sort: sorting, lean: true };
+    const options = { page, limit, sort: sorting };
     return this.model.paginate(query, options);
   }
 
