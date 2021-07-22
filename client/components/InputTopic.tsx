@@ -39,9 +39,7 @@ const InputTopic = (props: PropTypes): React.ReactElement => {
 
   return (
     <Autocomplete
-      size="small"
       freeSolo
-      fullWidth
       options={topics}
       value={props.value ? { name: props.value } : null}
       loading={loading}
@@ -58,14 +56,17 @@ const InputTopic = (props: PropTypes): React.ReactElement => {
         </Typography>
       )}
       renderInput={(params) => (
-        <MaxLengthTextField
-          {...params}
-          className={props.className}
-          label={Resources.getString(StringID.EDIT_ARTICLE_TOPIC)}
-          variant="outlined"
-          required
-          maxLength={TOPIC_NAME_MAX_LENGTH}
-        />
+        <div className={props.className} ref={params.InputProps.ref}>
+          <MaxLengthTextField
+            {...params.inputProps}
+            label={Resources.getString(StringID.EDIT_ARTICLE_TOPIC)}
+            variant="outlined"
+            size="small"
+            fullWidth
+            required
+            maxLength={TOPIC_NAME_MAX_LENGTH}
+          />
+        </div>
       )}
     />
   );
