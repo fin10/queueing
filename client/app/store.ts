@@ -2,20 +2,20 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import logger from 'redux-logger';
 import { useDispatch } from 'react-redux';
 import notification from 'client/redux/notification';
-import comment from 'client/redux/comment';
 import report from 'client/redux/report';
 import profileReducer from 'client/features/profile/profileSlice';
 import articleSummaryReducer from 'client/features/articleSummary/articleSummarySlice';
 import articleDetailReducer from 'client/features/articleDetail/articleDetailSlice';
+import commentsReducer from 'client/features/comments/commentsSlice';
 import topicReducer from 'client/features/topic/topicSlice';
 
 const rootReducer = combineReducers({
   profile: profileReducer,
   articleSummary: articleSummaryReducer,
   articleDetail: articleDetailReducer,
+  comments: commentsReducer,
   topic: topicReducer,
   notification,
-  comment,
   report,
 });
 
