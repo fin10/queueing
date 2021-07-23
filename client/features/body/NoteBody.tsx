@@ -1,6 +1,22 @@
 import { createStyles, Link, makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
-import { ArticleBodyEntity, EntityType } from './articleDetailAPI';
+
+export const enum EntityType {
+  STRING = 'string',
+  IMAGE = 'image',
+  VIDEO = 'video',
+  YOUTUBE = 'youtube',
+  LINK = 'link',
+}
+
+export interface BodyEntity {
+  readonly type: EntityType;
+  readonly value: string;
+}
+
+interface PropTypes {
+  readonly entities: BodyEntity[];
+}
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -27,13 +43,12 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-const ArticleDetailBody = (props: { body: ArticleBodyEntity[] }): React.ReactElement => {
-  const { body } = props;
+export function NoteBody({ entities }: PropTypes) {
   const classes = useStyles();
 
   return (
     <>
-      {body.map((entity, idx) => {
+      {entities.map((entity, idx) => {
         switch (entity.type) {
           case EntityType.IMAGE:
             return <img key={idx} className={classes.fullWidth} src={entity.value} />;
@@ -65,6 +80,4 @@ const ArticleDetailBody = (props: { body: ArticleBodyEntity[] }): React.ReactEle
       })}
     </>
   );
-};
-
-export default ArticleDetailBody;
+}

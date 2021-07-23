@@ -2,19 +2,7 @@ import axios from 'axios';
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
 import { StatusCodes } from 'http-status-codes';
-
-export const enum EntityType {
-  STRING = 'string',
-  IMAGE = 'image',
-  VIDEO = 'video',
-  YOUTUBE = 'youtube',
-  LINK = 'link',
-}
-
-export interface ArticleBodyEntity {
-  readonly type: EntityType;
-  readonly value: string;
-}
+import { BodyEntity } from '../body/NoteBody';
 
 export interface ArticleDetail {
   readonly id: string;
@@ -27,7 +15,7 @@ export interface ArticleDetail {
   readonly likes: number;
   readonly dislikes: number;
   readonly user: string;
-  readonly body: ArticleBodyEntity[];
+  readonly body: BodyEntity[];
 }
 
 export interface ActionResponse {

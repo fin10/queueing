@@ -13,9 +13,8 @@ import React from 'react';
 import { DislikeAction, LikeAction } from './Action';
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
-import ArticleDetailBody from 'client/features/articleDetail/ArticleDetailBody';
+import { BodyEntity, NoteBody } from 'client/features/body/NoteBody';
 import { NoteWithBody } from 'client/types';
-import { ArticleBodyEntity } from 'client/features/articleDetail/articleDetailAPI';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -47,7 +46,7 @@ const CommentCard = (props: PropTypes): React.ReactElement => {
         <Typography gutterBottom variant="subtitle2" color="textSecondary">
           {note.user}
         </Typography>
-        <ArticleDetailBody body={(note.body as unknown) as ArticleBodyEntity[]} />
+        <NoteBody entities={(note.body as unknown) as BodyEntity[]} />
       </CardContent>
       <CardActions className={classes.actions}>
         <ButtonGroup size="small" color="primary">
