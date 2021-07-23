@@ -24,7 +24,13 @@ export class ArticleService {
   async create(user: User, { topic: topicName, title, body }: CreateArticleDto) {
     const topic = await this.topicService.getOrCreate(user, topicName);
     const id = await this.noteService.create(user, topic.name, title);
-    await this.bodyService.put(id, body);
+
+    try {
+      await this.bodyService.put(id, body);
+    } catch (err) {
+      await this.noteService.remove(id);
+      throw err;
+    }
 
     return this.getArticle(id);
   }

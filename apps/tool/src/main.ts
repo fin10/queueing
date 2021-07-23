@@ -36,8 +36,12 @@ const bootstrap = async () => {
         const user = await userService.findUser({ provider: 'clien', key: data.nickname });
         if (!user) return;
 
-        await articleService.create(user, data);
-        logger.debug(`Article registered: [${data.topic}] ${data.title}`);
+        try {
+          await articleService.create(user, data);
+          logger.debug(`Article registered: [${data.topic}] ${data.title}`);
+        } catch (err) {
+          logger.error(`Failed to create article: [${data.topic}] ${data.title}`, err.stack);
+        }
       }),
     );
   } catch (err) {
