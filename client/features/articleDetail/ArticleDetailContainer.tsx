@@ -6,11 +6,11 @@ import { useParams } from 'react-router-dom';
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
 import ArticleCard from 'client/features/articleDetail/ArticleCard';
-import InputComment from 'client/components/InputComment';
 import ReportDialog from 'client/components/ReportDialog';
 import { fetchArticleDetail } from './articleDetailSlice';
 import { useAppDispatch } from 'client/app/store';
 import { Logger } from 'client/utils/Logger';
+import { CommentsContainer } from '../comments/CommentsContainer';
 
 export default function ArticleDetailContainer() {
   const { id } = useParams<{ id: string }>();
@@ -34,7 +34,7 @@ export default function ArticleDetailContainer() {
     <>
       <ArticleCard id={id} />
 
-      <InputComment parentId={id} />
+      <CommentsContainer articleId={id} />
 
       <ReportDialog open={isReportDialogOpened} onClose={() => openReportDialog(false)} onReportClick={dummyFunction} />
 

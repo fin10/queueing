@@ -6,8 +6,8 @@ import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { ArticleState, CommentState } from '../types';
 import ArticleCard from 'client/features/articleDetail/ArticleCard';
-import InputComment from 'client/components/InputComment';
-import CommentCard from 'client/components/CommentCard';
+import { InputComment } from 'client/features/comments/InputComment';
+import { CommentCard } from 'client/features/comments/CommentCard';
 import { dislikeArticle, fetchArticle, likeArticle, removeArticle } from 'client/redux/article';
 import { dislikeComment, fetchComments, likeComment } from 'client/redux/comment';
 import { Resources } from 'client/resources/Resources';
@@ -96,11 +96,11 @@ const ArticlePage = (): React.ReactElement => {
 
       {commentState.comments.map((comment) => (
         <React.Fragment key={comment.id}>
-          <CommentCard note={comment} onActionClick={handleCommentAction} />
+          <CommentCard id={comment.id} />
         </React.Fragment>
       ))}
 
-      <InputComment parentId={id} />
+      <InputComment articleId={id} />
 
       <ConfirmDialog
         open={isRemoveDialogOpened}

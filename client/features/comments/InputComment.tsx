@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Button, createStyles, makeStyles, TextField, Theme } from '@material-ui/core';
-import { Resources } from '../resources/Resources';
-import { StringID } from '../resources/StringID';
-import { addComment } from '../redux/comment';
+import { Resources } from 'client/resources/Resources';
+import { StringID } from 'client/resources/StringID';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -14,18 +13,16 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface PropTypes {
-  readonly parentId: string;
+  readonly articleId: string;
 }
 
-const InputComment = (props: PropTypes): React.ReactElement => {
-  const { parentId } = props;
+export function InputComment({ articleId }: PropTypes) {
   const classes = useStyles();
   const [comment, updateComment] = useState('');
   const dispatch = useDispatch();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    dispatch(addComment(parentId, comment, () => updateComment('')));
   };
 
   return (
@@ -46,6 +43,4 @@ const InputComment = (props: PropTypes): React.ReactElement => {
       </Button>
     </form>
   );
-};
-
-export default InputComment;
+}
