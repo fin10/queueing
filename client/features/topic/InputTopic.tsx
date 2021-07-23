@@ -1,18 +1,25 @@
-import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { Resources } from '../resources/Resources';
-import { StringID } from '../resources/StringID';
+import { Resources } from '../../resources/Resources';
+import { StringID } from '../../resources/StringID';
 import Autocomplete, { AutocompleteInputChangeReason, createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { Typography } from '@material-ui/core';
-import { Topic } from '../types';
-import { Logger } from '../utils/Logger';
+import { Logger } from '../../utils/Logger';
 import { MaxLengthTextField } from 'client/common/MaxLengthTextField';
 import { TOPIC_NAME_MAX_LENGTH } from 'client/constants';
+import { fetchTopic, selectTopics } from './topicSlice';
+import { Topic } from './topicAPI';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { useAppDispatch } from 'client/app/store';
+import { useSelector } from 'react-redux';
 
 interface PropTypes {
-  className?: string;
-  value?: string;
-  onInputChange?: (event: React.ChangeEvent<unknown>, value: string, reason: AutocompleteInputChangeReason) => void;
+  readonly className?: string;
+  readonly value?: string;
+  readonly onInputChange?: (
+    event: React.ChangeEvent<unknown>,
+    value: string,
+    reason: AutocompleteInputChangeReason,
+  ) => void;
 }
 
 const filterOptions = createFilterOptions<Topic>({
@@ -22,26 +29,25 @@ const filterOptions = createFilterOptions<Topic>({
 
 const InputTopic = (props: PropTypes): React.ReactElement => {
   const [loading, updateLoading] = useState(true);
-  const [topics, updateTopics] = useState<Topic[]>([]);
+
+  const topics = useSelector(selectTopics);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await axios.get('/api/topic');
-        const topics = res.data;
-        updateTopics(topics);
-        updateLoading(false);
-      } catch (err) {
-        Logger.error(err);
-      }
-    })();
+    updateLoading(true);
+    dispatch(fetchTopic())
+      .then(unwrapResult)
+      .catch((err) => Logger.error(err))
+      .finally(() => updateLoading(false));
   }, []);
+
+  const count = topics.find(({ name }) => props.value === name)?.count;
 
   return (
     <Autocomplete
       freeSolo
       options={topics}
-      value={props.value ? { name: props.value } : null}
+      value={props.value ? { name: props.value, count } : null}
       loading={loading}
       loadingText={Resources.getString(StringID.EDIT_ARTICLE_LOADING_TOPICS)}
       onInputChange={props.onInputChange}

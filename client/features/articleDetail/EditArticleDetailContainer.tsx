@@ -7,7 +7,7 @@ import { useAppDispatch } from 'client/app/store';
 import { createArticle, fetchArticleDetail, updateArticle } from './articleDetailSlice';
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
-import InputTopic from 'client/components/InputTopic';
+import InputTopic from 'client/features/topic/InputTopic';
 import { ArticleBodyEntity } from './articleDetailAPI';
 import ErrorDialog from 'client/common/ErrorDialog';
 import { BODY_MAX_LENGTH, TITLE_MAX_LENGTH } from 'client/constants';

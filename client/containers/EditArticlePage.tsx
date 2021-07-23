@@ -6,7 +6,7 @@ import { TextField, Button } from '@material-ui/core';
 import { Logger } from '../utils/Logger';
 import { Resources } from '../resources/Resources';
 import { StringID } from '../resources/StringID';
-import InputTopic from '../components/InputTopic';
+import InputTopic from '../features/topic/InputTopic';
 import { NoteWithBody } from '../types';
 
 const useStyles = makeStyles((theme: Theme) =>

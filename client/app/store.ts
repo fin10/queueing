@@ -7,11 +7,13 @@ import report from 'client/redux/report';
 import profileReducer from 'client/features/profile/profileSlice';
 import articleSummaryReducer from 'client/features/articleSummary/articleSummarySlice';
 import articleDetailReducer from 'client/features/articleDetail/articleDetailSlice';
+import topicReducer from 'client/features/topic/topicSlice';
 
 const rootReducer = combineReducers({
   profile: profileReducer,
   articleSummary: articleSummaryReducer,
   articleDetail: articleDetailReducer,
+  topic: topicReducer,
   notification,
   comment,
   report,
