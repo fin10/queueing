@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 export class CreateCommentDto {
   @IsNotEmpty()
   @Transform(({ value }) => mongoose.Types.ObjectId(value))
-  readonly parentId!: mongoose.Types.ObjectId;
+  readonly articleId!: mongoose.Types.ObjectId;
 
   @IsNotEmpty()
   readonly body!: string;

@@ -26,10 +26,10 @@ export class CommentService {
   ) {}
 
   async create(user: User, data: CreateCommentDto) {
-    const { parentId, body } = data;
+    const { articleId, body } = data;
 
-    const parentNote = await this.noteService.getNote(parentId);
-    if (!parentNote) throw new NotFoundException(`Note not found with ${parentId}`);
+    const parentNote = await this.noteService.getNote(articleId);
+    if (!parentNote) throw new NotFoundException(`Note not found with ${articleId}`);
 
     const comment = new this.model({
       userId: user._id,
@@ -37,7 +37,12 @@ export class CommentService {
     });
     await comment.save();
 
-    await this.bodyService.put(comment._id, body);
+    try {
+      await this.bodyService.put(comment._id, body);
+    } catch (err) {
+      await comment.remove();
+      throw err;
+    }
 
     return this.getComment(comment);
   }
