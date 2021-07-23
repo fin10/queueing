@@ -13,10 +13,16 @@ export interface Comment {
 }
 
 async function fetch(articleId: string) {
-  const res = await axios.get<Comment[]>(`/api/comment/${qs.stringify({ articleId })}`);
+  const res = await axios.get<Comment[]>(`/api/comment?${qs.stringify({ articleId })}`);
+  return res.data;
+}
+
+async function addComment(articleId: string, body: string) {
+  const res = await axios.post<Comment>('/api/comment', { articleId, body });
   return res.data;
 }
 
 export default {
   fetch,
+  addComment,
 };

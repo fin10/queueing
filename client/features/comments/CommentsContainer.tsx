@@ -18,7 +18,7 @@ export function CommentsContainer({ articleId }: PropTypes) {
   useEffect(() => {
     dispatch(fetchComments(articleId))
       .then(unwrapResult)
-      .catch((err) => Logger.error(err));
+      .catch((err) => Logger.error(err.stack));
   }, [dispatch]);
 
   return (

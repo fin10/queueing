@@ -21,6 +21,17 @@ export const fetchComments = createAsyncThunk(
   },
 );
 
+export const addComment = createAsyncThunk(
+  `${ACTION_NAME}/add`,
+  async ({ articleId, body }: { articleId: string; body: string }, { rejectWithValue }) => {
+    try {
+      return await commentsAPI.addComment(articleId, body);
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  },
+);
+
 const initialState: CommentsState = {
   byId: {},
   allIds: [],
@@ -35,6 +46,12 @@ const articleSummarySlice = createSlice({
       const ids = action.payload.map(({ id }) => id);
       state.byId = _.object(ids, action.payload);
       state.allIds = ids;
+    });
+    builder.addCase(addComment.fulfilled, (state, action) => {
+      state.byId[action.payload.id] = action.payload;
+      if (!state.allIds.find((id) => id === action.payload.id)) {
+        state.allIds.push(action.payload.id);
+      }
     });
   },
 });

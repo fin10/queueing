@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { Button, createStyles, makeStyles, TextField, Theme } from '@material-ui/core';
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
+import { addComment } from './commentsSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { useAppDispatch } from 'client/app/store';
+import { Logger } from 'client/utils/Logger';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -19,10 +22,15 @@ interface PropTypes {
 export function InputComment({ articleId }: PropTypes) {
   const classes = useStyles();
   const [comment, updateComment] = useState('');
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    dispatch(addComment({ articleId, body: comment }))
+      .then(unwrapResult)
+      .then(() => updateComment(''))
+      .catch((err) => Logger.error(err.stack));
   };
 
   return (
