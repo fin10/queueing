@@ -45,6 +45,7 @@ export function InputComment({ articleId }: PropTypes) {
         id="comment"
         variant="outlined"
         fullWidth
+        required
         multiline
         rows={4}
         onChange={(e) => updateComment(e.target.value)}
