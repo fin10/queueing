@@ -37,7 +37,25 @@ async function addComment(articleId: string, body: string) {
   }
 }
 
+async function removeComment(id: string) {
+  try {
+    const res = await axios.delete<string>(`/api/comment/${id}`);
+    return res.data;
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      switch (err.response.status) {
+        case StatusCodes.UNAUTHORIZED:
+          throw new Error(Resources.getString(StringID.ERROR_UNAUTHORIZED));
+        case StatusCodes.FORBIDDEN:
+          throw new Error(Resources.getString(StringID.ERROR_FORBIDDEN_TO_DELETE_COMMENT));
+      }
+    }
+    throw err;
+  }
+}
+
 export default {
   fetch,
   addComment,
+  removeComment,
 };

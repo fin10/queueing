@@ -29,5 +29,6 @@
     "ERROR_FORBIDDEN_TO_REMOVE_ARTICLE": "현재 글을 삭제할 권한이 없습니다.",
     "ERROR_FORBIDDEN_TO_UPDATE_ARTICLE": "현재 글을 수정할 권한이 없습니다.",
     "ERROR_FORBIDDEN_TO_CREATE_ARTICLE": "새로운 글을 작성할 권한이 없습니다.",
-    "ERROR_FORBIDDEN_TO_CREATE_COMMENT": "댓글을 작성할 권한이 없습니다."
+    "ERROR_FORBIDDEN_TO_CREATE_COMMENT": "댓글을 작성할 권한이 없습니다.",
+    "ERROR_FORBIDDEN_TO_DELETE_COMMENT": "현재 댓글을 삭제할 권한이 없습니다."
 }

@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { Logger } from 'client/utils/Logger';
 import _ from 'underscore';
 import { RootState } from '../../app/store';
 import commentsAPI, { Comment } from './commentsAPI';
@@ -32,6 +33,14 @@ export const addComment = createAsyncThunk(
   },
 );
 
+export const removeComment = createAsyncThunk(`${ACTION_NAME}/remove`, async (id: string, { rejectWithValue }) => {
+  try {
+    return await commentsAPI.removeComment(id);
+  } catch (err) {
+    return rejectWithValue(err.message);
+  }
+});
+
 const initialState: CommentsState = {
   byId: {},
   allIds: [],
@@ -52,6 +61,14 @@ const articleSummarySlice = createSlice({
       if (!state.allIds.find((id) => id === action.payload.id)) {
         state.allIds.push(action.payload.id);
       }
+    });
+    builder.addCase(removeComment.fulfilled, (state, action) => {
+      if (!state.byId[action.payload]) {
+        Logger.warn(`Comment not loaded: ${action.payload}`);
+        return;
+      }
+      state.allIds = _.without(state.allIds, action.payload);
+      delete state.byId[action.payload];
     });
   },
 });
