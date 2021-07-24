@@ -8,10 +8,10 @@ import { createArticle, fetchArticleDetail, updateArticle } from './articleDetai
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
 import InputTopic from 'client/features/topic/InputTopic';
-import { ArticleBodyEntity } from './articleDetailAPI';
 import ErrorDialog from 'client/common/ErrorDialog';
 import { BODY_MAX_LENGTH, TITLE_MAX_LENGTH } from 'client/constants';
 import { MaxLengthTextField } from 'client/common/MaxLengthTextField';
+import { BodyEntity } from '../body/NoteBody';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-function convertArticleBodyToString(body: ArticleBodyEntity[]) {
+function convertArticleBodyToString(body: BodyEntity[]) {
   return body.map((entity) => entity.value).join('');
 }
 
