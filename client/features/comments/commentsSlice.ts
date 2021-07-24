@@ -27,7 +27,7 @@ export const addComment = createAsyncThunk(
     try {
       return await commentsAPI.addComment(articleId, body);
     } catch (err) {
-      return rejectWithValue(err);
+      return rejectWithValue(err.message);
     }
   },
 );

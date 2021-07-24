@@ -1,4 +1,7 @@
 import axios from 'axios';
+import { Resources } from 'client/resources/Resources';
+import { StringID } from 'client/resources/StringID';
+import { StatusCodes } from 'http-status-codes';
 import qs from 'qs';
 import { BodyEntity } from '../body/NoteBody';
 
@@ -18,8 +21,20 @@ async function fetch(articleId: string) {
 }
 
 async function addComment(articleId: string, body: string) {
-  const res = await axios.post<Comment>('/api/comment', { articleId, body });
-  return res.data;
+  try {
+    const res = await axios.post<Comment>('/api/comment', { articleId, body });
+    return res.data;
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      switch (err.response.status) {
+        case StatusCodes.UNAUTHORIZED:
+          throw new Error(Resources.getString(StringID.ERROR_UNAUTHORIZED));
+        case StatusCodes.FORBIDDEN:
+          throw new Error(Resources.getString(StringID.ERROR_FORBIDDEN_TO_CREATE_COMMENT));
+      }
+    }
+    throw err;
+  }
 }
 
 export default {
