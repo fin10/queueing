@@ -82,11 +82,11 @@ const articleDetailSlice = createSlice({
       state.byId[action.payload.id] = action.payload;
     });
     builder.addCase(removeArticle.fulfilled, (state, action) => {
-      if (!state.byId[action.payload.id]) {
-        Logger.warn(`Article Detail not loaded: ${action.payload.id}`);
+      if (!state.byId[action.payload]) {
+        Logger.warn(`Article Detail not loaded: ${action.payload}`);
         return;
       }
-      delete state.byId[action.payload.id];
+      delete state.byId[action.payload];
     });
     builder.addMatcher(
       (action) => action.type === likeArticle.fulfilled.type || action.type === dislikeArticle.fulfilled.type,

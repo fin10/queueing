@@ -90,6 +90,6 @@ describe(ArticleController.name, () => {
     jest.spyOn(mockArticleService, 'remove').mockResolvedValueOnce([{ id: noteId }]);
 
     const removed = await controller.remove(noteId);
-    expect(removed.id).toBe(noteId);
+    expect(removed).toBe(noteId);
   });
 });

@@ -25,6 +25,7 @@ import { Logger } from 'client/utils/Logger';
 import ErrorDialog from 'client/common/ErrorDialog';
 import { useHistory } from 'react-router-dom';
 import qs from 'query-string';
+import { ActionType } from 'client/common/ActionType';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,15 +44,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
-
-const enum ActionType {
-  REPORT = 'action-type-report',
-  LIKE = 'action-type-like',
-  DISLIKE = 'action-type-dislike',
-  UPDATE = 'action-type-update',
-  DELETE = 'action-type-delete',
-  DELETE_CONFIRMED = 'action-type-delete-confirmed',
-}
 
 interface PropTypes {
   readonly id: string;

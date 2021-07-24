@@ -43,8 +43,7 @@ export class ArticleController {
   @Delete(':id')
   async remove(@Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId) {
     await this.service.remove(id);
-
-    return { id };
+    return id;
   }
 
   @Get(':id')

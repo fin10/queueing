@@ -68,11 +68,13 @@ async function update(id: string, topic: string, title: string, body: string) {
 
 async function remove(id: string) {
   try {
-    const res = await axios.delete<ActionResponse>(`/api/article/${id}`);
+    const res = await axios.delete<string>(`/api/article/${id}`);
     return res.data;
   } catch (err) {
     if (axios.isAxiosError(err)) {
       switch (err.response.status) {
+        case StatusCodes.UNAUTHORIZED:
+          throw new Error(Resources.getString(StringID.ERROR_UNAUTHORIZED));
         case StatusCodes.FORBIDDEN:
           throw new Error(Resources.getString(StringID.ERROR_FORBIDDEN_TO_REMOVE_ARTICLE));
       }
