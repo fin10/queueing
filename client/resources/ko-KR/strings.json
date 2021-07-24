@@ -25,7 +25,7 @@
     "REPORT_TYPE_COPYRIGHT": "저작권, 초상권 침해",
     "REPORT_TYPE_PLASTERED": "악의적으로 반복적인 내용 게시",
     "REPORT_SUCCEED": "신고가 정상적으로 접수 되었습니다.",
-    "ERROR_UNAUTHORIZED": "로그인이 필요합니다.",
+    "ERROR_UNAUTHORIZED": "로그인이 필요한 기능입니다.",
     "ERROR_FORBIDDEN_TO_REMOVE_ARTICLE": "현재 글을 삭제할 권한이 없습니다.",
     "ERROR_FORBIDDEN_TO_UPDATE_ARTICLE": "현재 글을 수정할 권한이 없습니다.",
     "ERROR_FORBIDDEN_TO_CREATE_ARTICLE": "새로운 글을 작성할 권한이 없습니다.",
