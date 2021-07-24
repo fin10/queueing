@@ -60,7 +60,7 @@ export class CommentService {
     const comments = await this.model.find({ parent: articleId });
     if (!comments.length) return [];
 
-    return _.compact(await Promise.all(comments.map(this.getComment)));
+    return _.compact(await Promise.all(comments.map((comment) => this.getComment(comment))));
   }
 
   @OnEvent(NoteRemovedEvent.name, { nextTick: true })
