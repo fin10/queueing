@@ -13,7 +13,7 @@ export const fetchArticleDetail = createAsyncThunk(`${ACTION_NAME}/fetch`, async
   try {
     return await articleDetailAPI.fetch(id);
   } catch (err) {
-    return rejectWithValue(err);
+    return rejectWithValue(err.message);
   }
 });
 
@@ -51,7 +51,7 @@ export const likeArticle = createAsyncThunk(`${ACTION_NAME}/like`, async (id: st
   try {
     return await articleDetailAPI.like(id);
   } catch (err) {
-    return rejectWithValue(err);
+    return rejectWithValue(err.message);
   }
 });
 
@@ -59,7 +59,7 @@ export const dislikeArticle = createAsyncThunk(`${ACTION_NAME}/dislike`, async (
   try {
     return await articleDetailAPI.dislike(id);
   } catch (err) {
-    return rejectWithValue(err);
+    return rejectWithValue(err.message);
   }
 });
 
