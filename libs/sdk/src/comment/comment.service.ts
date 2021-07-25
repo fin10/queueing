@@ -12,6 +12,7 @@ import { ProfileService } from '../profile/profile.service';
 import mongoose, { Model } from 'mongoose';
 import { Comment, CommentDocument } from './schemas/comment.schema';
 import { InjectModel } from '@nestjs/mongoose';
+import { CommentRemovedEvent } from './events/comment-removed.event';
 
 @Injectable()
 export class CommentService {
@@ -48,12 +49,10 @@ export class CommentService {
   }
 
   async remove(id: mongoose.Types.ObjectId) {
-    if (!(await this.model.exists({ _id: id }))) {
-      throw new NotFoundException(`Comment not found with ${id}`);
-    }
+    const comment = await this.model.findById(id);
+    if (!comment) throw new NotFoundException(`Comment not found with ${id}`);
 
-    await this.model.remove({ _id: id });
-    await this.bodyService.remove(id);
+    await comment.remove();
   }
 
   async getComments(articleId: mongoose.Types.ObjectId) {
@@ -67,13 +66,21 @@ export class CommentService {
   async onNoteRemoved(event: NoteRemovedEvent) {
     const start = moment();
 
-    const ids = await this.model.find({ parent: event.getId() }, '_id');
-    ids.forEach(({ _id }) => this.bodyService.remove(_id));
+    const comments = await this.model.find({ parent: event.getId() }, '_id');
+    await Promise.all(comments.map((comment) => comment.remove()));
 
-    const count = await this.model.deleteMany({ parent: event.getId() });
-    if (count) {
-      this.logger.debug(`Removed comments (${count}) with ${event.getId()} in ${moment().diff(start, 'ms')}ms`);
+    if (comments.length) {
+      this.logger.debug(
+        `Removed comments (${comments.length}) with ${event.getId()} in ${moment().diff(start, 'ms')}ms`,
+      );
     }
+  }
+
+  @OnEvent(CommentRemovedEvent.name, { nextTick: true })
+  async onCommentRemoved(event: CommentRemovedEvent) {
+    const start = moment();
+    await this.bodyService.remove(event.id);
+    this.logger.debug(`Removed comment body with ${event.id} in ${moment().diff(start, 'ms')}ms`);
   }
 
   private async getComment(comment: CommentDocument) {

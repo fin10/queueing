@@ -9,6 +9,7 @@ import { CommentService } from './comment.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Comment, CommentSchema } from './schemas/comment.schema';
+import { NoteRemovedEvent } from '../note/events/note-removed.event';
 
 describe('CommentService', () => {
   let mongod: MongoMemoryServer;
@@ -21,7 +22,7 @@ describe('CommentService', () => {
     remove: jest.fn(),
   };
   const mockProfileService = { getProfile: jest.fn() };
-  const mockActionService = { getEmotionCounts: jest.fn() };
+  const mockActionService = { getEmotionCounts: async () => ({ likes: 0, dislikes: 0 }) };
 
   beforeEach(async () => {
     mongod = await MongoMemoryServer.create();
@@ -50,16 +51,32 @@ describe('CommentService', () => {
   it('create a comment', async () => {
     const user = { _id: new mongoose.Types.ObjectId() } as User;
     const nickname = 'test-user';
-    const data = { parentId: new mongoose.Types.ObjectId(), body: 'text-body' };
+    const data = { articleId: new mongoose.Types.ObjectId(), body: 'text-body' };
 
-    jest.spyOn(mockNoteService, 'getNote').mockResolvedValueOnce({ _id: data.parentId });
+    jest.spyOn(mockNoteService, 'getNote').mockResolvedValueOnce({ _id: data.articleId });
     jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
     jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: nickname });
-    jest.spyOn(mockActionService, 'getEmotionCounts').mockResolvedValueOnce({ likes: 0, dislikes: 0 });
 
     const created = await service.create(user, data);
     expect(created.creator).toBe(nickname);
-    expect(created.articleId).toBe(data.parentId);
+    expect(created.articleId).toBe(data.articleId);
     expect(created.body).toStrictEqual([data.body]);
+  });
+
+  it('recevied a note removed event', async () => {
+    const user = { _id: new mongoose.Types.ObjectId() } as User;
+    const data = { articleId: new mongoose.Types.ObjectId(), body: 'text-body' };
+
+    jest.spyOn(mockNoteService, 'getNote').mockResolvedValueOnce({ _id: data.articleId });
+    jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
+    jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: 'test-user' });
+
+    await service.create(user, data);
+
+    const event = new NoteRemovedEvent(data.articleId);
+    await service.onNoteRemoved(event);
+
+    const comments = await service.getComments(data.articleId);
+    expect(comments.length).toBe(0);
   });
 });
