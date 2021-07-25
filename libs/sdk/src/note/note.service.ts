@@ -74,12 +74,12 @@ export class NoteService {
   }
 
   async removeExpiredNotes(date = moment.utc().toDate()) {
-    const filter = { expireTime: { $lte: date } };
+    const notes = await this.model.find({ expireTime: { $lte: date } });
+    if (notes.length) {
+      await Promise.all(notes.map((note) => note.remove()));
+    }
 
-    const count = await this.count(filter);
-    await this.model.deleteMany(filter);
-
-    return count;
+    return notes.length;
   }
 
   async count<T>(filter: FilterQuery<T>): Promise<number> {
