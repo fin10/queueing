@@ -12,7 +12,6 @@ import { ProfileService } from '../profile/profile.service';
 import mongoose, { Model } from 'mongoose';
 import { Comment, CommentDocument } from './schemas/comment.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { CommentRemovedEvent } from './events/comment-removed.event';
 
 @Injectable()
 export class CommentService {
@@ -74,13 +73,6 @@ export class CommentService {
         `Removed comments (${comments.length}) with ${event.getId()} in ${moment().diff(start, 'ms')}ms`,
       );
     }
-  }
-
-  @OnEvent(CommentRemovedEvent.name, { nextTick: true })
-  async onCommentRemoved(event: CommentRemovedEvent) {
-    const start = moment();
-    await this.bodyService.remove(event.id);
-    this.logger.debug(`Removed comment body with ${event.id} in ${moment().diff(start, 'ms')}ms`);
   }
 
   private async getComment(comment: CommentDocument) {

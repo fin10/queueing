@@ -4,6 +4,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { Cache } from 'cache-manager';
 import moment from 'moment';
 import mongoose from 'mongoose';
+import { CommentRemovedEvent } from '../comment/events/comment-removed.event';
 import { EnvironmentVariables } from '../config/env.validation';
 import { NoteRemovedEvent } from './events/note-removed.event';
 import { NoteBodyEntity } from './note-body.entity';
@@ -42,6 +43,13 @@ export class NoteBodyService {
     const start = moment();
     await this.remove(event.getId());
     this.logger.debug(`Removed note body with ${event.getId()} in ${moment().diff(start, 'ms')}ms`);
+  }
+
+  @OnEvent(CommentRemovedEvent.name, { nextTick: true })
+  async onCommentRemoved(event: CommentRemovedEvent) {
+    const start = moment();
+    await this.remove(event.id);
+    this.logger.debug(`Removed comment body with ${event.id} in ${moment().diff(start, 'ms')}ms`);
   }
 
   private parseEntities(body: string): NoteBodyEntity[] {
