@@ -66,9 +66,8 @@ export class CommentService {
     const start = moment();
 
     const comments = await this.model.find({ parent: event.getId() }, '_id');
-    await Promise.all(comments.map((comment) => comment.remove()));
-
     if (comments.length) {
+      await Promise.all(comments.map((comment) => comment.remove()));
       this.logger.debug(
         `Removed comments (${comments.length}) with ${event.getId()} in ${moment().diff(start, 'ms')}ms`,
       );
@@ -78,7 +77,7 @@ export class CommentService {
   private async getComment(comment: CommentDocument) {
     const body = await this.bodyService.get(comment._id);
     if (!body) {
-      await this.model.findByIdAndDelete(comment._id);
+      await comment.remove();
       this.logger.verbose(`Comment(${comment._id}) has been expired.`);
       return null;
     }
