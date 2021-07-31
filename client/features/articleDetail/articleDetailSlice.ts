@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from 'client/app/store';
 import { Logger } from 'client/utils/Logger';
+import actionAPI from '../action/actionAPI';
 import articleDetailAPI, { ArticleDetail } from './articleDetailAPI';
 
 const ACTION_NAME = 'articleDetail';
@@ -49,7 +50,7 @@ export const removeArticle = createAsyncThunk(`${ACTION_NAME}/remove`, async (id
 
 export const likeArticle = createAsyncThunk(`${ACTION_NAME}/like`, async (id: string, { rejectWithValue }) => {
   try {
-    return await articleDetailAPI.like(id);
+    return await actionAPI.like(id);
   } catch (err) {
     return rejectWithValue(err.message);
   }
@@ -57,7 +58,7 @@ export const likeArticle = createAsyncThunk(`${ACTION_NAME}/like`, async (id: st
 
 export const dislikeArticle = createAsyncThunk(`${ACTION_NAME}/dislike`, async (id: string, { rejectWithValue }) => {
   try {
-    return await articleDetailAPI.dislike(id);
+    return await actionAPI.dislike(id);
   } catch (err) {
     return rejectWithValue(err.message);
   }
