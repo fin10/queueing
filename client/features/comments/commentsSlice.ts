@@ -3,6 +3,7 @@ import { Logger } from 'client/utils/Logger';
 import _ from 'underscore';
 import { RootState } from '../../app/store';
 import commentsAPI, { Comment } from './commentsAPI';
+import actionAPI from '../action/actionAPI';
 
 const ACTION_NAME = 'comments';
 
@@ -41,6 +42,22 @@ export const removeComment = createAsyncThunk(`${ACTION_NAME}/remove`, async (id
   }
 });
 
+export const likeComment = createAsyncThunk(`${ACTION_NAME}/like`, async (id: string, { rejectWithValue }) => {
+  try {
+    return await actionAPI.like(id);
+  } catch (err) {
+    return rejectWithValue(err.message);
+  }
+});
+
+export const dislikeComment = createAsyncThunk(`${ACTION_NAME}/dislike`, async (id: string, { rejectWithValue }) => {
+  try {
+    return await actionAPI.dislike(id);
+  } catch (err) {
+    return rejectWithValue(err.message);
+  }
+});
+
 const initialState: CommentsState = {
   byId: {},
   allIds: [],
@@ -70,6 +87,18 @@ const articleSummarySlice = createSlice({
       state.allIds = _.without(state.allIds, action.payload);
       delete state.byId[action.payload];
     });
+    builder.addMatcher(
+      (action) => action.type === likeComment.fulfilled.type || action.type === dislikeComment.fulfilled.type,
+      (state, action) => {
+        const comment = state.byId[action.payload.id];
+        if (!comment) {
+          Logger.warn(`Comment Detail not loaded: ${action.payload.id}`);
+          return;
+        }
+        comment.likes = action.payload.likes;
+        comment.dislikes = action.payload.dislikes;
+      },
+    );
   },
 });
 

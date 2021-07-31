@@ -16,11 +16,12 @@ import { StringID } from 'client/resources/StringID';
 import { NoteBody } from 'client/features/body/NoteBody';
 import { RootState, useAppDispatch } from 'client/app/store';
 import { useSelector } from 'react-redux';
-import { removeComment, selectCommentById } from './commentsSlice';
+import { dislikeComment, likeComment, removeComment, selectCommentById } from './commentsSlice';
 import ConfirmDialog from 'client/common/ConfirmDialog';
 import { ActionType } from 'client/features/action/ActionType';
 import { unwrapResult } from '@reduxjs/toolkit';
 import ErrorDialog from 'client/common/ErrorDialog';
+import { Logger } from 'client/utils/Logger';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -52,6 +53,16 @@ export function CommentCard({ id }: PropTypes) {
 
   const handlActionClick = (elm: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     switch (elm.currentTarget.id) {
+      case ActionType.LIKE:
+        dispatch(likeComment(id))
+          .then(unwrapResult)
+          .catch((err) => Logger.error(err));
+        break;
+      case ActionType.DISLIKE:
+        dispatch(dislikeComment(id))
+          .then(unwrapResult)
+          .catch((err) => Logger.error(err));
+        break;
       case ActionType.DELETE:
         openRemoveDialog(true);
         break;
@@ -79,10 +90,18 @@ export function CommentCard({ id }: PropTypes) {
         </CardContent>
         <CardActions className={classes.actions}>
           <ButtonGroup size="small" color="primary">
-            <Button className={classes.button} aria-label={Resources.getString(StringID.ACTION_LIKE)}>
+            <Button
+              id={ActionType.LIKE}
+              className={classes.button}
+              aria-label={Resources.getString(StringID.ACTION_LIKE)}
+            >
               <LikeAction likes={comment.likes} />
             </Button>
-            <Button className={classes.button} aria-label={Resources.getString(StringID.ACTION_DISLIKE)}>
+            <Button
+              id={ActionType.LIKE}
+              className={classes.button}
+              aria-label={Resources.getString(StringID.ACTION_DISLIKE)}
+            >
               <DislikeAction dislikes={comment.dislikes} />
             </Button>
 
