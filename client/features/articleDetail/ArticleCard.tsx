@@ -21,7 +21,6 @@ import { RootState, useAppDispatch } from 'client/app/store';
 import { useSelector } from 'react-redux';
 import { dislikeArticle, likeArticle, removeArticle, selectArticleDetailById } from './articleDetailSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { Logger } from 'client/utils/Logger';
 import ErrorDialog from 'client/common/ErrorDialog';
 import { useHistory } from 'react-router-dom';
 import qs from 'query-string';
@@ -66,12 +65,18 @@ export default function ArticleCard({ id }: PropTypes) {
       case ActionType.LIKE:
         dispatch(likeArticle(id))
           .then(unwrapResult)
-          .catch((err) => Logger.error(err));
+          .catch((rejectedValue) => {
+            openRemoveDialog(false);
+            setErrorDialogState({ open: true, message: rejectedValue });
+          });
         break;
       case ActionType.DISLIKE:
         dispatch(dislikeArticle(id))
           .then(unwrapResult)
-          .catch((err) => Logger.error(err));
+          .catch((rejectedValue) => {
+            openRemoveDialog(false);
+            setErrorDialogState({ open: true, message: rejectedValue });
+          });
         break;
       case ActionType.UPDATE:
         history.push(`/article/new?${qs.stringify({ id })}`);

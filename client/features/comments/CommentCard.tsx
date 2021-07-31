@@ -21,7 +21,6 @@ import ConfirmDialog from 'client/common/ConfirmDialog';
 import { ActionType } from 'client/features/action/ActionType';
 import { unwrapResult } from '@reduxjs/toolkit';
 import ErrorDialog from 'client/common/ErrorDialog';
-import { Logger } from 'client/utils/Logger';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -56,12 +55,18 @@ export function CommentCard({ id }: PropTypes) {
       case ActionType.LIKE:
         dispatch(likeComment(id))
           .then(unwrapResult)
-          .catch((err) => Logger.error(err));
+          .catch((rejectedValue) => {
+            openRemoveDialog(false);
+            setErrorDialogState({ open: true, message: rejectedValue });
+          });
         break;
       case ActionType.DISLIKE:
         dispatch(dislikeComment(id))
           .then(unwrapResult)
-          .catch((err) => Logger.error(err));
+          .catch((rejectedValue) => {
+            openRemoveDialog(false);
+            setErrorDialogState({ open: true, message: rejectedValue });
+          });
         break;
       case ActionType.DELETE:
         openRemoveDialog(true);
