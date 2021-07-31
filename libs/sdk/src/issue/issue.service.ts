@@ -43,8 +43,8 @@ export class IssueService {
       const action = await this.actionService.getAction(event.id);
       if (!action) throw new NotFoundException(`Action not found with: ${event.id}`);
 
-      const note = await this.noteService.getNote(action.noteId);
-      if (!note) throw new NotFoundException(`Note not found with ${action.noteId}`);
+      const note = await this.noteService.getNote(action.targetId);
+      if (!note) throw new NotFoundException(`Note not found with ${action.targetId}`);
 
       const body = await this.noteBodyService.get(note._id);
       if (!body) throw new NotFoundException(`${note._id} has been expired.`);
