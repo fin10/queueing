@@ -25,7 +25,7 @@ import { Logger } from 'client/utils/Logger';
 import ErrorDialog from 'client/common/ErrorDialog';
 import { useHistory } from 'react-router-dom';
 import qs from 'query-string';
-import { ActionType } from 'client/common/ActionType';
+import { ActionType } from 'client/features/action/ActionType';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

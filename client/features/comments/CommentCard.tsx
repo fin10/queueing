@@ -18,7 +18,7 @@ import { RootState, useAppDispatch } from 'client/app/store';
 import { useSelector } from 'react-redux';
 import { removeComment, selectCommentById } from './commentsSlice';
 import ConfirmDialog from 'client/common/ConfirmDialog';
-import { ActionType } from 'client/common/ActionType';
+import { ActionType } from 'client/features/action/ActionType';
 import { unwrapResult } from '@reduxjs/toolkit';
 import ErrorDialog from 'client/common/ErrorDialog';
 
