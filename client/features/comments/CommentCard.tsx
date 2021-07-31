@@ -94,13 +94,15 @@ export function CommentCard({ id }: PropTypes) {
               id={ActionType.LIKE}
               className={classes.button}
               aria-label={Resources.getString(StringID.ACTION_LIKE)}
+              onClick={handlActionClick}
             >
               <LikeAction likes={comment.likes} />
             </Button>
             <Button
-              id={ActionType.LIKE}
+              id={ActionType.DISLIKE}
               className={classes.button}
               aria-label={Resources.getString(StringID.ACTION_DISLIKE)}
+              onClick={handlActionClick}
             >
               <DislikeAction dislikes={comment.dislikes} />
             </Button>
