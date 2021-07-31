@@ -1,6 +1,8 @@
 import { Test } from '@nestjs/testing';
 import { Request } from 'express';
 import mongoose from 'mongoose';
+import { PoliciesGuard } from '../policy/policies.guard';
+import { UserAuthGuard } from '../user/user-auth.guard';
 import { ActionController } from './action.controller';
 import { ActionService } from './action.service';
 
@@ -18,7 +20,12 @@ describe(ActionController.name, () => {
           useValue: mockActionService,
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(UserAuthGuard)
+      .useValue(true)
+      .overrideGuard(PoliciesGuard)
+      .useValue(true)
+      .compile();
 
     controller = module.get(ActionController);
   });

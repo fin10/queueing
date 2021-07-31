@@ -8,12 +8,18 @@ import { ReportType } from './enums/report-type.enum';
 import mongoose from 'mongoose';
 import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
 import { Locale } from '../localization/enums/locale.enum';
+import { PoliciesGuard } from '../policy/policies.guard';
+import { CheckPolicies } from '../policy/decorators/check-policies.decorator';
+import { LikeActionPolicyHandler } from '../policy/handlers/like-action-policy.handler';
+import { DislikeActionPolicyHandler } from '../policy/handlers/dislike-action-policy.handler';
 
 @UseGuards(UserAuthGuard)
 @Controller('action')
 export class ActionController {
   constructor(private readonly action: ActionService) {}
 
+  @UseGuards(UserAuthGuard, PoliciesGuard)
+  @CheckPolicies(new LikeActionPolicyHandler())
   @Post('/like/:id')
   async like(@Req() req: Request, @Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId) {
     const user = req.user as User;
@@ -21,6 +27,8 @@ export class ActionController {
     return { id, ...emotions };
   }
 
+  @UseGuards(UserAuthGuard, PoliciesGuard)
+  @CheckPolicies(new DislikeActionPolicyHandler())
   @Post('/dislike/:id')
   async dislike(@Req() req: Request, @Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId) {
     const user = req.user as User;

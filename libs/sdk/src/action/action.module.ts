@@ -7,11 +7,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ActionCreatedEvent } from './events/action-created.event';
 import { LocalizationModule } from '../localization/localization.module';
+import { PolicyModule } from '../policy/policy.module';
 
 @Module({
   imports: [
     NoteModule,
     LocalizationModule,
+    PolicyModule,
     MongooseModule.forFeatureAsync([
       {
         imports: [EventEmitter2],
