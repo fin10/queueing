@@ -102,6 +102,10 @@ export function CommentCard({ id }: PropTypes) {
         </CardContent>
         <CardActions className={classes.actions}>
           <ButtonGroup size="small" color="primary">
+            <Button id={ActionType.REPORT} className={classes.button} onClick={handlActionClick}>
+              {Resources.getString(StringID.ACTION_REPORT)}
+            </Button>
+
             <Button
               id={ActionType.LIKE}
               className={classes.button}
