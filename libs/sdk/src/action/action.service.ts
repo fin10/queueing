@@ -1,30 +1,35 @@
 import moment from 'moment';
-import { BadRequestException, Logger } from '@nestjs/common';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { NoteRemovedEvent } from '../note/events/note-removed.event';
-import { NoteService } from '../note/note.service';
 import { User } from '../user/schemas/user.schema';
 import { EmotionType } from './enums/emotion-type.enum';
 import { Action, ActionDocument } from './schemas/action.schema';
-import { ReportType } from './enums/report-type.enum';
 import { ActionName } from './enums/action-name.enum';
-import { Locale } from '../localization/enums/locale.enum';
-import LocalizationService from '../localization/localization.service';
-import _ from 'underscore';
 import { CommentRemovedEvent } from '../comment/events/comment-removed.event';
+import { MongoErrorCode } from '../exceptions/mongo-error.code';
 
 @Injectable()
 export class ActionService {
   private readonly logger = new Logger(ActionService.name);
 
-  constructor(
-    @InjectModel(Action.name) private model: Model<ActionDocument>,
-    private readonly noteService: NoteService,
-    private readonly localization: LocalizationService,
-  ) {}
+  constructor(@InjectModel(Action.name) private model: Model<ActionDocument>) {}
+
+  async putAction(user: User, name: ActionName, type: string, targetId: mongoose.Types.ObjectId) {
+    try {
+      await this.model.create({ userId: user._id, name, type, targetId });
+    } catch (err) {
+      if (err.code === MongoErrorCode.DUPLICATE_KEY) {
+        this.logger.warn(`Action already exists for User(${user._id}), Action(${name}) and target(${targetId})`);
+      } else {
+        this.logger.error(`Failed to put action for User(${user._id}), Action(${name})`, err.stack);
+        throw err;
+      }
+    }
+  }
 
   async putEmotion(user: User, targetId: mongoose.Types.ObjectId, type: EmotionType) {
     const action = await this.model.findOne({ userId: user._id, name: ActionName.EMOTION, targetId });
@@ -34,7 +39,7 @@ export class ActionService {
         await action.updateOne({ type });
       }
     } else {
-      await this.model.create({ userId: user._id, name: ActionName.EMOTION, type, targetId });
+      await this.putAction(user, ActionName.EMOTION, type, targetId);
     }
 
     return this.getEmotionCounts(targetId);
@@ -57,23 +62,6 @@ export class ActionService {
 
   async getAction(id: mongoose.Types.ObjectId): Promise<ActionDocument> {
     return this.model.findById(id).lean();
-  }
-
-  async putReport(user: User, id: mongoose.Types.ObjectId, type: ReportType): Promise<void> {
-    const note = await this.noteService.getNote(id);
-    if (!note) throw new NotFoundException();
-
-    const action = await this.model.findOne({ userId: user._id, name: ActionName.REPORT, targetId: note._id });
-    if (action) throw new BadRequestException('Already reported');
-
-    await this.model.create({ userId: user._id, name: ActionName.REPORT, type, targetId: note._id });
-  }
-
-  getReportTypes(locale: Locale): { code: ReportType; text: string }[] {
-    return _.values(ReportType).map((type) => ({
-      code: type,
-      text: this.localization.enum(locale).reportType(type),
-    }));
   }
 
   @OnEvent(NoteRemovedEvent.name, { nextTick: true })

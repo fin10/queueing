@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Restriction } from './restriction';
-import { ReportType } from '../action/enums/report-type.enum';
+import { ReportType } from '../reporting/enums/report-type.enum';
 
 @Injectable()
 export class PenaltyService {

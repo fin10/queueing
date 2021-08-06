@@ -2,8 +2,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import LocalizationService from '../localization/localization.service';
-import { NoteService } from '../note/note.service';
 import { User } from '../user/schemas/user.schema';
 import { ActionService } from './action.service';
 import { EmotionType } from './enums/emotion-type.enum';
@@ -13,9 +11,7 @@ describe(ActionService.name, () => {
   let mongod: MongoMemoryServer;
   let service: ActionService;
 
-  const createTestUser = () => {
-    return { _id: new mongoose.Types.ObjectId() } as User;
-  };
+  const createTestUser = jest.fn().mockReturnValue({ _id: new mongoose.Types.ObjectId() } as User);
 
   beforeEach(async () => {
     mongod = await MongoMemoryServer.create();
@@ -25,19 +21,7 @@ describe(ActionService.name, () => {
         MongooseModule.forRoot(mongod.getUri(), { useCreateIndex: true }),
         MongooseModule.forFeature([{ name: Action.name, schema: ActionSchema }]),
       ],
-      providers: [
-        ActionService,
-        {
-          provide: NoteService,
-          useValue: {
-            getNote: async (id: string) => ({ _id: id }),
-          },
-        },
-        {
-          provide: LocalizationService,
-          useValue: {},
-        },
-      ],
+      providers: [ActionService],
     }).compile();
 
     service = module.get(ActionService);
