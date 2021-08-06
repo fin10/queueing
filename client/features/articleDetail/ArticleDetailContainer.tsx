@@ -10,6 +10,7 @@ import { fetchArticleDetail } from './articleDetailSlice';
 import { useAppDispatch } from 'client/app/store';
 import { Logger } from 'client/utils/Logger';
 import { CommentsContainer } from '../comments/CommentsContainer';
+import { fetchReportTypes } from '../reporting/reportingSlice';
 
 export default function ArticleDetailContainer() {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +21,10 @@ export default function ArticleDetailContainer() {
 
   useEffect(() => {
     dispatch(fetchArticleDetail(id))
+      .then(unwrapResult)
+      .catch((err) => Logger.error(err));
+
+    dispatch(fetchReportTypes())
       .then(unwrapResult)
       .catch((err) => Logger.error(err));
   }, [dispatch]);

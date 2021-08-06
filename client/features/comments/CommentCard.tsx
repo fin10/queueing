@@ -21,6 +21,7 @@ import ConfirmDialog from 'client/common/ConfirmDialog';
 import { ActionType } from 'client/features/action/ActionType';
 import { unwrapResult } from '@reduxjs/toolkit';
 import ErrorDialog from 'client/common/ErrorDialog';
+import { ReportDialog } from '../reporting/ReportDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -44,8 +45,9 @@ interface PropTypes {
 export function CommentCard({ id }: PropTypes) {
   const classes = useStyles();
 
-  const [isRemoveDialogOpened, openRemoveDialog] = useState(false);
   const [errorDialogState, setErrorDialogState] = useState<{ open: boolean; message?: string }>({ open: false });
+  const [isRemoveDialogOpened, openRemoveDialog] = useState(false);
+  const [isReportDialogOpened, openReportDialog] = useState(false);
 
   const comment = useSelector((state: RootState) => selectCommentById(state, id));
   const dispatch = useAppDispatch();
@@ -78,6 +80,11 @@ export function CommentCard({ id }: PropTypes) {
             openRemoveDialog(false);
             setErrorDialogState({ open: true, message: rejectedValue });
           });
+        break;
+      case ActionType.REPORT:
+        openReportDialog(true);
+        break;
+      case ActionType.REPORT_CONFIRMED:
         break;
       default:
         throw new Error(`Not supported action type: ${elm.currentTarget.id}`);
@@ -126,6 +133,13 @@ export function CommentCard({ id }: PropTypes) {
         contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_COMMENT)}
         positiveText={Resources.getString(StringID.ACTION_DELETE)}
         onPositiveClick={handlActionClick}
+      />
+
+      <ReportDialog
+        id={ActionType.REPORT_CONFIRMED}
+        open={isReportDialogOpened}
+        onClose={() => openReportDialog(false)}
+        onReportClick={handlActionClick}
       />
 
       <ErrorDialog

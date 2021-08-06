@@ -1,11 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Dialog, DialogContent, DialogActions, Button, FormControlLabel, RadioGroup, Radio } from '@material-ui/core';
 import { Resources } from '../../resources/Resources';
 import { StringID } from '../../resources/StringID';
-import { fetchReportTypes, selectReportTypes } from './reportingSlice';
-import { unwrapResult } from '@reduxjs/toolkit';
-import { Logger } from 'client/utils/Logger';
-import { useAppDispatch } from 'client/app/store';
+import { selectReportTypes } from './reportingSlice';
 import { useSelector } from 'react-redux';
 
 interface PropTypes {
@@ -18,14 +15,6 @@ interface PropTypes {
 export function ReportDialog({ id, open, onClose, onReportClick }: PropTypes) {
   const [type, updateType] = React.useState<string>('');
   const types = useSelector(selectReportTypes);
-
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    dispatch(fetchReportTypes())
-      .then(unwrapResult)
-      .catch((err) => Logger.error(err));
-  }, [dispatch]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     updateType(event.target.value);
