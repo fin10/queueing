@@ -12,7 +12,7 @@ import { Locale } from '../localization/enums/locale.enum';
 export class ReportingService {
   constructor(private readonly actionService: ActionService, private readonly localization: LocalizationService) {}
 
-  async putReport(user: User, targetId: mongoose.Types.ObjectId, type: ReportType) {
+  async putReport(user: User, type: ReportType, targetId: mongoose.Types.ObjectId) {
     await this.actionService.putAction(user, ActionName.REPORT, type, targetId);
   }
 

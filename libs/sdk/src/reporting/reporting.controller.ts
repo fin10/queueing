@@ -1,4 +1,4 @@
-import { Controller, DefaultValuePipe, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { UserAuthGuard } from '../user/user-auth.guard';
 import { User } from '../user/schemas/user.schema';
@@ -8,7 +8,6 @@ import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
 import { Locale } from '../localization/enums/locale.enum';
 import { ReportingService } from './reporting.service';
 
-@UseGuards(UserAuthGuard)
 @Controller('report')
 export class ReportingController {
   constructor(private readonly reportingService: ReportingService) {}
@@ -20,13 +19,14 @@ export class ReportingController {
     return this.reportingService.getReportTypes(locale);
   }
 
-  @Post('/:id/:type')
+  @UseGuards(UserAuthGuard)
+  @Post()
   async report(
     @Req() req: Request,
-    @Param('id', ParseObjectIdPipe) id: mongoose.Types.ObjectId,
-    @Param('type') type: ReportType,
+    @Body('targetId', ParseObjectIdPipe) targetId: mongoose.Types.ObjectId,
+    @Body('type') type: ReportType,
   ): Promise<void> {
     const user = req.user as User;
-    return this.reportingService.putReport(user, id, type);
+    return this.reportingService.putReport(user, type, targetId);
   }
 }

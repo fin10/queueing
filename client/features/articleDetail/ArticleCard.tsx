@@ -25,6 +25,7 @@ import ErrorDialog from 'client/common/ErrorDialog';
 import { useHistory } from 'react-router-dom';
 import qs from 'query-string';
 import { ActionType } from 'client/features/action/ActionType';
+import { ReportDialog } from '../reporting/ReportDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -55,13 +56,12 @@ export default function ArticleCard({ id }: PropTypes) {
 
   const [errorDialogState, setErrorDialogState] = useState<{ open: boolean; message?: string }>({ open: false });
   const [isRemoveDialogOpened, openRemoveDialog] = useState(false);
+  const [isReportDialogOpened, openReportDialog] = useState(false);
 
   const article = useSelector((state: RootState) => selectArticleDetailById(state, id));
 
   const handlActionClick = (elm: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     switch (elm.currentTarget.id) {
-      case ActionType.REPORT:
-        break;
       case ActionType.LIKE:
         dispatch(likeArticle(id))
           .then(unwrapResult)
@@ -92,6 +92,11 @@ export default function ArticleCard({ id }: PropTypes) {
             openRemoveDialog(false);
             setErrorDialogState({ open: true, message: rejectedValue });
           });
+        break;
+      case ActionType.REPORT:
+        openReportDialog(true);
+        break;
+      case ActionType.REPORT_CONFIRMED:
         break;
       default:
         throw new Error(`Not supported action type: ${elm.currentTarget.id}`);
@@ -156,6 +161,13 @@ export default function ArticleCard({ id }: PropTypes) {
         contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_ARTICLE)}
         positiveText={Resources.getString(StringID.ACTION_DELETE)}
         onPositiveClick={handlActionClick}
+      />
+
+      <ReportDialog
+        id={ActionType.REPORT_CONFIRMED}
+        open={isReportDialogOpened}
+        onClose={() => openReportDialog(false)}
+        onReportClick={handlActionClick}
       />
 
       <ErrorDialog
