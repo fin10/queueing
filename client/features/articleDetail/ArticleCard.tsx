@@ -26,6 +26,8 @@ import { useHistory } from 'react-router-dom';
 import qs from 'query-string';
 import { ActionType } from 'client/features/action/ActionType';
 import { ReportDialog } from '../reporting/ReportDialog';
+import { ReportTypeCode } from '../reporting/reportingAPI';
+import { submitReport } from '../reporting/reportingSlice';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -96,11 +98,18 @@ export default function ArticleCard({ id }: PropTypes) {
       case ActionType.REPORT:
         openReportDialog(true);
         break;
-      case ActionType.REPORT_CONFIRMED:
-        break;
       default:
         throw new Error(`Not supported action type: ${elm.currentTarget.id}`);
     }
+  };
+
+  const handleReportingSubmit = (type: ReportTypeCode) => {
+    dispatch(submitReport({ targetId: id, type }))
+      .then(unwrapResult)
+      .catch((rejectedValue) => {
+        setErrorDialogState({ open: true, message: rejectedValue });
+      })
+      .finally(() => openReportDialog(false));
   };
 
   if (!article) return <div />;
@@ -164,10 +173,9 @@ export default function ArticleCard({ id }: PropTypes) {
       />
 
       <ReportDialog
-        id={ActionType.REPORT_CONFIRMED}
         open={isReportDialogOpened}
         onClose={() => openReportDialog(false)}
-        onReportClick={handlActionClick}
+        onReportingSubmit={handleReportingSubmit}
       />
 
       <ErrorDialog

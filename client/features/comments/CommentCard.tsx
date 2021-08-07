@@ -22,6 +22,8 @@ import { ActionType } from 'client/features/action/ActionType';
 import { unwrapResult } from '@reduxjs/toolkit';
 import ErrorDialog from 'client/common/ErrorDialog';
 import { ReportDialog } from '../reporting/ReportDialog';
+import { ReportTypeCode } from '../reporting/reportingAPI';
+import { submitReport } from '../reporting/reportingSlice';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -84,11 +86,18 @@ export function CommentCard({ id }: PropTypes) {
       case ActionType.REPORT:
         openReportDialog(true);
         break;
-      case ActionType.REPORT_CONFIRMED:
-        break;
       default:
         throw new Error(`Not supported action type: ${elm.currentTarget.id}`);
     }
+  };
+
+  const handleReportingSubmit = (type: ReportTypeCode) => {
+    dispatch(submitReport({ targetId: id, type }))
+      .then(unwrapResult)
+      .catch((rejectedValue) => {
+        setErrorDialogState({ open: true, message: rejectedValue });
+      })
+      .finally(() => openReportDialog(false));
   };
 
   return (
@@ -140,10 +149,9 @@ export function CommentCard({ id }: PropTypes) {
       />
 
       <ReportDialog
-        id={ActionType.REPORT_CONFIRMED}
         open={isReportDialogOpened}
         onClose={() => openReportDialog(false)}
-        onReportClick={handlActionClick}
+        onReportingSubmit={handleReportingSubmit}
       />
 
       <ErrorDialog

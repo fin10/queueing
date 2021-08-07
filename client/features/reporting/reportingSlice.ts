@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from 'client/app/store';
-import reportingAPI, { ReportType } from './reportingAPI';
+import reportingAPI, { ReportType, ReportTypeCode } from './reportingAPI';
 
 const ACTION_NAME = 'reporting';
 
@@ -15,6 +15,17 @@ export const fetchReportTypes = createAsyncThunk(`${ACTION_NAME}/fetch`, async (
     return rejectWithValue(err.message);
   }
 });
+
+export const submitReport = createAsyncThunk(
+  `${ACTION_NAME}/submit`,
+  async ({ targetId, type }: { targetId: string; type: ReportTypeCode }, { rejectWithValue }) => {
+    try {
+      return await reportingAPI.report(targetId, type);
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  },
+);
 
 const initialState: reportingState = {
   types: [],
