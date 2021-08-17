@@ -7,6 +7,7 @@ import { ActionService } from '../action/action.service';
 import { NoteBodyService } from '../note/note-body.service';
 import { NoteService } from '../note/note.service';
 import { ProfileService } from '../profile/profile.service';
+import { CommentService } from '../comment/comment.service';
 
 describe('ArticleService', () => {
   let service: ArticleService;
@@ -25,6 +26,7 @@ describe('ArticleService', () => {
   };
   const mockProfileService = { getProfile: jest.fn() };
   const mockActionService = { count: jest.fn() };
+  const mockCommentService = { count: jest.fn() };
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -35,6 +37,7 @@ describe('ArticleService', () => {
         { provide: ActionService, useValue: mockActionService },
         { provide: NoteBodyService, useValue: mockBodyService },
         { provide: ProfileService, useValue: mockProfileService },
+        { provide: CommentService, useValue: mockCommentService },
       ],
     }).compile();
 
@@ -55,7 +58,6 @@ describe('ArticleService', () => {
     jest.spyOn(mockNoteService, 'count').mockResolvedValueOnce(0);
     jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
     jest.spyOn(mockProfileService, 'getProfile').mockResolvedValueOnce({ name: nickname });
-    jest.spyOn(mockActionService, 'count').mockResolvedValueOnce(0);
 
     const created = await service.create(user, data);
     expect(created.id).toBe(noteId);
@@ -78,7 +80,6 @@ describe('ArticleService', () => {
     jest.spyOn(mockNoteService, 'count').mockResolvedValueOnce(0);
     jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
     jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: nickname });
-    jest.spyOn(mockActionService, 'count').mockResolvedValueOnce(0);
 
     const updated = await service.update(user, noteId, data);
     expect(updated.id).toBe(noteId);

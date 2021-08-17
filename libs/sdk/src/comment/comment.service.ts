@@ -9,7 +9,7 @@ import { NoteRemovedEvent } from '../note/events/note-removed.event';
 import { ActionService } from '../action/action.service';
 import { User } from '../user/schemas/user.schema';
 import { ProfileService } from '../profile/profile.service';
-import mongoose, { Model } from 'mongoose';
+import mongoose, { FilterQuery, Model } from 'mongoose';
 import { Comment, CommentDocument } from './schemas/comment.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { ActionName } from '../action/enums/action-name.enum';
@@ -61,6 +61,10 @@ export class CommentService {
     if (!comments.length) return [];
 
     return _.compact(await Promise.all(comments.map((comment) => this.getComment(comment))));
+  }
+
+  count(filter: FilterQuery<CommentDocument>): Promise<number> {
+    return this.model.countDocuments(filter);
   }
 
   @OnEvent(NoteRemovedEvent.name, { nextTick: true })

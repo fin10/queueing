@@ -12,12 +12,14 @@ import { ArticleDetail } from './interfaces/article-detail.interface';
 import { ArticleSummary } from './interfaces/article-summary.interface';
 import { ActionName } from '../action/enums/action-name.enum';
 import { EmotionType } from '../action/enums/emotion-type.enum';
+import { CommentService } from '../comment/comment.service';
 
 @Injectable()
 export class ArticleService {
   constructor(
     private readonly topicService: TopicService,
     private readonly noteService: NoteService,
+    private readonly commentService: CommentService,
     private readonly actionService: ActionService,
     private readonly bodyService: NoteBodyService,
     private readonly profileService: ProfileService,
@@ -64,7 +66,7 @@ export class ArticleService {
     }
 
     const profile = this.profileService.getProfile(note.userId);
-    const comments = await this.noteService.count({ parent: note._id });
+    const comments = await this.commentService.count({ parent: note._id });
     const likes = await this.actionService.count({
       name: ActionName.EMOTION,
       type: EmotionType.LIKE,
@@ -96,7 +98,7 @@ export class ArticleService {
     const summaries: ArticleSummary[] = await Promise.all(
       result.docs.map(async (note) => {
         const profile = this.profileService.getProfile(note.userId);
-        const comments = await this.noteService.count({ parent: note._id });
+        const comments = await this.commentService.count({ parent: note._id });
         const likes = await this.actionService.count({
           name: ActionName.EMOTION,
           type: EmotionType.LIKE,

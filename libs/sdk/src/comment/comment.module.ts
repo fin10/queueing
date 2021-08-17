@@ -36,5 +36,6 @@ import { Comment, CommentDocument, CommentSchema } from './schemas/comment.schem
   ],
   controllers: [CommentController],
   providers: [CommentService],
+  exports: [CommentService],
 })
 export class CommentModule {}
