@@ -24,7 +24,7 @@ import { EnvironmentVariables, validate } from '@lib/sdk/config/env.validation';
       ),
       transports: [new winston.transports.Console()],
     }),
-    ConfigModule.forRoot({ isGlobal: true, validate }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: ['.env.development.local', '.env'], validate }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
