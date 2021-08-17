@@ -24,7 +24,7 @@ describe('ArticleService', () => {
     remove: jest.fn(),
   };
   const mockProfileService = { getProfile: jest.fn() };
-  const mockActionService = { getEmotionCounts: jest.fn() };
+  const mockActionService = { count: jest.fn() };
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -55,7 +55,7 @@ describe('ArticleService', () => {
     jest.spyOn(mockNoteService, 'count').mockResolvedValueOnce(0);
     jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
     jest.spyOn(mockProfileService, 'getProfile').mockResolvedValueOnce({ name: nickname });
-    jest.spyOn(mockActionService, 'getEmotionCounts').mockResolvedValueOnce({ likes: 0, dislikes: 0 });
+    jest.spyOn(mockActionService, 'count').mockResolvedValueOnce(0);
 
     const created = await service.create(user, data);
     expect(created.id).toBe(noteId);
@@ -78,7 +78,7 @@ describe('ArticleService', () => {
     jest.spyOn(mockNoteService, 'count').mockResolvedValueOnce(0);
     jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
     jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: nickname });
-    jest.spyOn(mockActionService, 'getEmotionCounts').mockResolvedValueOnce({ likes: 0, dislikes: 0 });
+    jest.spyOn(mockActionService, 'count').mockResolvedValueOnce(0);
 
     const updated = await service.update(user, noteId, data);
     expect(updated.id).toBe(noteId);

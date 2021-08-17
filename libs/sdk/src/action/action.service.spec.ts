@@ -4,6 +4,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import { User } from '../user/schemas/user.schema';
 import { ActionService } from './action.service';
+import { ActionName } from './enums/action-name.enum';
 import { EmotionType } from './enums/emotion-type.enum';
 import { Action, ActionSchema } from './schemas/action.schema';
 
@@ -60,16 +61,13 @@ describe(ActionService.name, () => {
     expect(actualLike).toStrictEqual({ likes: 1, dislikes: 0 });
   });
 
-  it('get emotion counts', async () => {
+  it('count actions', async () => {
     const user = createTestUser();
     const noteId = new mongoose.Types.ObjectId();
 
-    await Promise.all([
-      service.putEmotion(user, noteId, EmotionType.DISLIKE),
-      service.putEmotion(user, noteId, EmotionType.LIKE),
-    ]);
+    await service.putEmotion(user, noteId, EmotionType.LIKE);
 
-    const actual = await service.getEmotionCounts(noteId);
-    expect(actual).toStrictEqual({ likes: 1, dislikes: 1 });
+    const actual = await service.count({ name: ActionName.EMOTION, type: EmotionType.LIKE, targetId: noteId });
+    expect(actual).toBe(1);
   });
 });

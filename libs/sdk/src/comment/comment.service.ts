@@ -12,6 +12,8 @@ import { ProfileService } from '../profile/profile.service';
 import mongoose, { Model } from 'mongoose';
 import { Comment, CommentDocument } from './schemas/comment.schema';
 import { InjectModel } from '@nestjs/mongoose';
+import { ActionName } from '../action/enums/action-name.enum';
+import { EmotionType } from '../action/enums/emotion-type.enum';
 
 @Injectable()
 export class CommentService {
@@ -83,7 +85,16 @@ export class CommentService {
     }
 
     const profile = this.profileService.getProfile(comment.userId);
-    const { likes, dislikes } = await this.actionService.getEmotionCounts(comment._id);
+    const likes = await this.actionService.count({
+      name: ActionName.EMOTION,
+      type: EmotionType.LIKE,
+      targetId: comment._id,
+    });
+    const dislikes = await this.actionService.count({
+      name: ActionName.EMOTION,
+      type: EmotionType.DISLIKE,
+      targetId: comment._id,
+    });
 
     return {
       id: comment._id,

@@ -22,7 +22,7 @@ describe('CommentService', () => {
     remove: jest.fn(),
   };
   const mockProfileService = { getProfile: jest.fn() };
-  const mockActionService = { getEmotionCounts: async () => ({ likes: 0, dislikes: 0 }) };
+  const mockActionService = { count: jest.fn() };
 
   beforeEach(async () => {
     mongod = await MongoMemoryServer.create();
@@ -56,6 +56,7 @@ describe('CommentService', () => {
     jest.spyOn(mockNoteService, 'getNote').mockResolvedValueOnce({ _id: data.articleId });
     jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
     jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: nickname });
+    jest.spyOn(mockActionService, 'count').mockResolvedValueOnce(0);
 
     const created = await service.create(user, data);
     expect(created.creator).toBe(nickname);

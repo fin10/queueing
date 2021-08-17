@@ -82,7 +82,7 @@ export class NoteService {
     return notes.length;
   }
 
-  async count<T>(filter: FilterQuery<T>): Promise<number> {
+  async count(filter: FilterQuery<NoteDocument>): Promise<number> {
     return this.getValidNotes().countDocuments(filter).lean();
   }
 

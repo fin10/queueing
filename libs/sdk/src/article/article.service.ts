@@ -10,6 +10,8 @@ import { ProfileService } from '../profile/profile.service';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ArticleDetail } from './interfaces/article-detail.interface';
 import { ArticleSummary } from './interfaces/article-summary.interface';
+import { ActionName } from '../action/enums/action-name.enum';
+import { EmotionType } from '../action/enums/emotion-type.enum';
 
 @Injectable()
 export class ArticleService {
@@ -63,7 +65,16 @@ export class ArticleService {
 
     const profile = this.profileService.getProfile(note.userId);
     const comments = await this.noteService.count({ parent: note._id });
-    const { likes, dislikes } = await this.actionService.getEmotionCounts(note._id);
+    const likes = await this.actionService.count({
+      name: ActionName.EMOTION,
+      type: EmotionType.LIKE,
+      targetId: note._id,
+    });
+    const dislikes = await this.actionService.count({
+      name: ActionName.EMOTION,
+      type: EmotionType.DISLIKE,
+      targetId: note._id,
+    });
 
     return {
       id: note._id,
@@ -86,7 +97,16 @@ export class ArticleService {
       result.docs.map(async (note) => {
         const profile = this.profileService.getProfile(note.userId);
         const comments = await this.noteService.count({ parent: note._id });
-        const { likes, dislikes } = await this.actionService.getEmotionCounts(note._id);
+        const likes = await this.actionService.count({
+          name: ActionName.EMOTION,
+          type: EmotionType.LIKE,
+          targetId: note._id,
+        });
+        const dislikes = await this.actionService.count({
+          name: ActionName.EMOTION,
+          type: EmotionType.DISLIKE,
+          targetId: note._id,
+        });
 
         return {
           id: note._id,

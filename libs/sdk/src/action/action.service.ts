@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model } from 'mongoose';
+import mongoose, { FilterQuery, Model } from 'mongoose';
 import { NoteRemovedEvent } from '../note/events/note-removed.event';
 import { User } from '../user/schemas/user.schema';
 import { EmotionType } from './enums/emotion-type.enum';
@@ -42,25 +42,26 @@ export class ActionService {
       await this.putAction(user, ActionName.EMOTION, type, targetId);
     }
 
-    return this.getEmotionCounts(targetId);
-  }
-
-  async getEmotionCounts(targetId: mongoose.Types.ObjectId) {
-    const likes: number = await this.model.countDocuments({
-      targetId,
+    const likes = await this.count({
       name: ActionName.EMOTION,
       type: EmotionType.LIKE,
-    });
-    const dislikes: number = await this.model.countDocuments({
       targetId,
+    });
+
+    const dislikes = await this.count({
       name: ActionName.EMOTION,
       type: EmotionType.DISLIKE,
+      targetId,
     });
 
     return { likes, dislikes };
   }
 
-  async getAction(id: mongoose.Types.ObjectId): Promise<ActionDocument> {
+  count(filter: FilterQuery<ActionDocument>): Promise<number> {
+    return this.model.countDocuments(filter);
+  }
+
+  getAction(id: mongoose.Types.ObjectId): Promise<ActionDocument> {
     return this.model.findById(id).lean();
   }
 
