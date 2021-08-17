@@ -3,7 +3,6 @@ import moment from 'moment';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { NoteBodyService } from '../note/note-body.service';
-import { NoteService } from '../note/note.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { NoteRemovedEvent } from '../note/events/note-removed.event';
 import { ActionService } from '../action/action.service';
@@ -21,7 +20,6 @@ export class CommentService {
 
   constructor(
     @InjectModel(Comment.name) private readonly model: Model<CommentDocument>,
-    private readonly noteService: NoteService,
     private readonly actionService: ActionService,
     private readonly bodyService: NoteBodyService,
     private readonly profileService: ProfileService,
@@ -30,13 +28,7 @@ export class CommentService {
   async create(user: User, data: CreateCommentDto) {
     const { articleId, body } = data;
 
-    const parentNote = await this.noteService.getNote(articleId);
-    if (!parentNote) throw new NotFoundException(`Note not found with ${articleId}`);
-
-    const comment = new this.model({
-      userId: user._id,
-      parent: parentNote._id,
-    });
+    const comment = new this.model({ userId: user._id, parent: articleId });
     await comment.save();
 
     try {
@@ -63,7 +55,7 @@ export class CommentService {
     return _.compact(await Promise.all(comments.map((comment) => this.getComment(comment))));
   }
 
-  count(filter: FilterQuery<CommentDocument>): Promise<number> {
+  count(filter?: FilterQuery<CommentDocument>): Promise<number> {
     return this.model.countDocuments(filter);
   }
 

@@ -48,6 +48,10 @@ export class NoteService {
     return this.getValidNotes().findOne({ _id: id });
   }
 
+  async exists(id: mongoose.Types.ObjectId) {
+    return !!(await this.getNote(id).countDocuments());
+  }
+
   async paginateNotes<T>(
     filter: FilterQuery<T>,
     page: number,
