@@ -1,8 +1,6 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import logger from 'redux-logger';
 import { useDispatch } from 'react-redux';
-import notification from 'client/redux/notification';
-import report from 'client/redux/report';
 import profileReducer from 'client/features/profile/profileSlice';
 import articleSummaryReducer from 'client/features/articleSummary/articleSummarySlice';
 import articleDetailReducer from 'client/features/articleDetail/articleDetailSlice';
@@ -17,8 +15,6 @@ const rootReducer = combineReducers({
   comments: commentsReducer,
   topic: topicReducer,
   reporting: reportingReducer,
-  notification,
-  report,
 });
 
 const store = configureStore({

@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Container, createStyles, makeStyles, Theme } from '@material-ui/core';
-import Header from 'client/components/Header';
+import Header from 'client/common/Header';
 import ArticleSummaryContainer from 'client/features/articleSummary/ArticleSummaryContainer';
 import ArticleDetailContainer from 'client/features/articleDetail/ArticleDetailContainer';
 import EditArticleDetailContainer from 'client/features/articleDetail/EditArticleDetailContainer';

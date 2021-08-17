@@ -14,9 +14,9 @@ import {
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
 import ConfirmDialog from 'client/common/ConfirmDialog';
-import { DislikeAction, LikeAction } from 'client/components/Action';
-import { ExpireTime } from 'client/components/ExpireTime';
-import { NoteBody } from '../body/NoteBody';
+import { DislikeAction, LikeAction } from 'client/common/Action';
+import { ExpireTime } from 'client/common/ExpireTime';
+import { NoteBody } from 'client/common/NoteBody';
 import { RootState, useAppDispatch } from 'client/app/store';
 import { useSelector } from 'react-redux';
 import { dislikeArticle, likeArticle, removeArticle, selectArticleDetailById } from './articleDetailSlice';

@@ -2,8 +2,8 @@ import axios from 'axios';
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
 import { StatusCodes } from 'http-status-codes';
-import qs from 'qs';
-import { BodyEntity } from '../body/NoteBody';
+import qs from 'query-string';
+import { BodyEntity } from 'client/common/NoteBody';
 
 export interface Comment {
   readonly id: string;

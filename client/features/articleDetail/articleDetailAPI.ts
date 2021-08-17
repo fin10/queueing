@@ -1,8 +1,8 @@
 import axios from 'axios';
+import { StatusCodes } from 'http-status-codes';
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
-import { StatusCodes } from 'http-status-codes';
-import { BodyEntity } from '../body/NoteBody';
+import { BodyEntity } from 'client/common/NoteBody';
 
 export interface ArticleDetail {
   readonly id: string;

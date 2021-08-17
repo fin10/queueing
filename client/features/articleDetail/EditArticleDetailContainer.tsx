@@ -11,7 +11,7 @@ import InputTopic from 'client/features/topic/InputTopic';
 import ErrorDialog from 'client/common/ErrorDialog';
 import { BODY_MAX_LENGTH, TITLE_MAX_LENGTH } from 'client/constants';
 import { MaxLengthTextField } from 'client/common/MaxLengthTextField';
-import { BodyEntity } from '../body/NoteBody';
+import { BodyEntity } from 'client/common/NoteBody';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

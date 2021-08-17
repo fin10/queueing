@@ -10,10 +10,10 @@ import {
   Typography,
 } from '@material-ui/core';
 import React, { useState } from 'react';
-import { DislikeAction, LikeAction } from '../../components/Action';
+import { DislikeAction, LikeAction } from 'client/common/Action';
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
-import { NoteBody } from 'client/features/body/NoteBody';
+import { NoteBody } from 'client/common/NoteBody';
 import { RootState, useAppDispatch } from 'client/app/store';
 import { useSelector } from 'react-redux';
 import { dislikeComment, likeComment, removeComment, selectCommentById } from './commentsSlice';
@@ -21,9 +21,9 @@ import ConfirmDialog from 'client/common/ConfirmDialog';
 import { ActionType } from 'client/features/action/ActionType';
 import { unwrapResult } from '@reduxjs/toolkit';
 import ErrorDialog from 'client/common/ErrorDialog';
-import { ReportDialog } from '../reporting/ReportDialog';
-import { ReportTypeCode } from '../reporting/reportingAPI';
-import { submitReport } from '../reporting/reportingSlice';
+import { ReportDialog } from 'client/features/reporting/ReportDialog';
+import { ReportTypeCode } from 'client/features/reporting/reportingAPI';
+import { submitReport } from 'client/features/reporting/reportingSlice';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

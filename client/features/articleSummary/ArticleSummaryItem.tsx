@@ -3,8 +3,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../app/store';
-import { CommentAction, LikeAction, DislikeAction } from '../../components/Action';
-import { ExpireTime } from '../../components/ExpireTime';
+import { CommentAction, LikeAction, DislikeAction } from 'client/common/Action';
+import { ExpireTime } from 'client/common/ExpireTime';
 import { selectArticleSummaryById } from './articleSummarySlice';
 
 interface PropTypes {
