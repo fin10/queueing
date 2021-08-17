@@ -25,6 +25,9 @@ import ErrorDialog from 'client/common/ErrorDialog';
 import { useHistory } from 'react-router-dom';
 import qs from 'query-string';
 import { ActionType } from 'client/features/action/ActionType';
+import { ReportDialog } from '../reporting/ReportDialog';
+import { ReportTypeCode } from '../reporting/reportingAPI';
+import { submitReport } from '../reporting/reportingSlice';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -55,13 +58,12 @@ export default function ArticleCard({ id }: PropTypes) {
 
   const [errorDialogState, setErrorDialogState] = useState<{ open: boolean; message?: string }>({ open: false });
   const [isRemoveDialogOpened, openRemoveDialog] = useState(false);
+  const [isReportDialogOpened, openReportDialog] = useState(false);
 
   const article = useSelector((state: RootState) => selectArticleDetailById(state, id));
 
   const handlActionClick = (elm: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     switch (elm.currentTarget.id) {
-      case ActionType.REPORT:
-        break;
       case ActionType.LIKE:
         dispatch(likeArticle(id))
           .then(unwrapResult)
@@ -93,9 +95,21 @@ export default function ArticleCard({ id }: PropTypes) {
             setErrorDialogState({ open: true, message: rejectedValue });
           });
         break;
+      case ActionType.REPORT:
+        openReportDialog(true);
+        break;
       default:
         throw new Error(`Not supported action type: ${elm.currentTarget.id}`);
     }
+  };
+
+  const handleReportingSubmit = (type: ReportTypeCode) => {
+    dispatch(submitReport({ targetId: id, type }))
+      .then(unwrapResult)
+      .catch((rejectedValue) => {
+        setErrorDialogState({ open: true, message: rejectedValue });
+      })
+      .finally(() => openReportDialog(false));
   };
 
   if (!article) return <div />;
@@ -156,6 +170,12 @@ export default function ArticleCard({ id }: PropTypes) {
         contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_ARTICLE)}
         positiveText={Resources.getString(StringID.ACTION_DELETE)}
         onPositiveClick={handlActionClick}
+      />
+
+      <ReportDialog
+        open={isReportDialogOpened}
+        onClose={() => openReportDialog(false)}
+        onReportingSubmit={handleReportingSubmit}
       />
 
       <ErrorDialog

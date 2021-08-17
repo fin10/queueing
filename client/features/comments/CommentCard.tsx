@@ -21,6 +21,9 @@ import ConfirmDialog from 'client/common/ConfirmDialog';
 import { ActionType } from 'client/features/action/ActionType';
 import { unwrapResult } from '@reduxjs/toolkit';
 import ErrorDialog from 'client/common/ErrorDialog';
+import { ReportDialog } from '../reporting/ReportDialog';
+import { ReportTypeCode } from '../reporting/reportingAPI';
+import { submitReport } from '../reporting/reportingSlice';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -44,8 +47,9 @@ interface PropTypes {
 export function CommentCard({ id }: PropTypes) {
   const classes = useStyles();
 
-  const [isRemoveDialogOpened, openRemoveDialog] = useState(false);
   const [errorDialogState, setErrorDialogState] = useState<{ open: boolean; message?: string }>({ open: false });
+  const [isRemoveDialogOpened, openRemoveDialog] = useState(false);
+  const [isReportDialogOpened, openReportDialog] = useState(false);
 
   const comment = useSelector((state: RootState) => selectCommentById(state, id));
   const dispatch = useAppDispatch();
@@ -79,9 +83,21 @@ export function CommentCard({ id }: PropTypes) {
             setErrorDialogState({ open: true, message: rejectedValue });
           });
         break;
+      case ActionType.REPORT:
+        openReportDialog(true);
+        break;
       default:
         throw new Error(`Not supported action type: ${elm.currentTarget.id}`);
     }
+  };
+
+  const handleReportingSubmit = (type: ReportTypeCode) => {
+    dispatch(submitReport({ targetId: id, type }))
+      .then(unwrapResult)
+      .catch((rejectedValue) => {
+        setErrorDialogState({ open: true, message: rejectedValue });
+      })
+      .finally(() => openReportDialog(false));
   };
 
   return (
@@ -95,6 +111,10 @@ export function CommentCard({ id }: PropTypes) {
         </CardContent>
         <CardActions className={classes.actions}>
           <ButtonGroup size="small" color="primary">
+            <Button id={ActionType.REPORT} className={classes.button} onClick={handlActionClick}>
+              {Resources.getString(StringID.ACTION_REPORT)}
+            </Button>
+
             <Button
               id={ActionType.LIKE}
               className={classes.button}
@@ -126,6 +146,12 @@ export function CommentCard({ id }: PropTypes) {
         contentText={Resources.getString(StringID.DIALOG_QUESTION_REMOVE_COMMENT)}
         positiveText={Resources.getString(StringID.ACTION_DELETE)}
         onPositiveClick={handlActionClick}
+      />
+
+      <ReportDialog
+        open={isReportDialogOpened}
+        onClose={() => openReportDialog(false)}
+        onReportingSubmit={handleReportingSubmit}
       />
 
       <ErrorDialog

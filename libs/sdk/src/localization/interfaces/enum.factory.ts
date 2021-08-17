@@ -1,4 +1,4 @@
-import { ReportType } from '@lib/sdk/action/enums/report-type.enum';
+import { ReportType } from '@lib/sdk/reporting/enums/report-type.enum';
 
 export interface EnumFactory {
   reportType(type: ReportType): string;

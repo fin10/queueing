@@ -17,6 +17,7 @@ import { EnvironmentVariables, validate } from '@lib/sdk/config/env.validation';
 import { utilities, WinstonModule } from 'nest-winston';
 import winston from 'winston';
 import morgan from 'morgan';
+import { ReportingModule } from '@lib/sdk/reporting/reporting.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import morgan from 'morgan';
     TopicModule,
     CleanerModule,
     ActionModule,
+    ReportingModule,
     AuthModule,
     ProfileModule,
     IssueModule,

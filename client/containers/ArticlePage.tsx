@@ -12,7 +12,7 @@ import { dislikeArticle, fetchArticle, likeArticle, removeArticle } from 'client
 import { dislikeComment, fetchComments, likeComment } from 'client/redux/comment';
 import { Resources } from 'client/resources/Resources';
 import ConfirmDialog from 'client/common/ConfirmDialog';
-import ReportDialog from 'client/components/ReportDialog';
+import ReportDialog from 'client/features/reporting/ReportDialog';
 import { StringID } from 'client/resources/StringID';
 import { postReport } from 'client/redux/report';
 

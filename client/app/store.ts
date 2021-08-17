@@ -8,6 +8,7 @@ import articleSummaryReducer from 'client/features/articleSummary/articleSummary
 import articleDetailReducer from 'client/features/articleDetail/articleDetailSlice';
 import commentsReducer from 'client/features/comments/commentsSlice';
 import topicReducer from 'client/features/topic/topicSlice';
+import reportingReducer from 'client/features/reporting/reportingSlice';
 
 const rootReducer = combineReducers({
   profile: profileReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   articleDetail: articleDetailReducer,
   comments: commentsReducer,
   topic: topicReducer,
+  reporting: reportingReducer,
   notification,
   report,
 });
