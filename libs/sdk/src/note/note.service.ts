@@ -6,11 +6,11 @@ import { User } from '../user/schemas/user.schema';
 import { Note, NoteDocument } from './schemas/note.schema';
 import { EnvironmentVariables } from '../config/env.validation';
 import { ConfigService } from '@nestjs/config';
+import { Topic } from '../topic/schemas/topic.schema';
 
 @Injectable()
 export class NoteService {
   private readonly ttl: number;
-  private readonly topicMaxLength: number;
   private readonly titleMaxLength: number;
 
   constructor(
@@ -18,17 +18,15 @@ export class NoteService {
     config: ConfigService<EnvironmentVariables>,
   ) {
     this.ttl = config.get<number>('QUEUEING_NOTE_TTL');
-    this.topicMaxLength = config.get<number>('QUEUEING_TOPIC_MAX_LENGTH');
     this.titleMaxLength = config.get<number>('QUEUEING_TITLE_MAX_LENGTH');
   }
 
-  async create(user: User, topic: string, title: string) {
-    this.validateTopic(topic);
+  async create(user: User, topic: Topic, title: string) {
     this.validateTitle(title);
 
     const note = new this.model({
       userId: user._id,
-      topic,
+      topic: topic.name,
       title,
       expireTime: this.getExpireTime(),
     });
@@ -37,22 +35,17 @@ export class NoteService {
     return note._id;
   }
 
-  async update(id: mongoose.Types.ObjectId, topic: string, title: string) {
-    this.validateTopic(topic);
+  async update(id: mongoose.Types.ObjectId, topic: Topic, title: string) {
     this.validateTitle(title);
 
     const note = await this.model.findById(id);
     if (!note) throw new NotFoundException(`Note not found with ${id}`);
 
-    await note.updateOne({ topic, title });
+    await note.updateOne({ topic: topic.name, title });
   }
 
-  async getNote(id: mongoose.Types.ObjectId): Promise<NoteDocument | null> {
+  getNote(id: mongoose.Types.ObjectId) {
     return this.getValidNotes().findOne({ _id: id });
-  }
-
-  async getNotes<T>(filter?: FilterQuery<T>, sorting?: string): Promise<NoteDocument[]> {
-    return this.getValidNotes().find(filter).sort(sorting);
   }
 
   async paginateNotes<T>(
@@ -82,8 +75,8 @@ export class NoteService {
     return notes.length;
   }
 
-  async count(filter: FilterQuery<NoteDocument>): Promise<number> {
-    return this.getValidNotes().countDocuments(filter).lean();
+  count(filter?: FilterQuery<NoteDocument>): Promise<number> {
+    return this.getValidNotes().countDocuments(filter);
   }
 
   private getValidNotes() {
@@ -92,12 +85,6 @@ export class NoteService {
 
   private getExpireTime(): Date {
     return moment.utc().add(this.ttl, 's').toDate();
-  }
-
-  private validateTopic(topic: string) {
-    if (topic.length > this.topicMaxLength) {
-      throw new PayloadTooLargeException(`Length of 'topic' should be lower then ${this.topicMaxLength}`);
-    }
   }
 
   private validateTitle(title: string) {

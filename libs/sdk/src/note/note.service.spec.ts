@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Note, NoteSchema } from './schemas/note.schema';
 import { ConfigService } from '@nestjs/config';
+import { Topic } from '../topic/schemas/topic.schema';
 
 describe('NoteService', () => {
   let mongod: MongoMemoryServer;
@@ -46,8 +47,9 @@ describe('NoteService', () => {
 
   it('create a note', async () => {
     const user = { _id: new mongoose.Types.ObjectId() } as User;
+    const topic = { name: 'topic' } as Topic;
 
-    const id = await service.create(user, 'topic', 'title');
+    const id = await service.create(user, topic, 'title');
 
     const created = await service.getNote(id);
     expect(created.userId).toStrictEqual(user._id);
@@ -57,9 +59,12 @@ describe('NoteService', () => {
 
   it('update a note', async () => {
     const user = { _id: new mongoose.Types.ObjectId() } as User;
+    const topic = { name: 'topic' } as Topic;
 
-    const id = await service.create(user, 'topic', 'title');
-    await service.update(id, 'updatedTopic', 'updatedTitle');
+    const id = await service.create(user, topic, 'title');
+
+    const updatedTopic = { name: 'updatedTopic' } as Topic;
+    await service.update(id, updatedTopic, 'updatedTitle');
 
     const updated = await service.getNote(id);
     expect(updated.topic).toBe('updatedTopic');
@@ -68,8 +73,9 @@ describe('NoteService', () => {
 
   it('remove a note', async () => {
     const user = { _id: new mongoose.Types.ObjectId() } as User;
+    const topic = { name: 'topic' } as Topic;
 
-    const id = await service.create(user, 'topic', 'title');
+    const id = await service.create(user, topic, 'title');
     const created = await service.getNote(id);
     expect(created._id).toStrictEqual(id);
 
@@ -81,15 +87,16 @@ describe('NoteService', () => {
 
   it('remove expired notes', async () => {
     const user = { _id: new mongoose.Types.ObjectId() } as User;
+    const topic = { name: 'topic' } as Topic;
 
-    const id = await service.create(user, 'topic', 'title');
+    const id = await service.create(user, topic, 'title');
     const created = await service.getNote(id);
     expect(created._id).toStrictEqual(id);
 
     const removed = await service.removeExpiredNotes(moment.utc().add(1, 'minute').toDate());
     expect(removed).toBe(1);
 
-    const remainings = await service.getNotes();
-    expect(remainings.length).toBe(0);
+    const remainings = await service.count();
+    expect(remainings).toBe(0);
   });
 });

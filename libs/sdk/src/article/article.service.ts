@@ -27,7 +27,7 @@ export class ArticleService {
 
   async create(user: User, { topic: topicName, title, body }: CreateArticleDto) {
     const topic = await this.topicService.getOrCreate(user, topicName);
-    const id = await this.noteService.create(user, topic.name, title);
+    const id = await this.noteService.create(user, topic, title);
 
     try {
       await this.bodyService.put(id, body);
@@ -41,7 +41,7 @@ export class ArticleService {
 
   async update(user: User, id: mongoose.Types.ObjectId, { topic: topicName, title, body }: UpdateArticleDto) {
     const topic = await this.topicService.getOrCreate(user, topicName);
-    await this.noteService.update(id, topic.name, title);
+    await this.noteService.update(id, topic, title);
     await this.bodyService.remove(id);
     await this.bodyService.put(id, body);
 
