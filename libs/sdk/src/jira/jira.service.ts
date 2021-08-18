@@ -10,19 +10,19 @@ export class JiraService {
   private readonly username: string;
   private readonly token: string;
 
-  constructor(readonly config: ConfigService<EnvironmentVariables>) {
+  constructor(config: ConfigService<EnvironmentVariables>) {
     this.enabled = config.get('QUEUEING_JIRA_ENABLED');
     this.url = config.get('QUEUEING_JIRA_URL');
     this.username = config.get('QUEUEING_JIRA_USERNAME');
     this.token = config.get('QUEUEING_JIRA_TOKEN');
   }
 
-  isEnabled(): boolean {
+  isEnabled() {
     return this.enabled;
   }
 
   async findIssueIds(jql: string, max = 1): Promise<string[]> {
-    if (!this.isEnabled()) throw new InternalServerErrorException('Jira service is not enabled.');
+    this.checkEnabled();
 
     const data = {
       jql,
@@ -34,7 +34,7 @@ export class JiraService {
   }
 
   async createIssue(issueType: string, summary: string, description: string, labels: string[]): Promise<string> {
-    if (!this.isEnabled()) throw new InternalServerErrorException('Jira service is not enabled.');
+    this.checkEnabled();
 
     const data = {
       fields: {
@@ -55,7 +55,7 @@ export class JiraService {
   }
 
   async addLabel(issueId: string, label: string): Promise<void> {
-    if (!this.isEnabled()) throw new InternalServerErrorException('Jira service is not enabled.');
+    this.checkEnabled();
 
     const data = {
       update: {
@@ -69,7 +69,7 @@ export class JiraService {
   }
 
   async addComment(issueId: string, description: string): Promise<string> {
-    if (!this.isEnabled()) throw new InternalServerErrorException('Jira service is not enabled.');
+    this.checkEnabled();
 
     const data = {
       body: {
@@ -89,5 +89,9 @@ export class JiraService {
     return {
       Authorization: `Basic ${Buffer.from(`${this.username}:${this.token}`).toString('base64')}`,
     };
+  }
+
+  private checkEnabled() {
+    if (!this.isEnabled()) throw new InternalServerErrorException('Jira service is not enabled.');
   }
 }

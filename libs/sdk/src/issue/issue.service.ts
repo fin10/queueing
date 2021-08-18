@@ -25,8 +25,8 @@ export class IssueService {
 
   @OnEvent(ActionCreatedEvent.name, { nextTick: true })
   async onActionCreated(event: ActionCreatedEvent): Promise<void> {
-    if (!this.jiraService.isEnabled()) return;
     if (event.name !== ActionName.REPORT) return;
+    if (!this.jiraService.isEnabled()) return;
 
     try {
       const action = await this.actionService.getAction(event.id);
