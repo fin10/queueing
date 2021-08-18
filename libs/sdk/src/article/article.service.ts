@@ -115,6 +115,10 @@ export class ArticleService {
     };
   }
 
+  findArticles(filter?: FilterQuery<ArticleDocument>) {
+    return this.model.find(filter);
+  }
+
   private async getValidArticle(id: mongoose.Types.ObjectId) {
     const query = { ...this.getValidateFilter(), _id: id };
     const article = await this.model.findOne(query);

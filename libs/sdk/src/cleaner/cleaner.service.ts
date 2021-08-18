@@ -1,7 +1,6 @@
 import moment from 'moment';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { NoteService } from '../note/note.service';
 import { TopicService } from '../topic/topic.service';
 import { ArticleService } from '../article/article.service';
 
@@ -9,23 +8,21 @@ import { ArticleService } from '../article/article.service';
 export class CleanerService {
   private readonly logger = new Logger(CleanerService.name);
 
-  constructor(
-    private readonly noteService: NoteService,
-    private readonly articleService: ArticleService,
-    private readonly topicService: TopicService,
-  ) {}
+  constructor(private readonly articleService: ArticleService, private readonly topicService: TopicService) {}
 
   @Cron(CronExpression.EVERY_5_MINUTES)
-  async cleanNotes(): Promise<void> {
-    this.logger.verbose(`Cleaning expired notes...`);
+  async cleanArticles() {
+    this.logger.verbose(`Cleaning expired articles...`);
 
     const start = moment();
-    const count = await this.noteService.removeExpiredNotes();
-    this.logger.verbose(`Completed to clean expired notes (${count}) in ${moment().diff(start, 'ms')}ms`);
+    const articles = await this.articleService.findArticles({ expireTime: { $lte: moment.utc().toDate() } });
+    await Promise.all(articles.map((article) => article.remove()));
+
+    this.logger.verbose(`Completed to clean expired articles (${articles.length}) in ${moment().diff(start, 'ms')}ms`);
   }
 
   @Cron(CronExpression.EVERY_HOUR)
-  async cleanTopics(): Promise<void> {
+  async cleanTopics() {
     this.logger.verbose(`Cleaning empty topics...`);
 
     const start = moment();
