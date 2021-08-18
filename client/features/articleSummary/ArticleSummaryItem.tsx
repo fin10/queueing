@@ -57,7 +57,7 @@ export default function ArticleSummaryItem(props: PropTypes) {
 
             <Grid item xs={6}>
               <Typography align="right" color="textSecondary" variant="body2">
-                {summary.user}
+                {summary.creator}
               </Typography>
             </Grid>
           </Grid>

@@ -14,7 +14,7 @@ export interface ArticleDetail {
   readonly children: number;
   readonly likes: number;
   readonly dislikes: number;
-  readonly user: string;
+  readonly creator: string;
   readonly body: BodyEntity[];
 }
 

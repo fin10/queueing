@@ -121,7 +121,7 @@ export default function ArticleCard({ id }: PropTypes) {
         <CardContent>
           <div className={classes.margin}>
             <Typography variant="body2" color="textSecondary" gutterBottom>
-              {article.user}
+              {article.creator}
             </Typography>
             <Typography variant="h5">{article.title}</Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>

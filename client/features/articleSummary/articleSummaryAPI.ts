@@ -11,7 +11,7 @@ export interface ArticleSummary {
   readonly children: number;
   readonly likes: number;
   readonly dislikes: number;
-  readonly user: string;
+  readonly creator: string;
 }
 
 export interface ArticleSummaryResponse {
