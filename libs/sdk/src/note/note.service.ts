@@ -44,21 +44,23 @@ export class NoteService {
     await note.updateOne({ topic: topic.name, title });
   }
 
-  getNote(id: mongoose.Types.ObjectId) {
-    return this.getValidNotes().findOne({ _id: id });
+  count(filter?: FilterQuery<NoteDocument>): Promise<number> {
+    const query = { ...this.getValidateFilter(), filter };
+    return this.model.countDocuments(query);
   }
 
   async exists(id: mongoose.Types.ObjectId) {
-    return !!(await this.getNote(id).countDocuments());
+    const query = { ...this.getValidateFilter(), _id: id };
+    return this.model.exists(query);
   }
 
-  async paginateNotes<T>(
-    filter: FilterQuery<T>,
-    page: number,
-    limit: number,
-    sorting?: string,
-  ): Promise<mongoose.PaginateResult<NoteDocument>> {
-    const query = { expireTime: { $gt: moment.utc().toDate() }, ...filter };
+  getNote(id: mongoose.Types.ObjectId) {
+    const query = { ...this.getValidateFilter(), _id: id };
+    return this.model.findOne(query);
+  }
+
+  paginateNotes(page: number, limit: number, sorting?: string) {
+    const query = this.getValidateFilter();
     const options = { page, limit, sort: sorting };
     return this.model.paginate(query, options);
   }
@@ -79,12 +81,8 @@ export class NoteService {
     return notes.length;
   }
 
-  count(filter?: FilterQuery<NoteDocument>): Promise<number> {
-    return this.getValidNotes().countDocuments(filter);
-  }
-
-  private getValidNotes() {
-    return this.model.find({ expireTime: { $gt: moment.utc().toDate() } });
+  private getValidateFilter(): FilterQuery<NoteDocument> {
+    return { expireTime: { $gt: moment.utc().toDate() } };
   }
 
   private getExpireTime(): Date {

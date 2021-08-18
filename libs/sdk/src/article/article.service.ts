@@ -94,7 +94,7 @@ export class ArticleService {
   }
 
   async getArticles(page: number, limit: number) {
-    const result = await this.noteService.paginateNotes({ parent: { $exists: false } }, page, limit, '-createdAt');
+    const result = await this.noteService.paginateNotes(page, limit, '-createdAt');
     const summaries: ArticleSummary[] = await Promise.all(
       result.docs.map(async (note) => {
         const profile = this.profileService.getProfile(note.userId);
