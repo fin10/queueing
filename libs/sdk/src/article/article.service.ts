@@ -85,6 +85,11 @@ export class ArticleService {
     return this.model.exists(query);
   }
 
+  count(filter?: FilterQuery<ArticleDocument>): Promise<number> {
+    const query = { ...this.getValidateFilter(), ...filter };
+    return this.model.countDocuments(query);
+  }
+
   async getArticle(id: mongoose.Types.ObjectId) {
     const article = await this.getValidArticle(id);
     const body = await this.bodyService.get(article._id);

@@ -1,20 +1,20 @@
 import { Test } from '@nestjs/testing';
+import { ArticleService } from '../article/article.service';
 import { TopicController } from './topic.controller';
 import { TopicService } from './topic.service';
 
 describe(TopicController.name, () => {
   let controller: TopicController;
 
-  const mockTopicService = { getTopics: async () => [], getNoteCountsByTopic: async () => ({}) };
+  const mockArticleService = { count: jest.fn() };
+  const mockTopicService = { getTopics: jest.fn(), getNoteCountsByTopic: jest.fn() };
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
         TopicController,
-        {
-          provide: TopicService,
-          useValue: mockTopicService,
-        },
+        { provide: ArticleService, useValue: mockArticleService },
+        { provide: TopicService, useValue: mockTopicService },
       ],
     }).compile();
 
@@ -22,6 +22,7 @@ describe(TopicController.name, () => {
   });
 
   it('get topics', async () => {
+    jest.spyOn(mockArticleService, 'count').mockResolvedValueOnce(1);
     jest.spyOn(mockTopicService, 'getTopics').mockResolvedValueOnce([{ name: 'test' }]);
     jest.spyOn(mockTopicService, 'getNoteCountsByTopic').mockResolvedValueOnce({ test: 1 });
 

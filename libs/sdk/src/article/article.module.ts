@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { MongooseModule } from '@nestjs/mongoose';
 import paginate from 'mongoose-paginate-v2';
@@ -16,7 +16,7 @@ import { Article, ArticleDocument, ArticleSchema } from './schemas/article.schem
 @Module({
   imports: [
     NoteModule,
-    TopicModule,
+    forwardRef(() => TopicModule),
     ActionModule,
     ProfileModule,
     PolicyModule,

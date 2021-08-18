@@ -3,7 +3,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import { NoteService } from '../note/note.service';
 import { User } from '../user/schemas/user.schema';
 import { Topic, TopicSchema } from './schemas/topic.schema';
 import { TopicService } from './topic.service';
@@ -11,8 +10,6 @@ import { TopicService } from './topic.service';
 describe(TopicService.name, () => {
   let mongod: MongoMemoryServer;
   let service: TopicService;
-
-  const mockNoteService = { count: jest.fn() };
 
   const mockConfigService = {
     get: (key: string) => {
@@ -36,11 +33,7 @@ describe(TopicService.name, () => {
         MongooseModule.forRoot(mongod.getUri(), { useCreateIndex: true }),
         MongooseModule.forFeature([{ name: Topic.name, schema: TopicSchema }]),
       ],
-      providers: [
-        TopicService,
-        { provide: NoteService, useValue: mockNoteService },
-        { provide: ConfigService, useValue: mockConfigService },
-      ],
+      providers: [TopicService, { provide: ConfigService, useValue: mockConfigService }],
     }).compile();
 
     service = module.get(TopicService);
@@ -81,21 +74,5 @@ describe(TopicService.name, () => {
     expect(topics.length).toBe(1);
     expect(topics[0].userId).toStrictEqual(topic.userId);
     expect(topics[0].name).toBe(topic.name);
-  });
-
-  it('get note counts by topics', async () => {
-    const topic = await createTestTopic();
-
-    jest.spyOn(mockNoteService, 'count').mockResolvedValueOnce(1);
-
-    const counts = await service.getNoteCountsByTopic([topic]);
-    expect(counts[topic.name]).toBe(1);
-  });
-
-  it('remove empty topics', async () => {
-    await createTestTopic();
-
-    const count = await service.removeEmptyTopics();
-    expect(count).toBe(1);
   });
 });

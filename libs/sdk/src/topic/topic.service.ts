@@ -1,8 +1,6 @@
-import _ from 'underscore';
 import { Injectable, Logger, PayloadTooLargeException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { NoteService } from '../note/note.service';
+import mongoose, { Model } from 'mongoose';
 import { Topic, TopicDocument } from './schemas/topic.schema';
 import { User } from '../user/schemas/user.schema';
 import { MongoErrorCode } from '../exceptions/mongo-error.code';
@@ -17,7 +15,6 @@ export class TopicService {
 
   constructor(
     @InjectModel(Topic.name) private readonly model: Model<TopicDocument>,
-    private readonly noteService: NoteService,
     config: ConfigService<EnvironmentVariables>,
   ) {
     this.topicMaxLength = config.get<number>('QUEUEING_TOPIC_MAX_LENGTH');
@@ -25,13 +22,6 @@ export class TopicService {
 
   getTopics(): Promise<TopicDocument[]> {
     return this.model.find().lean();
-  }
-
-  async getNoteCountsByTopic(topics: Topic[]) {
-    const names = topics.map(({ name }) => name);
-    const counts = await Promise.all(names.map((name) => this.noteService.count({ topic: name })));
-
-    return _.object(names, counts);
   }
 
   async getOrCreate(user: User, name: string): Promise<Topic> {
@@ -56,14 +46,7 @@ export class TopicService {
     return this.model.findOne({ name }).lean();
   }
 
-  async removeEmptyTopics() {
-    const topics: TopicDocument[] = await this.model.find().lean();
-    const counts = await this.getNoteCountsByTopic(topics);
-
-    const shouldDelete = topics.filter(({ name }) => !counts[name]);
-
-    await Promise.all(shouldDelete.map((topic) => this.model.deleteOne({ _id: topic._id })));
-
-    return shouldDelete.length;
+  async remove(id: mongoose.Types.ObjectId) {
+    await this.model.remove({ _id: id });
   }
 }

@@ -1,12 +1,15 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Topic, TopicSchema } from './schemas/topic.schema';
 import { TopicController } from './topic.controller';
 import { TopicService } from './topic.service';
-import { NoteModule } from '../note/note.module';
+import { ArticleModule } from '../article/article.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Topic.name, schema: TopicSchema, collection: 'topics' }]), NoteModule],
+  imports: [
+    MongooseModule.forFeature([{ name: Topic.name, schema: TopicSchema, collection: 'topics' }]),
+    forwardRef(() => ArticleModule),
+  ],
   controllers: [TopicController],
   providers: [TopicService],
   exports: [TopicService],
