@@ -34,7 +34,7 @@ export class TopicService {
     return _.object(names, counts);
   }
 
-  async getOrCreate(user: User, name: string): Promise<TopicDocument> {
+  async getOrCreate(user: User, name: string): Promise<Topic> {
     if (name.length > this.topicMaxLength) {
       throw new PayloadTooLargeException(`Length of 'topic' should be lower then ${this.topicMaxLength}`);
     }
