@@ -1,4 +1,4 @@
-import { Note } from '@lib/sdk/note/schemas/note.schema';
+import { Article } from '@lib/sdk/article/schemas/article.schema';
 import { User } from '@lib/sdk/user/schemas/user.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
@@ -10,7 +10,7 @@ export class Comment {
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: User.name })
   readonly userId: mongoose.Types.ObjectId;
 
-  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: Note.name })
+  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: Article.name })
   readonly parent: mongoose.Types.ObjectId;
 }
 
