@@ -6,6 +6,7 @@ import {
   CardContent,
   createStyles,
   makeStyles,
+  Snackbar,
   Theme,
   Typography,
 } from '@material-ui/core';
@@ -24,6 +25,7 @@ import ErrorDialog from 'client/common/ErrorDialog';
 import { ReportDialog } from 'client/features/reporting/ReportDialog';
 import { ReportTypeCode } from 'client/features/reporting/reportingAPI';
 import { submitReport } from 'client/features/reporting/reportingSlice';
+import { Alert } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -50,6 +52,7 @@ export function CommentCard({ id }: PropTypes) {
   const [errorDialogState, setErrorDialogState] = useState<{ open: boolean; message?: string }>({ open: false });
   const [isRemoveDialogOpened, openRemoveDialog] = useState(false);
   const [isReportDialogOpened, openReportDialog] = useState(false);
+  const [isReportedAlertOpened, openReportedAlert] = useState(false);
 
   const comment = useSelector((state: RootState) => selectCommentById(state, id));
   const dispatch = useAppDispatch();
@@ -94,6 +97,7 @@ export function CommentCard({ id }: PropTypes) {
   const handleReportingSubmit = (type: ReportTypeCode) => {
     dispatch(submitReport({ targetId: id, type }))
       .then(unwrapResult)
+      .then(() => openReportedAlert(true))
       .catch((rejectedValue) => {
         setErrorDialogState({ open: true, message: rejectedValue });
       })
@@ -153,6 +157,10 @@ export function CommentCard({ id }: PropTypes) {
         onClose={() => openReportDialog(false)}
         onReportingSubmit={handleReportingSubmit}
       />
+
+      <Snackbar open={isReportedAlertOpened} autoHideDuration={10000} onClose={() => openReportedAlert(false)}>
+        <Alert severity="success">{Resources.getString(StringID.REPORT_SUCCEED)}</Alert>
+      </Snackbar>
 
       <ErrorDialog
         open={errorDialogState.open}
