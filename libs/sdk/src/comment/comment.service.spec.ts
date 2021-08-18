@@ -9,7 +9,7 @@ import { CommentService } from './comment.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Comment, CommentSchema } from './schemas/comment.schema';
-import { NoteRemovedEvent } from '../note/events/note-removed.event';
+import { ArticleRemovedEvent } from '../article/events/article-removed.event';
 
 describe('CommentService', () => {
   let mongod: MongoMemoryServer;
@@ -74,8 +74,8 @@ describe('CommentService', () => {
 
     await service.create(user, data);
 
-    const event = new NoteRemovedEvent(data.articleId);
-    await service.onNoteRemoved(event);
+    const event = new ArticleRemovedEvent(data.articleId);
+    await service.onArticleRemoved(event);
 
     const comments = await service.getComments(data.articleId);
     expect(comments.length).toBe(0);

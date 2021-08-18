@@ -10,7 +10,8 @@ import { ProfileModule } from '../profile/profile.module';
 import { TopicModule } from '../topic/topic.module';
 import { ArticleController } from './article.controller';
 import { ArticleService } from './article.service';
-import { Article, ArticleSchema } from './schemas/article.schema';
+import { ArticleRemovedEvent } from './events/article-removed.event';
+import { Article, ArticleDocument, ArticleSchema } from './schemas/article.schema';
 
 @Module({
   imports: [
@@ -29,6 +30,10 @@ import { Article, ArticleSchema } from './schemas/article.schema';
           const schema = ArticleSchema;
 
           schema.plugin(paginate);
+
+          schema.post('remove', (doc: ArticleDocument) => {
+            eventEmitter.emit(ArticleRemovedEvent.name, new ArticleRemovedEvent(doc._id));
+          });
 
           return schema;
         },
