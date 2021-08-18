@@ -45,7 +45,7 @@ export class NoteService {
   }
 
   count(filter?: FilterQuery<NoteDocument>): Promise<number> {
-    const query = { ...this.getValidateFilter(), filter };
+    const query = { ...this.getValidateFilter(), ...filter };
     return this.model.countDocuments(query);
   }
 
