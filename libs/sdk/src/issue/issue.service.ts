@@ -1,15 +1,16 @@
 import _ from 'underscore';
+import mongoose from 'mongoose';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ActionCreatedEvent } from '../action/events/action-created.event';
 import { ActionName } from '../action/enums/action-name.enum';
-import { NoteBodyEntity } from '../note/note-body.entity';
-import { NoteBodyService } from '../note/note-body.service';
-import { NoteService } from '../note/note.service';
-import { NoteDocument } from '../note/schemas/note.schema';
 import { JiraService } from '../jira/jira.service';
 import { Action } from '../action/schemas/action.schema';
 import { ActionService } from '../action/action.service';
+import { ArticleService } from '../article/article.service';
+import { CommentService } from '../comment/comment.service';
+import { ArticleDetail } from '../article/interfaces/article-detail.interface';
+import { CommentDetail } from '../comment/interfaces/comment-detail.interface';
 
 @Injectable()
 export class IssueService {
@@ -17,22 +18,10 @@ export class IssueService {
 
   constructor(
     private readonly actionService: ActionService,
-    private readonly noteService: NoteService,
-    private readonly noteBodyService: NoteBodyService,
+    private readonly articleService: ArticleService,
+    private readonly commentService: CommentService,
     private readonly jiraService: JiraService,
   ) {}
-
-  async postIssue(action: Action, note: NoteDocument, entities: NoteBodyEntity[]): Promise<void> {
-    let issueId = await this.findIssue(note);
-    if (issueId) {
-      await this.updateIssue(issueId, action);
-    } else {
-      issueId = await this.createIssue(action, note, entities);
-    }
-
-    const commentId = await this.addComment(issueId, action);
-    this.logger.verbose(`Issue posted: ${issueId}, comment: ${commentId}`);
-  }
 
   @OnEvent(ActionCreatedEvent.name, { nextTick: true })
   async onActionCreated(event: ActionCreatedEvent): Promise<void> {
@@ -43,40 +32,103 @@ export class IssueService {
       const action = await this.actionService.getAction(event.id);
       if (!action) throw new NotFoundException(`Action not found with: ${event.id}`);
 
-      const note = await this.noteService.getNote(action.targetId);
-      if (!note) throw new NotFoundException(`Note not found with ${action.targetId}`);
+      if (await this.articleService.exists(action.targetId)) {
+        await this.postArticleIssue(action);
+        return;
+      }
 
-      const body = await this.noteBodyService.get(note._id);
-      if (!body) throw new NotFoundException(`${note._id} has been expired.`);
+      if (await this.commentService.exists(action.targetId)) {
+        await this.postCommentIssue(action);
+        return;
+      }
 
-      await this.postIssue(action, note, body);
+      throw new NotFoundException(`Not found valid article or comment: ${event.id}`);
     } catch (err) {
       this.logger.error(err.message);
     }
   }
 
-  private async findIssue(note: NoteDocument): Promise<string | undefined> {
-    const jql = `issuetype = Report AND summary ~ ${note._id}`;
-    const [id] = (await this.jiraService.findIssueIds(jql)) || [];
-    return id;
+  private async findIssueId(id: mongoose.Types.ObjectId) {
+    const jql = `issuetype = Report AND summary ~ ${id}`;
+    return _.first(await this.jiraService.findIssueIds(jql));
   }
 
-  private createIssue(action: Action, note: NoteDocument, entities: NoteBodyEntity[]) {
-    const summary = `[${note._id}] ${note.title || 'empty title'}`;
+  private async postArticleIssue(action: Action) {
+    const article = await this.articleService.getArticle(action.targetId);
+
+    let issueId = await this.findIssueId(article.id);
+    if (issueId) {
+      await this.updateIssue(issueId, action);
+    } else {
+      issueId = await this.createArticleIssue(action, article);
+    }
+
+    const commentId = await this.addComment(issueId, action);
+    this.logger.verbose(`Issue posted: ${issueId}, comment: ${commentId}`);
+  }
+
+  private async createArticleIssue(action: Action, article: ArticleDetail) {
+    const userId = await this.articleService.getUserId(article.id);
+
+    const summary = `[${article.id}] ${article.title}`;
+    const contents = _.chain(article.body)
+      .map((entity) => entity.value.trim())
+      .compact()
+      .value()
+      .join('\n');
+
     const description = _.pairs({
-      title: `${note.title || 'empty title'}`,
-      user: `${note.userId}`,
-      contents: `${entities
-        .map((entity) => entity.value.trim())
-        .filter((v) => v.length)
-        .join('\n')}`,
+      title: article.title,
+      user: userId,
+      contents,
     })
       .map(([k, v]) => `[${k}]\n${v}`)
       .join('\n\n');
 
     const labels = _.pairs({
-      user: note.userId.toHexString(),
-      topic: note.topic,
+      user: userId,
+      topic: article.topic,
+      type: action.type,
+    })
+      .filter(([, v]) => v)
+      .map(([k, v]) => `${k}:${v}`);
+
+    return this.jiraService.createIssue('Report', summary, description, labels);
+  }
+
+  private async postCommentIssue(action: Action) {
+    const comment = await this.commentService.getComment(action.targetId);
+
+    let issueId = await this.findIssueId(comment.id);
+    if (issueId) {
+      await this.updateIssue(issueId, action);
+    } else {
+      issueId = await this.createIssueWithComment(action, comment);
+    }
+
+    const commentId = await this.addComment(issueId, action);
+    this.logger.verbose(`Issue posted: ${issueId}, comment: ${commentId}`);
+  }
+
+  private async createIssueWithComment(action: Action, comment: CommentDetail) {
+    const userId = await this.commentService.getUserId(comment.id);
+
+    const contents = _.chain(comment.body)
+      .map((entity) => entity.value.trim())
+      .compact()
+      .value()
+      .join('\n');
+
+    const summary = `[${comment.id}] ${contents.substring(0, 20)}`;
+    const description = _.pairs({
+      user: userId,
+      contents,
+    })
+      .map(([k, v]) => `[${k}]\n${v}`)
+      .join('\n\n');
+
+    const labels = _.pairs({
+      user: userId,
       type: action.type,
     })
       .filter(([, v]) => v)

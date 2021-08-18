@@ -13,6 +13,7 @@ import { Comment, CommentDocument } from './schemas/comment.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { ActionName } from '../action/enums/action-name.enum';
 import { EmotionType } from '../action/enums/emotion-type.enum';
+import { CommentDetail } from './interfaces/comment-detail.interface';
 
 @Injectable()
 export class CommentService {
@@ -38,7 +39,7 @@ export class CommentService {
       throw err;
     }
 
-    return this.getComment(comment);
+    return this.populateComment(comment);
   }
 
   async remove(id: mongoose.Types.ObjectId) {
@@ -48,11 +49,29 @@ export class CommentService {
     await comment.remove();
   }
 
+  async getUserId(id: mongoose.Types.ObjectId) {
+    const comment = await this.model.findById(id);
+    if (!comment) throw new NotFoundException(`Comment not found with ${id}`);
+
+    return comment.userId;
+  }
+
+  exists(id: mongoose.Types.ObjectId) {
+    return this.model.exists({ _id: id });
+  }
+
+  async getComment(id: mongoose.Types.ObjectId) {
+    const comment = await this.model.findById(id);
+    if (!comment) throw new NotFoundException(`Comment not found with ${id}`);
+
+    return this.populateComment(comment);
+  }
+
   async getComments(articleId: mongoose.Types.ObjectId) {
     const comments = await this.model.find({ parent: articleId });
     if (!comments.length) return [];
 
-    return _.compact(await Promise.all(comments.map((comment) => this.getComment(comment))));
+    return _.compact(await Promise.all(comments.map((comment) => this.populateComment(comment))));
   }
 
   count(filter?: FilterQuery<CommentDocument>): Promise<number> {
@@ -72,7 +91,7 @@ export class CommentService {
     }
   }
 
-  private async getComment(comment: CommentDocument) {
+  private async populateComment(comment: CommentDocument): Promise<CommentDetail> {
     const body = await this.bodyService.get(comment._id);
     if (!body) {
       await comment.remove();

@@ -55,6 +55,17 @@ export class ArticleService {
     return this.noteService.remove(id);
   }
 
+  async getUserId(id: mongoose.Types.ObjectId) {
+    const note = await this.noteService.getNote(id);
+    if (!note) throw new NotFoundException(`Article not found with ${id}`);
+
+    return note.userId;
+  }
+
+  exists(id: mongoose.Types.ObjectId) {
+    return this.noteService.exists(id);
+  }
+
   async getArticle(id: mongoose.Types.ObjectId): Promise<ArticleDetail> {
     const note = await this.noteService.getNote(id);
     if (!note) throw new NotFoundException(`Article not found with ${id}`);

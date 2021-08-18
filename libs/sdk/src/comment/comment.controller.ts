@@ -11,6 +11,7 @@ import { CheckPolicies } from '../policy/decorators/check-policies.decorator';
 import { CreateCommentPolicyHandler } from '../policy/handlers/create-comment-policy.handler';
 import { DeleteCommentPolicyHandler } from '../policy/handlers/delete-comment-policy.handler';
 import { NoteService } from '../note/note.service';
+import { CommentDetail } from './interfaces/comment-detail.interface';
 
 @Controller('comment')
 export class CommentController {
@@ -35,7 +36,9 @@ export class CommentController {
   }
 
   @Get()
-  async getComments(@Query('articleId', ParseObjectIdPipe) articleId: mongoose.Types.ObjectId) {
+  async getComments(
+    @Query('articleId', ParseObjectIdPipe) articleId: mongoose.Types.ObjectId,
+  ): Promise<CommentDetail[]> {
     await this.validateArticleId(articleId);
     return this.service.getComments(articleId);
   }
