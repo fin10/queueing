@@ -4,13 +4,13 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { FilterQuery, Model } from 'mongoose';
-import { NoteRemovedEvent } from '../note/events/note-removed.event';
 import { User } from '../user/schemas/user.schema';
 import { EmotionType } from './enums/emotion-type.enum';
 import { Action, ActionDocument } from './schemas/action.schema';
 import { ActionName } from './enums/action-name.enum';
 import { CommentRemovedEvent } from '../comment/events/comment-removed.event';
 import { MongoErrorCode } from '../exceptions/mongo-error.code';
+import { ArticleRemovedEvent } from '../article/events/article-removed.event';
 
 @Injectable()
 export class ActionService {
@@ -65,12 +65,12 @@ export class ActionService {
     return this.model.findById(id).lean();
   }
 
-  @OnEvent(NoteRemovedEvent.name, { nextTick: true })
-  async onNoteRemoved(event: NoteRemovedEvent) {
+  @OnEvent(ArticleRemovedEvent.name, { nextTick: true })
+  async onArticleRemoved(event: ArticleRemovedEvent) {
     const start = moment();
-    const result = await this.model.deleteMany({ targetId: event.getId() });
+    const result = await this.model.deleteMany({ targetId: event.id });
     if (result.n) {
-      this.logger.debug(`Removed actions (${result.n}) with ${event.getId()} in ${moment().diff(start, 'ms')}ms`);
+      this.logger.debug(`Removed actions (${result.n}) with ${event.id} in ${moment().diff(start, 'ms')}ms`);
     }
   }
 

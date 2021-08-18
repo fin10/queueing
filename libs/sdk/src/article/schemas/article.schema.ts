@@ -2,10 +2,10 @@ import { User } from '@lib/sdk/user/schemas/user.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 
-export type NoteDocument = Note & Document;
+export type ArticleDocument = Article & Document;
 
 @Schema({ timestamps: true })
-export class Note {
+export class Article {
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: User.name })
   readonly userId!: mongoose.Types.ObjectId;
 
@@ -19,4 +19,4 @@ export class Note {
   readonly expireTime!: Date;
 }
 
-export const NoteSchema = SchemaFactory.createForClass(Note);
+export const ArticleSchema = SchemaFactory.createForClass(Article);

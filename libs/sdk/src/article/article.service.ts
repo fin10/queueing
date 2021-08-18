@@ -1,8 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import mongoose from 'mongoose';
+import { Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
+import mongoose, { FilterQuery } from 'mongoose';
 import { NoteBodyService } from '../note/note-body.service';
 import { CreateArticleDto } from './dto/create-article.dto';
-import { NoteService } from '../note/note.service';
 import { TopicService } from '../topic/topic.service';
 import { ActionService } from '../action/action.service';
 import { User } from '../user/schemas/user.schema';
@@ -13,127 +12,99 @@ import { ArticleSummary } from './interfaces/article-summary.interface';
 import { ActionName } from '../action/enums/action-name.enum';
 import { EmotionType } from '../action/enums/emotion-type.enum';
 import { CommentService } from '../comment/comment.service';
+import { Article, ArticleDocument } from './schemas/article.schema';
+import { ConfigService } from '@nestjs/config';
+import { InjectModel } from '@nestjs/mongoose';
+import { EnvironmentVariables } from '../config/env.validation';
+import moment from 'moment';
+import { NoteBodyEntity } from '../note/note-body.entity';
 
 @Injectable()
 export class ArticleService {
+  private readonly ttl: number;
+  private readonly titleMaxLength: number;
+
   constructor(
+    @InjectModel(Article.name) private readonly model: mongoose.PaginateModel<ArticleDocument>,
     private readonly topicService: TopicService,
-    private readonly noteService: NoteService,
     private readonly commentService: CommentService,
     private readonly actionService: ActionService,
     private readonly bodyService: NoteBodyService,
     private readonly profileService: ProfileService,
-  ) {}
+    config: ConfigService<EnvironmentVariables>,
+  ) {
+    this.ttl = config.get<number>('QUEUEING_NOTE_TTL');
+    this.titleMaxLength = config.get<number>('QUEUEING_TITLE_MAX_LENGTH');
+  }
 
   async create(user: User, { topic: topicName, title, body }: CreateArticleDto) {
+    this.validateTitle(title);
+
     const topic = await this.topicService.getOrCreate(user, topicName);
-    const id = await this.noteService.create(user, topic, title);
+
+    const article = await this.model.create({
+      userId: user._id,
+      topic: topic.name,
+      title,
+      expireTime: this.getExpireTime(),
+    });
 
     try {
-      await this.bodyService.put(id, body);
+      await this.bodyService.put(article._id, body);
+      return this.getArticle(article._id);
     } catch (err) {
-      await this.noteService.remove(id);
+      await article.remove();
       throw err;
     }
-
-    return this.getArticle(id);
   }
 
   async update(user: User, id: mongoose.Types.ObjectId, { topic: topicName, title, body }: UpdateArticleDto) {
+    this.validateTitle(title);
+    const article = await this.getValidArticle(id);
     const topic = await this.topicService.getOrCreate(user, topicName);
-    await this.noteService.update(id, topic, title);
+    await article.updateOne({ topic: topic.name, title });
+
     await this.bodyService.remove(id);
     await this.bodyService.put(id, body);
 
     return this.getArticle(id);
   }
 
-  async remove(id: mongoose.Types.ObjectId): Promise<void> {
-    const note = await this.noteService.getNote(id);
-    if (!note) throw new NotFoundException();
-
-    return this.noteService.remove(id);
+  async remove(id: mongoose.Types.ObjectId) {
+    const article = await this.getValidArticle(id);
+    await article.remove();
   }
 
   async getUserId(id: mongoose.Types.ObjectId) {
-    const note = await this.noteService.getNote(id);
-    if (!note) throw new NotFoundException(`Article not found with ${id}`);
-
-    return note.userId;
+    const article = await this.getValidArticle(id);
+    return article.userId;
   }
 
   exists(id: mongoose.Types.ObjectId) {
-    return this.noteService.exists(id);
+    const query = { ...this.getValidateFilter(), _id: id };
+    return this.model.exists(query);
   }
 
-  async getArticle(id: mongoose.Types.ObjectId): Promise<ArticleDetail> {
-    const note = await this.noteService.getNote(id);
-    if (!note) throw new NotFoundException(`Article not found with ${id}`);
+  count(filter?: FilterQuery<ArticleDocument>): Promise<number> {
+    const query = { ...this.getValidateFilter(), ...filter };
+    return this.model.countDocuments(query);
+  }
 
-    const body = await this.bodyService.get(note._id);
+  async getArticle(id: mongoose.Types.ObjectId) {
+    const article = await this.getValidArticle(id);
+    const body = await this.bodyService.get(article._id);
     if (!body) {
-      await note.remove();
-      throw new NotFoundException(`Article(${id}) has been expired.`);
+      await article.remove();
+      throw new NotFoundException(`Article(${article._id}) has been expired.`);
     }
 
-    const profile = await this.profileService.getProfile(note.userId);
-    const comments = await this.commentService.count({ parent: note._id });
-    const likes = await this.actionService.count({
-      name: ActionName.EMOTION,
-      type: EmotionType.LIKE,
-      targetId: note._id,
-    });
-    const dislikes = await this.actionService.count({
-      name: ActionName.EMOTION,
-      type: EmotionType.DISLIKE,
-      targetId: note._id,
-    });
-
-    return {
-      id: note._id,
-      creator: profile.name,
-      topic: note.topic,
-      title: note.title,
-      body,
-      created: note.get('createdAt'),
-      updated: note.get('updatedAt'),
-      expireTime: note.expireTime,
-      children: comments,
-      likes,
-      dislikes,
-    };
+    return this.populateArticleDetail(article, body);
   }
 
   async getArticles(page: number, limit: number) {
-    const result = await this.noteService.paginateNotes(page, limit, '-createdAt');
+    const result = await this.paginateArticles(page, limit, '-createdAt');
     const summaries: ArticleSummary[] = await Promise.all(
-      result.docs.map(async (note) => {
-        const profile = await this.profileService.getProfile(note.userId);
-        const comments = await this.commentService.count({ parent: note._id });
-        const likes = await this.actionService.count({
-          name: ActionName.EMOTION,
-          type: EmotionType.LIKE,
-          targetId: note._id,
-        });
-        const dislikes = await this.actionService.count({
-          name: ActionName.EMOTION,
-          type: EmotionType.DISLIKE,
-          targetId: note._id,
-        });
-
-        return {
-          id: note._id,
-          creator: profile.name,
-          topic: note.topic,
-          title: note.title,
-          created: note.get('createdAt'),
-          updated: note.get('updatedAt'),
-          expireTime: note.expireTime,
-          children: comments,
-          likes,
-          dislikes,
-        };
-      }),
+      result.docs.map((article) => this.populateArticleSummary(article)),
     );
 
     return {
@@ -141,6 +112,95 @@ export class ArticleService {
       pageSize: result.limit,
       totalPages: result.totalPages,
       summaries,
+    };
+  }
+
+  findArticles(filter?: FilterQuery<ArticleDocument>) {
+    return this.model.find(filter);
+  }
+
+  private async getValidArticle(id: mongoose.Types.ObjectId) {
+    const query = { ...this.getValidateFilter(), _id: id };
+    const article = await this.model.findOne(query);
+    if (!article) throw new NotFoundException(`Article not found with ${id}`);
+
+    return article;
+  }
+
+  private paginateArticles(page: number, limit: number, sorting?: string) {
+    const query = this.getValidateFilter();
+    const options = { page, limit, sort: sorting };
+    return this.model.paginate(query, options);
+  }
+
+  private validateTitle(title: string) {
+    if (title.length > this.titleMaxLength) {
+      throw new PayloadTooLargeException(`Length of 'title' should be lower then ${this.titleMaxLength}`);
+    }
+  }
+
+  private getValidateFilter(): FilterQuery<ArticleDocument> {
+    return { expireTime: { $gt: moment.utc().toDate() } };
+  }
+
+  private getExpireTime(): Date {
+    return moment.utc().add(this.ttl, 's').toDate();
+  }
+
+  private async populateArticleDetail(article: ArticleDocument, body: NoteBodyEntity[]): Promise<ArticleDetail> {
+    const profile = await this.profileService.getProfile(article.userId);
+    const comments = await this.commentService.count({ parent: article._id });
+    const likes = await this.actionService.count({
+      name: ActionName.EMOTION,
+      type: EmotionType.LIKE,
+      targetId: article._id,
+    });
+    const dislikes = await this.actionService.count({
+      name: ActionName.EMOTION,
+      type: EmotionType.DISLIKE,
+      targetId: article._id,
+    });
+
+    return {
+      id: article._id,
+      creator: profile.name,
+      topic: article.topic,
+      title: article.title,
+      body,
+      created: article.get('createdAt'),
+      updated: article.get('updatedAt'),
+      expireTime: article.expireTime,
+      children: comments,
+      likes,
+      dislikes,
+    };
+  }
+
+  private async populateArticleSummary(article: ArticleDocument): Promise<ArticleSummary> {
+    const profile = await this.profileService.getProfile(article.userId);
+    const comments = await this.commentService.count({ parent: article._id });
+    const likes = await this.actionService.count({
+      name: ActionName.EMOTION,
+      type: EmotionType.LIKE,
+      targetId: article._id,
+    });
+    const dislikes = await this.actionService.count({
+      name: ActionName.EMOTION,
+      type: EmotionType.DISLIKE,
+      targetId: article._id,
+    });
+
+    return {
+      id: article._id,
+      creator: profile.name,
+      topic: article.topic,
+      title: article.title,
+      created: article.get('createdAt'),
+      updated: article.get('updatedAt'),
+      expireTime: article.expireTime,
+      children: comments,
+      likes,
+      dislikes,
     };
   }
 }

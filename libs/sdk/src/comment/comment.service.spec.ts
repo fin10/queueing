@@ -3,19 +3,17 @@ import mongoose from 'mongoose';
 import { User } from '../user/schemas/user.schema';
 import { ActionService } from '../action/action.service';
 import { NoteBodyService } from '../note/note-body.service';
-import { NoteService } from '../note/note.service';
 import { ProfileService } from '../profile/profile.service';
 import { CommentService } from './comment.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Comment, CommentSchema } from './schemas/comment.schema';
-import { NoteRemovedEvent } from '../note/events/note-removed.event';
+import { ArticleRemovedEvent } from '../article/events/article-removed.event';
 
 describe('CommentService', () => {
   let mongod: MongoMemoryServer;
   let service: CommentService;
 
-  const mockNoteService = { getNote: jest.fn() };
   const mockBodyService = {
     put: jest.fn(),
     get: jest.fn(),
@@ -34,7 +32,6 @@ describe('CommentService', () => {
       ],
       providers: [
         CommentService,
-        { provide: NoteService, useValue: mockNoteService },
         { provide: ActionService, useValue: mockActionService },
         { provide: NoteBodyService, useValue: mockBodyService },
         { provide: ProfileService, useValue: mockProfileService },
@@ -53,7 +50,6 @@ describe('CommentService', () => {
     const nickname = 'test-user';
     const data = { articleId: new mongoose.Types.ObjectId(), body: 'text-body' };
 
-    jest.spyOn(mockNoteService, 'getNote').mockResolvedValueOnce({ _id: data.articleId });
     jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
     jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: nickname });
     jest.spyOn(mockActionService, 'count').mockResolvedValueOnce(0);
@@ -68,14 +64,13 @@ describe('CommentService', () => {
     const user = { _id: new mongoose.Types.ObjectId() } as User;
     const data = { articleId: new mongoose.Types.ObjectId(), body: 'text-body' };
 
-    jest.spyOn(mockNoteService, 'getNote').mockResolvedValueOnce({ _id: data.articleId });
     jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
     jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: 'test-user' });
 
     await service.create(user, data);
 
-    const event = new NoteRemovedEvent(data.articleId);
-    await service.onNoteRemoved(event);
+    const event = new ArticleRemovedEvent(data.articleId);
+    await service.onArticleRemoved(event);
 
     const comments = await service.getComments(data.articleId);
     expect(comments.length).toBe(0);

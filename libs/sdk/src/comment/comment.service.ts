@@ -4,7 +4,6 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { NoteBodyService } from '../note/note-body.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { NoteRemovedEvent } from '../note/events/note-removed.event';
 import { ActionService } from '../action/action.service';
 import { User } from '../user/schemas/user.schema';
 import { ProfileService } from '../profile/profile.service';
@@ -14,6 +13,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ActionName } from '../action/enums/action-name.enum';
 import { EmotionType } from '../action/enums/emotion-type.enum';
 import { CommentDetail } from './interfaces/comment-detail.interface';
+import { ArticleRemovedEvent } from '../article/events/article-removed.event';
 
 @Injectable()
 export class CommentService {
@@ -78,16 +78,14 @@ export class CommentService {
     return this.model.countDocuments(filter);
   }
 
-  @OnEvent(NoteRemovedEvent.name, { nextTick: true })
-  async onNoteRemoved(event: NoteRemovedEvent) {
+  @OnEvent(ArticleRemovedEvent.name, { nextTick: true })
+  async onArticleRemoved(event: ArticleRemovedEvent) {
     const start = moment();
 
-    const comments = await this.model.find({ parent: event.getId() }, '_id');
+    const comments = await this.model.find({ parent: event.id }, '_id');
     if (comments.length) {
       await Promise.all(comments.map((comment) => comment.remove()));
-      this.logger.debug(
-        `Removed comments (${comments.length}) with ${event.getId()} in ${moment().diff(start, 'ms')}ms`,
-      );
+      this.logger.debug(`Removed comments (${comments.length}) with ${event.id} in ${moment().diff(start, 'ms')}ms`);
     }
   }
 
