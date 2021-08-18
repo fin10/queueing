@@ -11,8 +11,8 @@ export interface Profile {
 export class ProfileService {
   constructor(private readonly nicknameService: NicknameService) {}
 
-  getProfile(userId: mongoose.Types.ObjectId): Profile {
-    const nickname = this.nicknameService.getNickname(userId);
+  async getProfile(userId: mongoose.Types.ObjectId) {
+    const nickname = await this.nicknameService.getNickname(userId);
     return {
       id: userId,
       name: nickname,

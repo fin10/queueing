@@ -65,7 +65,7 @@ export class ArticleService {
       throw new NotFoundException(`Article(${id}) has been expired.`);
     }
 
-    const profile = this.profileService.getProfile(note.userId);
+    const profile = await this.profileService.getProfile(note.userId);
     const comments = await this.commentService.count({ parent: note._id });
     const likes = await this.actionService.count({
       name: ActionName.EMOTION,
@@ -97,7 +97,7 @@ export class ArticleService {
     const result = await this.noteService.paginateNotes(page, limit, '-createdAt');
     const summaries: ArticleSummary[] = await Promise.all(
       result.docs.map(async (note) => {
-        const profile = this.profileService.getProfile(note.userId);
+        const profile = await this.profileService.getProfile(note.userId);
         const comments = await this.commentService.count({ parent: note._id });
         const likes = await this.actionService.count({
           name: ActionName.EMOTION,

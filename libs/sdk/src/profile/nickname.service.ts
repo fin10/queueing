@@ -1,8 +1,11 @@
 import _ from 'underscore';
 import fs from 'fs';
 import path from 'path';
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import mongoose from 'mongoose';
+import { ConfigService } from '@nestjs/config';
+import { EnvironmentVariables } from '../config/env.validation';
 
 class Dictionary {
   static Name = {
@@ -36,19 +39,26 @@ class Dictionary {
 
 @Injectable()
 export class NicknameService {
+  private readonly ttl: number;
   private readonly dictionaries: Dictionary[];
 
-  constructor() {
+  constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache, config: ConfigService<EnvironmentVariables>) {
+    this.ttl = config.get<number>('QUEUEING_NICKNAME_TTL');
     this.dictionaries = [Dictionary.Name.CHARACTERISTICS, Dictionary.Name.COLORS, Dictionary.Name.ANIMALS].map(
       Dictionary.load,
     );
   }
 
-  public getNickname(userId: mongoose.Types.ObjectId): string {
+  async getNickname(userId: mongoose.Types.ObjectId) {
     const id = userId.toHexString();
+    const cached = await this.cache.get<string>(id);
+    if (cached) return cached;
+
     const suffix = id.substring(id.length - 4);
     const name = this.dictionaries.map((dict) => dict.choice()).join(' ');
     const nickname = `${name} (${suffix})`;
+    await this.cache.set(id, nickname, { ttl: this.ttl });
+
     return nickname;
   }
 }

@@ -29,6 +29,11 @@ export class EnvironmentVariables {
   @IsNumber()
   @IsPositive()
   @Transform((params) => Number.parseInt(params.value))
+  readonly QUEUEING_NICKNAME_TTL = 3600;
+
+  @IsNumber()
+  @IsPositive()
+  @Transform((params) => Number.parseInt(params.value))
   readonly QUEUEING_NOTE_TTL = 3600;
 
   @IsNumber()

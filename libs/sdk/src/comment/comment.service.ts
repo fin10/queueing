@@ -80,7 +80,7 @@ export class CommentService {
       return null;
     }
 
-    const profile = this.profileService.getProfile(comment.userId);
+    const profile = await this.profileService.getProfile(comment.userId);
     const likes = await this.actionService.count({
       name: ActionName.EMOTION,
       type: EmotionType.LIKE,
