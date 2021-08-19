@@ -1,4 +1,4 @@
-import { NoteBodyEntity } from '@lib/sdk/note/note-body.entity';
+import { ContentsEntity } from '@lib/sdk/contents/contents.entity';
 import mongoose from 'mongoose';
 
 export interface ArticleDetail {
@@ -6,7 +6,7 @@ export interface ArticleDetail {
   readonly creator: string;
   readonly topic: string;
   readonly title: string;
-  readonly body: NoteBodyEntity[];
+  readonly body: ContentsEntity[];
   readonly created: Date;
   readonly updated: Date;
   readonly expireTime: Date;

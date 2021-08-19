@@ -16,8 +16,8 @@ import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { EnvironmentVariables } from '../config/env.validation';
 import moment from 'moment';
-import { NoteBodyEntity } from '../note/note-body.entity';
 import { ContentsService } from '../contents/contents.service';
+import { ContentsEntity } from '../contents/contents.entity';
 
 @Injectable()
 export class ArticleService {
@@ -147,7 +147,7 @@ export class ArticleService {
     return moment.utc().add(this.ttl, 's').toDate();
   }
 
-  private async populateArticleDetail(article: ArticleDocument, body: NoteBodyEntity[]): Promise<ArticleDetail> {
+  private async populateArticleDetail(article: ArticleDocument, body: ContentsEntity[]): Promise<ArticleDetail> {
     const profile = await this.profileService.getProfile(article.userId);
     const comments = await this.commentService.count({ parent: article._id });
     const likes = await this.actionService.count({

@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ActionService } from './action.service';
 import { ActionController } from './action.controller';
-import { NoteModule } from '../note/note.module';
 import { Action, ActionDocument, ActionSchema } from './schemas/action.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -11,7 +10,6 @@ import { PolicyModule } from '../policy/policy.module';
 
 @Module({
   imports: [
-    NoteModule,
     LocalizationModule,
     PolicyModule,
     MongooseModule.forFeatureAsync([
