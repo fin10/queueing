@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ActionModule } from '../action/action.module';
-import { NoteModule } from '../note/note.module';
+import { ContentsModule } from '../contents/contents.module';
 import { PolicyModule } from '../policy/policy.module';
 import { ProfileModule } from '../profile/profile.module';
 import { CommentController } from './comment.controller';
@@ -12,7 +12,7 @@ import { Comment, CommentDocument, CommentSchema } from './schemas/comment.schem
 
 @Module({
   imports: [
-    NoteModule,
+    ContentsModule,
     ActionModule,
     ProfileModule,
     PolicyModule,

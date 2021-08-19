@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import paginate from 'mongoose-paginate-v2';
 import { ActionModule } from '../action/action.module';
 import { CommentModule } from '../comment/comment.module';
-import { NoteModule } from '../note/note.module';
+import { ContentsModule } from '../contents/contents.module';
 import { PolicyModule } from '../policy/policy.module';
 import { ProfileModule } from '../profile/profile.module';
 import { TopicModule } from '../topic/topic.module';
@@ -15,7 +15,7 @@ import { Article, ArticleDocument, ArticleSchema } from './schemas/article.schem
 
 @Module({
   imports: [
-    NoteModule,
+    ContentsModule,
     forwardRef(() => TopicModule),
     ActionModule,
     ProfileModule,

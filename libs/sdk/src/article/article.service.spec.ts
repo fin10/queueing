@@ -4,27 +4,27 @@ import { ArticleService } from './article.service';
 import { User } from '../user/schemas/user.schema';
 import { TopicService } from '../topic/topic.service';
 import { ActionService } from '../action/action.service';
-import { NoteBodyService } from '../note/note-body.service';
 import { ProfileService } from '../profile/profile.service';
 import { CommentService } from '../comment/comment.service';
 import { Article, ArticleSchema } from './schemas/article.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { ConfigService } from '@nestjs/config';
+import { ContentsService } from '../contents/contents.service';
 
 describe('ArticleService', () => {
   let mongod: MongoMemoryServer;
   let service: ArticleService;
 
   const mockConfigService = {
-    get: (key: string) => {
+    get: jest.fn().mockImplementation((key: string) => {
       if (key === 'QUEUEING_NOTE_TTL') return 10;
       else if (key === 'QUEUEING_TITLE_MAX_LENGTH') return 50;
-    },
+    }),
   };
 
   const mockTopicService = { getOrCreate: jest.fn() };
-  const mockBodyService = {
+  const mockContentsService = {
     put: jest.fn(),
     get: jest.fn(),
     remove: jest.fn(),
@@ -46,7 +46,7 @@ describe('ArticleService', () => {
         { provide: ConfigService, useValue: mockConfigService },
         { provide: TopicService, useValue: mockTopicService },
         { provide: ActionService, useValue: mockActionService },
-        { provide: NoteBodyService, useValue: mockBodyService },
+        { provide: ContentsService, useValue: mockContentsService },
         { provide: ProfileService, useValue: mockProfileService },
         { provide: CommentService, useValue: mockCommentService },
       ],
@@ -65,7 +65,7 @@ describe('ArticleService', () => {
     const data = { title: 'test', topic: 'test-topic', body: 'text-body' };
 
     jest.spyOn(mockTopicService, 'getOrCreate').mockResolvedValueOnce({ name: data.topic });
-    jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
+    jest.spyOn(mockContentsService, 'get').mockResolvedValueOnce([data.body]);
     jest.spyOn(mockProfileService, 'getProfile').mockResolvedValueOnce({ name: nickname });
 
     const created = await service.create(user, data);
@@ -81,13 +81,13 @@ describe('ArticleService', () => {
     const data = { title: 'updated-title', topic: 'updated-topic', body: 'updated-body' };
 
     jest.spyOn(mockTopicService, 'getOrCreate').mockResolvedValueOnce({ name: 'topic' });
-    jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce(['body']);
+    jest.spyOn(mockContentsService, 'get').mockResolvedValueOnce(['body']);
     jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: nickname });
 
     const created = await service.create(user, { title: 'title', topic: 'topic', body: 'body' });
 
     jest.spyOn(mockTopicService, 'getOrCreate').mockResolvedValueOnce({ name: data.topic });
-    jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
+    jest.spyOn(mockContentsService, 'get').mockResolvedValueOnce([data.body]);
     jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: nickname });
 
     const updated = await service.update(user, created.id, data);

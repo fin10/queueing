@@ -2,19 +2,19 @@ import { Test } from '@nestjs/testing';
 import mongoose from 'mongoose';
 import { User } from '../user/schemas/user.schema';
 import { ActionService } from '../action/action.service';
-import { NoteBodyService } from '../note/note-body.service';
 import { ProfileService } from '../profile/profile.service';
 import { CommentService } from './comment.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Comment, CommentSchema } from './schemas/comment.schema';
 import { ArticleRemovedEvent } from '../article/events/article-removed.event';
+import { ContentsService } from '../contents/contents.service';
 
 describe('CommentService', () => {
   let mongod: MongoMemoryServer;
   let service: CommentService;
 
-  const mockBodyService = {
+  const mockContentsService = {
     put: jest.fn(),
     get: jest.fn(),
     remove: jest.fn(),
@@ -33,7 +33,7 @@ describe('CommentService', () => {
       providers: [
         CommentService,
         { provide: ActionService, useValue: mockActionService },
-        { provide: NoteBodyService, useValue: mockBodyService },
+        { provide: ContentsService, useValue: mockContentsService },
         { provide: ProfileService, useValue: mockProfileService },
       ],
     }).compile();
@@ -50,7 +50,7 @@ describe('CommentService', () => {
     const nickname = 'test-user';
     const data = { articleId: new mongoose.Types.ObjectId(), body: 'text-body' };
 
-    jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
+    jest.spyOn(mockContentsService, 'get').mockResolvedValueOnce([data.body]);
     jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: nickname });
     jest.spyOn(mockActionService, 'count').mockResolvedValueOnce(0);
 
@@ -64,7 +64,7 @@ describe('CommentService', () => {
     const user = { _id: new mongoose.Types.ObjectId() } as User;
     const data = { articleId: new mongoose.Types.ObjectId(), body: 'text-body' };
 
-    jest.spyOn(mockBodyService, 'get').mockResolvedValueOnce([data.body]);
+    jest.spyOn(mockContentsService, 'get').mockResolvedValueOnce([data.body]);
     jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: 'test-user' });
 
     await service.create(user, data);

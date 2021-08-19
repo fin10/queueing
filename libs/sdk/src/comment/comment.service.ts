@@ -2,7 +2,6 @@ import _ from 'underscore';
 import moment from 'moment';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { NoteBodyService } from '../note/note-body.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { ActionService } from '../action/action.service';
 import { User } from '../user/schemas/user.schema';
@@ -14,6 +13,7 @@ import { ActionName } from '../action/enums/action-name.enum';
 import { EmotionType } from '../action/enums/emotion-type.enum';
 import { CommentDetail } from './interfaces/comment-detail.interface';
 import { ArticleRemovedEvent } from '../article/events/article-removed.event';
+import { ContentsService } from '../contents/contents.service';
 
 @Injectable()
 export class CommentService {
@@ -22,7 +22,7 @@ export class CommentService {
   constructor(
     @InjectModel(Comment.name) private readonly model: Model<CommentDocument>,
     private readonly actionService: ActionService,
-    private readonly bodyService: NoteBodyService,
+    private readonly contentsService: ContentsService,
     private readonly profileService: ProfileService,
   ) {}
 
@@ -33,7 +33,7 @@ export class CommentService {
     await comment.save();
 
     try {
-      await this.bodyService.put(comment._id, body);
+      await this.contentsService.put(comment._id, body);
     } catch (err) {
       await comment.remove();
       throw err;
@@ -90,7 +90,7 @@ export class CommentService {
   }
 
   private async populateComment(comment: CommentDocument): Promise<CommentDetail> {
-    const body = await this.bodyService.get(comment._id);
+    const body = await this.contentsService.get(comment._id);
     if (!body) {
       await comment.remove();
       this.logger.verbose(`Comment(${comment._id}) has been expired.`);

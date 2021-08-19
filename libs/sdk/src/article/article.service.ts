@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
 import mongoose, { FilterQuery } from 'mongoose';
-import { NoteBodyService } from '../note/note-body.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { TopicService } from '../topic/topic.service';
 import { ActionService } from '../action/action.service';
@@ -18,6 +17,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { EnvironmentVariables } from '../config/env.validation';
 import moment from 'moment';
 import { NoteBodyEntity } from '../note/note-body.entity';
+import { ContentsService } from '../contents/contents.service';
 
 @Injectable()
 export class ArticleService {
@@ -29,7 +29,7 @@ export class ArticleService {
     private readonly topicService: TopicService,
     private readonly commentService: CommentService,
     private readonly actionService: ActionService,
-    private readonly bodyService: NoteBodyService,
+    private readonly contentsService: ContentsService,
     private readonly profileService: ProfileService,
     config: ConfigService<EnvironmentVariables>,
   ) {
@@ -50,7 +50,7 @@ export class ArticleService {
     });
 
     try {
-      await this.bodyService.put(article._id, body);
+      await this.contentsService.put(article._id, body);
       return this.getArticle(article._id);
     } catch (err) {
       await article.remove();
@@ -64,8 +64,8 @@ export class ArticleService {
     const topic = await this.topicService.getOrCreate(user, topicName);
     await article.updateOne({ topic: topic.name, title });
 
-    await this.bodyService.remove(id);
-    await this.bodyService.put(id, body);
+    await this.contentsService.remove(id);
+    await this.contentsService.put(id, body);
 
     return this.getArticle(id);
   }
@@ -92,7 +92,7 @@ export class ArticleService {
 
   async getArticle(id: mongoose.Types.ObjectId) {
     const article = await this.getValidArticle(id);
-    const body = await this.bodyService.get(article._id);
+    const body = await this.contentsService.get(article._id);
     if (!body) {
       await article.remove();
       throw new NotFoundException(`Article(${article._id}) has been expired.`);
