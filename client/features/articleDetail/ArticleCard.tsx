@@ -17,7 +17,7 @@ import { StringID } from 'client/resources/StringID';
 import ConfirmDialog from 'client/common/ConfirmDialog';
 import { DislikeAction, LikeAction } from 'client/common/Action';
 import { ExpireTime } from 'client/common/ExpireTime';
-import { NoteBody } from 'client/common/NoteBody';
+import { Contents } from 'client/common/Contents';
 import { RootState, useAppDispatch } from 'client/app/store';
 import { useSelector } from 'react-redux';
 import { dislikeArticle, likeArticle, removeArticle, selectArticleDetailById } from './articleDetailSlice';
@@ -132,7 +132,7 @@ export default function ArticleCard({ id }: PropTypes) {
               <ExpireTime expireTime={article.expireTime} />
             </Typography>
           </div>
-          <NoteBody entities={article.body} />
+          <Contents entities={article.body} />
         </CardContent>
         <CardActions className={classes.actions}>
           <ButtonGroup size="small" color="primary">

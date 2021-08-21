@@ -3,12 +3,12 @@ import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
 import { StatusCodes } from 'http-status-codes';
 import qs from 'query-string';
-import { BodyEntity } from 'client/common/NoteBody';
+import { ContentsEntity } from 'client/common/Contents';
 
 export interface Comment {
   readonly id: string;
   readonly creator: string;
-  readonly body: BodyEntity[];
+  readonly body: ContentsEntity[];
   readonly created: Date;
   readonly updated: Date;
   readonly likes: number;

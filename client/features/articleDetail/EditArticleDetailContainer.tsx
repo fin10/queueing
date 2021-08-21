@@ -11,7 +11,7 @@ import InputTopic from 'client/features/topic/InputTopic';
 import ErrorDialog from 'client/common/ErrorDialog';
 import { BODY_MAX_LENGTH, TITLE_MAX_LENGTH } from 'client/constants';
 import { MaxLengthTextField } from 'client/common/MaxLengthTextField';
-import { BodyEntity } from 'client/common/NoteBody';
+import { ContentsEntity } from 'client/common/Contents';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-function convertArticleBodyToString(body: BodyEntity[]) {
+function convertArticleBodyToString(body: ContentsEntity[]) {
   return body.map((entity) => entity.value).join('');
 }
 

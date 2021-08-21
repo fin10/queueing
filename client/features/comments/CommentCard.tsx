@@ -14,7 +14,7 @@ import React, { useState } from 'react';
 import { DislikeAction, LikeAction } from 'client/common/Action';
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
-import { NoteBody } from 'client/common/NoteBody';
+import { Contents } from 'client/common/Contents';
 import { RootState, useAppDispatch } from 'client/app/store';
 import { useSelector } from 'react-redux';
 import { dislikeComment, likeComment, removeComment, selectCommentById } from './commentsSlice';
@@ -111,7 +111,7 @@ export function CommentCard({ id }: PropTypes) {
           <Typography gutterBottom variant="subtitle2" color="textSecondary">
             {comment.creator}
           </Typography>
-          <NoteBody entities={comment.body} />
+          <Contents entities={comment.body} />
         </CardContent>
         <CardActions className={classes.actions}>
           <ButtonGroup size="small" color="primary">

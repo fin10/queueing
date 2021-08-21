@@ -9,13 +9,13 @@ export const enum EntityType {
   LINK = 'link',
 }
 
-export interface BodyEntity {
+export interface ContentsEntity {
   readonly type: EntityType;
   readonly value: string;
 }
 
 interface PropTypes {
-  readonly entities: BodyEntity[];
+  readonly entities: ContentsEntity[];
 }
 
 const useStyles = makeStyles(() =>
@@ -43,7 +43,7 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-export function NoteBody({ entities }: PropTypes) {
+export function Contents({ entities }: PropTypes) {
   const classes = useStyles();
 
   return (

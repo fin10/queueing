@@ -2,7 +2,7 @@ import axios from 'axios';
 import { StatusCodes } from 'http-status-codes';
 import { Resources } from 'client/resources/Resources';
 import { StringID } from 'client/resources/StringID';
-import { BodyEntity } from 'client/common/NoteBody';
+import { ContentsEntity } from 'client/common/Contents';
 
 export interface ArticleDetail {
   readonly id: string;
@@ -15,7 +15,7 @@ export interface ArticleDetail {
   readonly likes: number;
   readonly dislikes: number;
   readonly creator: string;
-  readonly body: BodyEntity[];
+  readonly body: ContentsEntity[];
 }
 
 async function fetch(id: string) {
