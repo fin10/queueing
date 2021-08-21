@@ -8,5 +8,5 @@ export class CreateArticleDto {
   readonly title: string;
 
   @IsNotEmpty()
-  readonly body: string;
+  readonly contents: string;
 }

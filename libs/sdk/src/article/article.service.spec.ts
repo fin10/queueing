@@ -62,32 +62,32 @@ describe('ArticleService', () => {
   it('create an article', async () => {
     const user = { _id: new mongoose.Types.ObjectId() } as User;
     const nickname = 'test-user';
-    const data = { title: 'test', topic: 'test-topic', body: 'text-body' };
+    const data = { title: 'test', topic: 'test-topic', contents: 'text-body' };
 
     jest.spyOn(mockTopicService, 'getOrCreate').mockResolvedValueOnce({ name: data.topic });
-    jest.spyOn(mockContentsService, 'get').mockResolvedValueOnce([data.body]);
+    jest.spyOn(mockContentsService, 'get').mockResolvedValueOnce([data.contents]);
     jest.spyOn(mockProfileService, 'getProfile').mockResolvedValueOnce({ name: nickname });
 
     const created = await service.create(user, data);
 
     expect(created.title).toBe(data.title);
     expect(created.topic).toBe(data.topic);
-    expect(created.body).toStrictEqual([data.body]);
+    expect(created.contents).toStrictEqual([data.contents]);
   });
 
   it('update an article', async () => {
     const user = { _id: new mongoose.Types.ObjectId() } as User;
     const nickname = 'test-user';
-    const data = { title: 'updated-title', topic: 'updated-topic', body: 'updated-body' };
+    const data = { title: 'updated-title', topic: 'updated-topic', contents: 'updated-body' };
 
     jest.spyOn(mockTopicService, 'getOrCreate').mockResolvedValueOnce({ name: 'topic' });
     jest.spyOn(mockContentsService, 'get').mockResolvedValueOnce(['body']);
     jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: nickname });
 
-    const created = await service.create(user, { title: 'title', topic: 'topic', body: 'body' });
+    const created = await service.create(user, { title: 'title', topic: 'topic', contents: 'body' });
 
     jest.spyOn(mockTopicService, 'getOrCreate').mockResolvedValueOnce({ name: data.topic });
-    jest.spyOn(mockContentsService, 'get').mockResolvedValueOnce([data.body]);
+    jest.spyOn(mockContentsService, 'get').mockResolvedValueOnce([data.contents]);
     jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: nickname });
 
     const updated = await service.update(user, created.id, data);
@@ -96,6 +96,6 @@ describe('ArticleService', () => {
     expect(updated.creator).toBe(nickname);
     expect(updated.title).toBe(data.title);
     expect(updated.topic).toBe(data.topic);
-    expect(updated.body).toStrictEqual([data.body]);
+    expect(updated.contents).toStrictEqual([data.contents]);
   });
 });

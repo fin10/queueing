@@ -48,23 +48,23 @@ describe('CommentService', () => {
   it('create a comment', async () => {
     const user = { _id: new mongoose.Types.ObjectId() } as User;
     const nickname = 'test-user';
-    const data = { articleId: new mongoose.Types.ObjectId(), body: 'text-body' };
+    const data = { articleId: new mongoose.Types.ObjectId(), contents: 'text-body' };
 
-    jest.spyOn(mockContentsService, 'get').mockResolvedValueOnce([data.body]);
+    jest.spyOn(mockContentsService, 'get').mockResolvedValueOnce([data.contents]);
     jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: nickname });
     jest.spyOn(mockActionService, 'count').mockResolvedValueOnce(0);
 
     const created = await service.create(user, data);
     expect(created.creator).toBe(nickname);
     expect(created.articleId).toBe(data.articleId);
-    expect(created.body).toStrictEqual([data.body]);
+    expect(created.contents).toStrictEqual([data.contents]);
   });
 
   it('recevied a note removed event', async () => {
     const user = { _id: new mongoose.Types.ObjectId() } as User;
-    const data = { articleId: new mongoose.Types.ObjectId(), body: 'text-body' };
+    const data = { articleId: new mongoose.Types.ObjectId(), contents: 'text-body' };
 
-    jest.spyOn(mockContentsService, 'get').mockResolvedValueOnce([data.body]);
+    jest.spyOn(mockContentsService, 'get').mockResolvedValueOnce([data.contents]);
     jest.spyOn(mockProfileService, 'getProfile').mockReturnValueOnce({ name: 'test-user' });
 
     await service.create(user, data);

@@ -6,7 +6,7 @@ export interface ArticleDetail {
   readonly creator: string;
   readonly topic: string;
   readonly title: string;
-  readonly body: ContentsEntity[];
+  readonly contents: ContentsEntity[];
   readonly created: Date;
   readonly updated: Date;
   readonly expireTime: Date;

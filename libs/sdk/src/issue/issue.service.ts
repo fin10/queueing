@@ -71,7 +71,7 @@ export class IssueService {
     const userId = await this.articleService.getUserId(article.id);
 
     const summary = `[${article.id}] ${article.title}`;
-    const contents = _.chain(article.body)
+    const contents = _.chain(article.contents)
       .map((entity) => entity.value.trim())
       .compact()
       .value()
@@ -113,7 +113,7 @@ export class IssueService {
   private async createIssueWithComment(action: Action, comment: CommentDetail) {
     const userId = await this.commentService.getUserId(comment.id);
 
-    const contents = _.chain(comment.body)
+    const contents = _.chain(comment.contents)
       .map((entity) => entity.value.trim())
       .compact()
       .value()

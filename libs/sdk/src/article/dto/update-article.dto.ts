@@ -8,5 +8,5 @@ export class UpdateArticleDto {
   readonly title?: string;
 
   @IsOptional()
-  readonly body?: string;
+  readonly contents?: string;
 }

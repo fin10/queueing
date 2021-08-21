@@ -27,13 +27,13 @@ export class CommentService {
   ) {}
 
   async create(user: User, data: CreateCommentDto) {
-    const { articleId, body } = data;
+    const { articleId, contents } = data;
 
     const comment = new this.model({ userId: user._id, parent: articleId });
     await comment.save();
 
     try {
-      await this.contentsService.put(comment._id, body);
+      await this.contentsService.put(comment._id, contents);
     } catch (err) {
       await comment.remove();
       throw err;
@@ -90,8 +90,8 @@ export class CommentService {
   }
 
   private async populateComment(comment: CommentDocument): Promise<CommentDetail> {
-    const body = await this.contentsService.get(comment._id);
-    if (!body) {
+    const contents = await this.contentsService.get(comment._id);
+    if (!contents) {
       await comment.remove();
       this.logger.verbose(`Comment(${comment._id}) has been expired.`);
       return null;
@@ -113,7 +113,7 @@ export class CommentService {
       id: comment._id,
       articleId: comment.parent,
       creator: profile.name,
-      body,
+      contents,
       created: comment.get('createdAt'),
       updated: comment.get('updatedAt'),
       likes,

@@ -37,7 +37,7 @@ export class ArticleService {
     this.titleMaxLength = config.get<number>('QUEUEING_TITLE_MAX_LENGTH');
   }
 
-  async create(user: User, { topic: topicName, title, body }: CreateArticleDto) {
+  async create(user: User, { topic: topicName, title, contents: body }: CreateArticleDto) {
     this.validateTitle(title);
 
     const topic = await this.topicService.getOrCreate(user, topicName);
@@ -58,14 +58,14 @@ export class ArticleService {
     }
   }
 
-  async update(user: User, id: mongoose.Types.ObjectId, { topic: topicName, title, body }: UpdateArticleDto) {
+  async update(user: User, id: mongoose.Types.ObjectId, { topic: topicName, title, contents }: UpdateArticleDto) {
     this.validateTitle(title);
     const article = await this.getValidArticle(id);
     const topic = await this.topicService.getOrCreate(user, topicName);
     await article.updateOne({ topic: topic.name, title });
 
     await this.contentsService.remove(id);
-    await this.contentsService.put(id, body);
+    await this.contentsService.put(id, contents);
 
     return this.getArticle(id);
   }
@@ -147,7 +147,7 @@ export class ArticleService {
     return moment.utc().add(this.ttl, 's').toDate();
   }
 
-  private async populateArticleDetail(article: ArticleDocument, body: ContentsEntity[]): Promise<ArticleDetail> {
+  private async populateArticleDetail(article: ArticleDocument, contents: ContentsEntity[]): Promise<ArticleDetail> {
     const profile = await this.profileService.getProfile(article.userId);
     const comments = await this.commentService.count({ parent: article._id });
     const likes = await this.actionService.count({
@@ -166,7 +166,7 @@ export class ArticleService {
       creator: profile.name,
       topic: article.topic,
       title: article.title,
-      body,
+      contents,
       created: article.get('createdAt'),
       updated: article.get('updatedAt'),
       expireTime: article.expireTime,
