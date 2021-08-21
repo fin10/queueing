@@ -21,8 +21,8 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-function convertArticleBodyToString(body: ContentsEntity[]) {
-  return body.map((entity) => entity.value).join('');
+function convertContentsToString(contents: ContentsEntity[]) {
+  return contents.map((entity) => entity.value).join('');
 }
 
 export default function EditArticleDetailContainer() {
@@ -32,7 +32,7 @@ export default function EditArticleDetailContainer() {
   const classes = useStyles();
   const [title, updateTitle] = useState('');
   const [topic, updateTopic] = useState('');
-  const [body, updateBody] = useState('');
+  const [contents, updateContents] = useState('');
   const [errorDialogState, setErrorDialogState] = useState<{ open: boolean; message?: string }>({ open: false });
 
   const history = useHistory();
@@ -45,7 +45,7 @@ export default function EditArticleDetailContainer() {
         .then((article) => {
           updateTitle(article.title);
           updateTopic(article.topic);
-          updateBody(convertArticleBodyToString(article.body));
+          updateContents(convertContentsToString(article.contents));
         })
         .catch((rejectedValue) => setErrorDialogState({ open: true, message: rejectedValue }));
     }, [dispatch]);
@@ -60,8 +60,8 @@ export default function EditArticleDetailContainer() {
       case 'title':
         updateTitle(event.target.value);
         break;
-      case 'body':
-        updateBody(event.target.value);
+      case 'contents':
+        updateContents(event.target.value);
         break;
     }
   };
@@ -69,7 +69,7 @@ export default function EditArticleDetailContainer() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const action = id ? updateArticle({ id, topic, title, body }) : createArticle({ topic, title, body });
+    const action = id ? updateArticle({ id, topic, title, contents }) : createArticle({ topic, title, contents });
 
     dispatch(action)
       .then(unwrapResult)
@@ -95,15 +95,15 @@ export default function EditArticleDetailContainer() {
 
       <MaxLengthTextField
         className={classes.margin}
-        id="body"
+        id="contents"
         variant="outlined"
         fullWidth
         required
         multiline
         rows={20}
         onChange={handleChange}
-        value={body}
-        label={Resources.getString(StringID.EDIT_ARTICLE_BODY)}
+        value={contents}
+        label={Resources.getString(StringID.EDIT_ARTICLE_CONTENTS)}
         maxLength={BODY_MAX_LENGTH}
       />
 

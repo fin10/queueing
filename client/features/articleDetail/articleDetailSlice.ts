@@ -20,9 +20,9 @@ export const fetchArticleDetail = createAsyncThunk(`${ACTION_NAME}/fetch`, async
 
 export const createArticle = createAsyncThunk(
   `${ACTION_NAME}/create`,
-  async (payload: { topic: string; title: string; body: string }, { rejectWithValue }) => {
+  async (payload: { topic: string; title: string; contents: string }, { rejectWithValue }) => {
     try {
-      return await articleDetailAPI.create(payload.topic, payload.title, payload.body);
+      return await articleDetailAPI.create(payload.topic, payload.title, payload.contents);
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -31,9 +31,9 @@ export const createArticle = createAsyncThunk(
 
 export const updateArticle = createAsyncThunk(
   `${ACTION_NAME}/update`,
-  async (payload: { id: string; topic: string; title: string; body: string }, { rejectWithValue }) => {
+  async (payload: { id: string; topic: string; title: string; contents: string }, { rejectWithValue }) => {
     try {
-      return await articleDetailAPI.update(payload.id, payload.topic, payload.title, payload.body);
+      return await articleDetailAPI.update(payload.id, payload.topic, payload.title, payload.contents);
     } catch (err) {
       return rejectWithValue(err.message);
     }

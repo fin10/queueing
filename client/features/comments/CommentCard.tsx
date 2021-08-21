@@ -111,7 +111,7 @@ export function CommentCard({ id }: PropTypes) {
           <Typography gutterBottom variant="subtitle2" color="textSecondary">
             {comment.creator}
           </Typography>
-          <Contents entities={comment.body} />
+          <Contents entities={comment.contents} />
         </CardContent>
         <CardActions className={classes.actions}>
           <ButtonGroup size="small" color="primary">

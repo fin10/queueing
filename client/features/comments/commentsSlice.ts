@@ -25,9 +25,9 @@ export const fetchComments = createAsyncThunk(
 
 export const addComment = createAsyncThunk(
   `${ACTION_NAME}/add`,
-  async ({ articleId, body }: { articleId: string; body: string }, { rejectWithValue }) => {
+  async ({ articleId, contents }: { articleId: string; contents: string }, { rejectWithValue }) => {
     try {
-      return await commentsAPI.addComment(articleId, body);
+      return await commentsAPI.addComment(articleId, contents);
     } catch (err) {
       return rejectWithValue(err.message);
     }

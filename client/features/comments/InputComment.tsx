@@ -32,7 +32,7 @@ export function InputComment({ articleId }: PropTypes) {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    dispatch(addComment({ articleId, body: comment }))
+    dispatch(addComment({ articleId, contents: comment }))
       .then(unwrapResult)
       .then(() => updateComment(''))
       .catch((rejectedValue) => setErrorDialogState({ open: true, message: rejectedValue }));

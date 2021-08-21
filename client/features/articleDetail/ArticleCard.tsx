@@ -132,7 +132,7 @@ export default function ArticleCard({ id }: PropTypes) {
               <ExpireTime expireTime={article.expireTime} />
             </Typography>
           </div>
-          <Contents entities={article.body} />
+          <Contents entities={article.contents} />
         </CardContent>
         <CardActions className={classes.actions}>
           <ButtonGroup size="small" color="primary">

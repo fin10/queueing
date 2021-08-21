@@ -15,7 +15,7 @@ export interface ArticleDetail {
   readonly likes: number;
   readonly dislikes: number;
   readonly creator: string;
-  readonly body: ContentsEntity[];
+  readonly contents: ContentsEntity[];
 }
 
 async function fetch(id: string) {
@@ -23,9 +23,9 @@ async function fetch(id: string) {
   return res.data;
 }
 
-async function create(topic: string, title: string, body: string) {
+async function create(topic: string, title: string, contents: string) {
   try {
-    const res = await axios.post<ArticleDetail>('/api/article', { topic, title, body });
+    const res = await axios.post<ArticleDetail>('/api/article', { topic, title, contents });
     return res.data;
   } catch (err) {
     if (axios.isAxiosError(err)) {
@@ -40,9 +40,9 @@ async function create(topic: string, title: string, body: string) {
   }
 }
 
-async function update(id: string, topic: string, title: string, body: string) {
+async function update(id: string, topic: string, title: string, contents: string) {
   try {
-    const res = await axios.put<ArticleDetail>(`/api/article/${id}`, { topic, title, body });
+    const res = await axios.put<ArticleDetail>(`/api/article/${id}`, { topic, title, contents });
     return res.data;
   } catch (err) {
     if (axios.isAxiosError(err)) {

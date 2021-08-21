@@ -8,7 +8,7 @@ import { ContentsEntity } from 'client/common/Contents';
 export interface Comment {
   readonly id: string;
   readonly creator: string;
-  readonly body: ContentsEntity[];
+  readonly contents: ContentsEntity[];
   readonly created: Date;
   readonly updated: Date;
   readonly likes: number;
@@ -20,9 +20,9 @@ async function fetch(articleId: string) {
   return res.data;
 }
 
-async function addComment(articleId: string, body: string) {
+async function addComment(articleId: string, contents: string) {
   try {
-    const res = await axios.post<Comment>('/api/comment', { articleId, body });
+    const res = await axios.post<Comment>('/api/comment', { articleId, contents });
     return res.data;
   } catch (err) {
     if (axios.isAxiosError(err)) {
