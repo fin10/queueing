@@ -22,12 +22,12 @@ export class ClienDataFetcher {
 
     return await Promise.all(
       articles.map(async (article) => {
-        const body = await this.fetchBody(article.link);
+        const contents = await this.fetchContents(article.link);
         return {
           title: article.title,
           topic: article.topic,
           nickname: article.nickname,
-          body,
+          contents,
         };
       }),
     );
@@ -59,7 +59,7 @@ export class ClienDataFetcher {
       .value();
   }
 
-  private async fetchBody(link: string) {
+  private async fetchContents(link: string) {
     const res = await axios.get(this.URL + link);
     const $ = cheerio.load(res.data);
 
