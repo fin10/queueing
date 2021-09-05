@@ -5,6 +5,7 @@ import Header from 'client/common/Header';
 import ArticleSummaryContainer from 'client/features/articleSummary/ArticleSummaryContainer';
 import ArticleDetailContainer from 'client/features/articleDetail/ArticleDetailContainer';
 import EditArticleDetailContainer from 'client/features/articleDetail/EditArticleDetailContainer';
+import ImposePenaltyContainer from 'client/features/penalty/ImposePenaltyContainer';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,6 +26,9 @@ const App = (): React.ReactElement => {
       <Container maxWidth="md">
         <Router>
           <Switch>
+            <Route exact path="/admin/penalty/:userId">
+              <ImposePenaltyContainer />
+            </Route>
             <Route exact path="/article/new">
               <EditArticleDetailContainer />
             </Route>

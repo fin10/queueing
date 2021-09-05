@@ -7,6 +7,7 @@ import articleDetailReducer from 'client/features/articleDetail/articleDetailSli
 import commentsReducer from 'client/features/comments/commentsSlice';
 import topicReducer from 'client/features/topic/topicSlice';
 import reportingReducer from 'client/features/reporting/reportingSlice';
+import penaltyReducer from 'client/features/penalty/penaltySlice';
 
 const rootReducer = combineReducers({
   profile: profileReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   comments: commentsReducer,
   topic: topicReducer,
   reporting: reportingReducer,
+  penalty: penaltyReducer,
 });
 
 const store = configureStore({
