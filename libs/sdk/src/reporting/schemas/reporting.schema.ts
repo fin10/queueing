@@ -11,11 +11,16 @@ export class Reporting {
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: User.name })
   readonly reporterId: mongoose.Types.ObjectId;
 
-  @Prop({ required: true, enum: Object.values(ReportType) })
-  readonly type: string;
+  @Prop({ required: true, type: String, enum: Object.values(ReportType), get: (v: string) => v as ReportType })
+  readonly type: ReportType;
 
-  @Prop({ required: true, enum: Object.values(ReportingTargetType) })
-  readonly targetType: string;
+  @Prop({
+    required: true,
+    type: String,
+    enum: Object.values(ReportingTargetType),
+    get: (v: string) => v as ReportingTargetType,
+  })
+  readonly targetType: ReportingTargetType;
 
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId })
   readonly targetId: mongoose.Types.ObjectId;

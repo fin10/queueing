@@ -18,10 +18,12 @@ export class PenaltyService {
       penalties[reporting.type].count += 1;
     });
 
-    return _.pairs(penalties).map(([type, { count, term }]) => ({
-      type: ReportType[type],
-      count,
-      term,
-    }));
+    return _.pairs(penalties).map(([type, { count, term }]) => {
+      return {
+        type: type as ReportType,
+        count,
+        term,
+      };
+    });
   }
 }

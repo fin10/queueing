@@ -1,48 +1,43 @@
 import _ from 'underscore';
 import mongoose from 'mongoose';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { ActionCreatedEvent } from '../action/events/action-created.event';
-import { ActionName } from '../action/enums/action-name.enum';
 import { JiraService } from '../jira/jira.service';
-import { Action } from '../action/schemas/action.schema';
-import { ActionService } from '../action/action.service';
 import { ArticleService } from '../article/article.service';
 import { CommentService } from '../comment/comment.service';
 import { ArticleDetail } from '../article/interfaces/article-detail.interface';
 import { CommentDetail } from '../comment/interfaces/comment-detail.interface';
+import { ReportingCreatedEvent } from '../reporting/events/reporting-created.event';
+import { ReportingService } from '../reporting/reporting.service';
+import { ReportingTargetType } from '../reporting/enums/reporting-target-type.enum';
+import { Reporting } from '../reporting/schemas/reporting.schema';
 
 @Injectable()
 export class IssueService {
   private readonly logger = new Logger(IssueService.name);
 
   constructor(
-    private readonly actionService: ActionService,
+    private readonly reportingService: ReportingService,
     private readonly articleService: ArticleService,
     private readonly commentService: CommentService,
     private readonly jiraService: JiraService,
   ) {}
 
-  @OnEvent(ActionCreatedEvent.name, { nextTick: true })
-  async onActionCreated(event: ActionCreatedEvent): Promise<void> {
-    if (event.name !== ActionName.REPORT) return;
+  @OnEvent(ReportingCreatedEvent.name, { nextTick: true })
+  async onReportingCreated(event: ReportingCreatedEvent) {
     if (!this.jiraService.isEnabled()) return;
 
     try {
-      const action = await this.actionService.getAction(event.id);
-      if (!action) throw new NotFoundException(`Action not found with: ${event.id}`);
+      const reporting = await this.reportingService.getReporting(event.id);
 
-      if (await this.articleService.exists(action.targetId)) {
-        await this.postArticleIssue(action);
-        return;
+      switch (reporting.targetType) {
+        case ReportingTargetType.ARTICLE:
+          await this.postArticleIssue(reporting);
+          break;
+        case ReportingTargetType.COMMENT:
+          await this.postCommentIssue(reporting);
+          break;
       }
-
-      if (await this.commentService.exists(action.targetId)) {
-        await this.postCommentIssue(action);
-        return;
-      }
-
-      throw new NotFoundException(`Not found valid article or comment: ${event.id}`);
     } catch (err) {
       this.logger.error(err.message);
     }
@@ -53,21 +48,21 @@ export class IssueService {
     return _.first(await this.jiraService.findIssueIds(jql));
   }
 
-  private async postArticleIssue(action: Action) {
-    const article = await this.articleService.getArticle(action.targetId);
+  private async postArticleIssue(reporting: Reporting) {
+    const article = await this.articleService.getArticle(reporting.targetId);
 
     let issueId = await this.findIssueId(article.id);
     if (issueId) {
-      await this.updateIssue(issueId, action);
+      await this.updateIssue(issueId, reporting);
     } else {
-      issueId = await this.createArticleIssue(action, article);
+      issueId = await this.createArticleIssue(reporting, article);
     }
 
-    const commentId = await this.addComment(issueId, action);
+    const commentId = await this.addComment(issueId, reporting);
     this.logger.verbose(`Issue posted: ${issueId}, comment: ${commentId}`);
   }
 
-  private async createArticleIssue(action: Action, article: ArticleDetail) {
+  private async createArticleIssue(reporting: Reporting, article: ArticleDetail) {
     const userId = await this.articleService.getUserId(article.id);
 
     const summary = `[${article.id}] ${article.title}`;
@@ -88,7 +83,7 @@ export class IssueService {
     const labels = _.pairs({
       user: userId,
       topic: article.topic,
-      type: action.type,
+      type: reporting.type,
     })
       .filter(([, v]) => v)
       .map(([k, v]) => `${k}:${v}`);
@@ -96,21 +91,21 @@ export class IssueService {
     return this.jiraService.createIssue('Report', summary, description, labels);
   }
 
-  private async postCommentIssue(action: Action) {
-    const comment = await this.commentService.getComment(action.targetId);
+  private async postCommentIssue(reporting: Reporting) {
+    const comment = await this.commentService.getComment(reporting.targetId);
 
     let issueId = await this.findIssueId(comment.id);
     if (issueId) {
-      await this.updateIssue(issueId, action);
+      await this.updateIssue(issueId, reporting);
     } else {
-      issueId = await this.createIssueWithComment(action, comment);
+      issueId = await this.createIssueWithComment(reporting, comment);
     }
 
-    const commentId = await this.addComment(issueId, action);
+    const commentId = await this.addComment(issueId, reporting);
     this.logger.verbose(`Issue posted: ${issueId}, comment: ${commentId}`);
   }
 
-  private async createIssueWithComment(action: Action, comment: CommentDetail) {
+  private async createIssueWithComment(reporting: Reporting, comment: CommentDetail) {
     const userId = await this.commentService.getUserId(comment.id);
 
     const contents = _.chain(comment.contents)
@@ -129,7 +124,7 @@ export class IssueService {
 
     const labels = _.pairs({
       user: userId,
-      type: action.type,
+      type: reporting.type,
     })
       .filter(([, v]) => v)
       .map(([k, v]) => `${k}:${v}`);
@@ -137,13 +132,13 @@ export class IssueService {
     return this.jiraService.createIssue('Report', summary, description, labels);
   }
 
-  private updateIssue(issueId: string, action: Action) {
-    const label = `type:${action.type}`;
+  private updateIssue(issueId: string, reporting: Reporting) {
+    const label = `type:${reporting.type}`;
     return this.jiraService.addLabel(issueId, label);
   }
 
-  private addComment(issueId: string, action: Action) {
-    const description = [`type: ${action.type}`, `reported by ${action.userId}`].join('\n');
+  private addComment(issueId: string, reporting: Reporting) {
+    const description = [`type: ${reporting.type}`, `reported by ${reporting.reporterId}`].join('\n');
     return this.jiraService.addComment(issueId, description);
   }
 }

@@ -1,4 +1,4 @@
 export enum ReportingTargetType {
-  ARTICLE,
-  COMMENT,
+  ARTICLE = 'article',
+  COMMENT = 'comment',
 }

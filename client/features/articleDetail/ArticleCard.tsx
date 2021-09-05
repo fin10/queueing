@@ -28,7 +28,7 @@ import qs from 'query-string';
 import { ActionType } from 'client/features/action/ActionType';
 import { ReportDialog } from '../reporting/ReportDialog';
 import { ReportTypeCode } from '../reporting/reportingAPI';
-import { submitReport } from '../reporting/reportingSlice';
+import { submitReportArticle } from '../reporting/reportingSlice';
 import { Alert } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -107,7 +107,7 @@ export default function ArticleCard({ id }: PropTypes) {
   };
 
   const handleReportingSubmit = (type: ReportTypeCode) => {
-    dispatch(submitReport({ targetId: id, type }))
+    dispatch(submitReportArticle({ targetId: id, type }))
       .then(unwrapResult)
       .then(() => openReportedAlert(true))
       .catch((rejectedValue) => {

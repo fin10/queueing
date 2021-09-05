@@ -16,11 +16,22 @@ export const fetchReportTypes = createAsyncThunk(`${ACTION_NAME}/fetch`, async (
   }
 });
 
-export const submitReport = createAsyncThunk(
-  `${ACTION_NAME}/submit`,
+export const submitReportArticle = createAsyncThunk(
+  `${ACTION_NAME}/submitReportArticle`,
   async ({ targetId, type }: { targetId: string; type: ReportTypeCode }, { rejectWithValue }) => {
     try {
-      return await reportingAPI.report(targetId, type);
+      return await reportingAPI.reportArticle(targetId, type);
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  },
+);
+
+export const submitReportComment = createAsyncThunk(
+  `${ACTION_NAME}/submitReportComment`,
+  async ({ targetId, type }: { targetId: string; type: ReportTypeCode }, { rejectWithValue }) => {
+    try {
+      return await reportingAPI.reportComment(targetId, type);
     } catch (err) {
       return rejectWithValue(err.message);
     }

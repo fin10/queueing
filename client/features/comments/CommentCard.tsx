@@ -24,7 +24,7 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import ErrorDialog from 'client/common/ErrorDialog';
 import { ReportDialog } from 'client/features/reporting/ReportDialog';
 import { ReportTypeCode } from 'client/features/reporting/reportingAPI';
-import { submitReport } from 'client/features/reporting/reportingSlice';
+import { submitReportComment } from 'client/features/reporting/reportingSlice';
 import { Alert } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -95,7 +95,7 @@ export function CommentCard({ id }: PropTypes) {
   };
 
   const handleReportingSubmit = (type: ReportTypeCode) => {
-    dispatch(submitReport({ targetId: id, type }))
+    dispatch(submitReportComment({ targetId: id, type }))
       .then(unwrapResult)
       .then(() => openReportedAlert(true))
       .catch((rejectedValue) => {

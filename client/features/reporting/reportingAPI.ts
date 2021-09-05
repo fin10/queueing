@@ -22,9 +22,17 @@ async function fetchReportTypes() {
   return res.data;
 }
 
-async function report(id: string, type: ReportTypeCode) {
+function reportArticle(id: string, type: ReportTypeCode) {
+  return report('/api/report/article', id, type);
+}
+
+function reportComment(id: string, type: ReportTypeCode) {
+  return report('/api/report/comment', id, type);
+}
+
+async function report(url: string, id: string, type: ReportTypeCode) {
   try {
-    const res = await axios.post(`/api/report`, { targetId: id, type });
+    const res = await axios.post(url, { targetId: id, type });
     return res.data;
   } catch (err) {
     if (axios.isAxiosError(err)) {
@@ -39,5 +47,6 @@ async function report(id: string, type: ReportTypeCode) {
 
 export default {
   fetchReportTypes,
-  report,
+  reportArticle,
+  reportComment,
 };

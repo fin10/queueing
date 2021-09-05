@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import _ from 'underscore';
 import mongoose, { Model } from 'mongoose';
 import { User } from '../user/schemas/user.schema';
@@ -32,6 +32,12 @@ export class ReportingService {
     type: ReportType,
   ) {
     await this.report(reporter._id, ReportingTargetType.COMMENT, targetId, targetUserId, type);
+  }
+
+  async getReporting(id: mongoose.Types.ObjectId): Promise<Reporting> {
+    const reporting = await this.model.findById(id).lean();
+    if (!reporting) throw new NotFoundException(`Reporting not found: ${id}`);
+    return reporting;
   }
 
   findReportings(targetUserId: mongoose.Types.ObjectId): Promise<Reporting[]> {
