@@ -61,8 +61,12 @@ export class ActionService {
     return this.model.countDocuments(filter);
   }
 
-  getAction(id: mongoose.Types.ObjectId): Promise<ActionDocument> {
+  getAction(id: mongoose.Types.ObjectId): Promise<Action> {
     return this.model.findById(id).lean();
+  }
+
+  findActions(user: User, name: ActionName): Promise<Action[]> {
+    return this.model.find({ userId: user._id, name }).lean();
   }
 
   @OnEvent(ArticleRemovedEvent.name, { nextTick: true })

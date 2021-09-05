@@ -16,6 +16,10 @@ export class ReportingService {
     await this.actionService.putAction(user, ActionName.REPORT, type, targetId);
   }
 
+  findReportings(user: User) {
+    return this.actionService.findActions(user, ActionName.REPORT);
+  }
+
   getReportTypes(locale: Locale) {
     return _.values(ReportType).map((type) => ({
       code: type,

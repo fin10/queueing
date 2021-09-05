@@ -18,6 +18,7 @@ import { utilities, WinstonModule } from 'nest-winston';
 import winston from 'winston';
 import morgan from 'morgan';
 import { ReportingModule } from '@lib/sdk/reporting/reporting.module';
+import { PenaltyModule } from '@lib/sdk/penalty/penalty.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { ReportingModule } from '@lib/sdk/reporting/reporting.module';
     AuthModule,
     ProfileModule,
     IssueModule,
+    PenaltyModule,
   ],
 })
 export class WebServiceModule implements NestModule {
