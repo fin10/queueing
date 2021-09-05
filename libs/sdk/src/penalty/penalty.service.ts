@@ -9,7 +9,7 @@ export class PenaltyService {
   constructor(private readonly reportingService: ReportingService) {}
 
   async fetchPenalties(user: User) {
-    const reportings = await this.reportingService.findReportings(user);
+    const reportings = await this.reportingService.findReportings(user._id);
     if (!reportings.length) return [];
 
     const penalties: { [key: string]: { count: number; term: number } } = {};
