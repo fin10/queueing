@@ -1,17 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ReportingType } from '../reporting/enums/reporting-type.enum';
-import { Restriction } from '../user/restriction';
 import { EnumFactory } from './interfaces/enum.factory';
-import { MessageFactory } from './interfaces/message.factory';
 
 @Injectable()
-export class KoKrLocalizationFactory implements MessageFactory, EnumFactory {
-  restriction(restriction: Restriction): string {
-    const datetime = restriction.period;
-    const message = `다른 사용자의 신고로 ${datetime}까지 이용이 제한됩니다.`;
-    return message;
-  }
-
+export class KoKrLocalizationFactory implements EnumFactory {
   reportingType(type: ReportingType): string {
     switch (type) {
       case ReportingType.RUDE:
