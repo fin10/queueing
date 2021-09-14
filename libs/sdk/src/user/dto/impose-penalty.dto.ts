@@ -1,4 +1,4 @@
-import { ReportType } from '@lib/sdk/reporting/enums/report-type.enum';
+import { ReportingType } from '@lib/sdk/reporting/enums/reporting-type.enum';
 import { BadRequestException } from '@nestjs/common';
 import { Transform } from 'class-transformer';
 import { ArrayNotEmpty, IsEnum, IsNotEmpty } from 'class-validator';
@@ -14,6 +14,6 @@ export class ImposePenaltyDto {
   readonly duration!: Duration;
 
   @ArrayNotEmpty()
-  @IsEnum(ReportType, { each: true })
-  readonly reasons: ReportType[] = [];
+  @IsEnum(ReportingType, { each: true })
+  readonly reasons: ReportingType[] = [];
 }

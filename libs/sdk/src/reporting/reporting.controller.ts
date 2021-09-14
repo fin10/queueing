@@ -13,7 +13,7 @@ import {
 import { Request } from 'express';
 import { UserAuthGuard } from '../user/user-auth.guard';
 import { User } from '../user/schemas/user.schema';
-import { ReportType } from './enums/report-type.enum';
+import { ReportingType } from './enums/reporting-type.enum';
 import mongoose from 'mongoose';
 import { ParseObjectIdPipe } from '../pipes/parse-object-id.pipe';
 import { Locale } from '../localization/enums/locale.enum';
@@ -32,7 +32,7 @@ export class ReportingController {
   @Get('/types')
   reportTypes(
     @Query('locale', new DefaultValuePipe(Locale['ko-KR'])) locale: Locale,
-  ): { code: ReportType; text: string }[] {
+  ): { code: ReportingType; text: string }[] {
     return this.reportingService.getReportTypes(locale);
   }
 
@@ -42,7 +42,7 @@ export class ReportingController {
   async reportArticle(
     @Req() req: Request,
     @Body('targetId', ParseObjectIdPipe) targetId: mongoose.Types.ObjectId,
-    @Body('type') type: ReportType,
+    @Body('type') type: ReportingType,
   ) {
     const user = req.user as User;
     const targetUserId = await this.articleService.getUserId(targetId);
@@ -55,7 +55,7 @@ export class ReportingController {
   async reportComment(
     @Req() req: Request,
     @Body('targetId', ParseObjectIdPipe) targetId: mongoose.Types.ObjectId,
-    @Body('type') type: ReportType,
+    @Body('type') type: ReportingType,
   ) {
     const user = req.user as User;
     const targetUserId = await this.commentService.getUserId(targetId);

@@ -1,4 +1,4 @@
-export enum ReportType {
+export enum ReportingType {
   RUDE = 'rude',
   AD = 'ad',
   LEWD = 'lewd',

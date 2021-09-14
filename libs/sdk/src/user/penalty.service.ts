@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Restriction } from './restriction';
-import { ReportType } from '../reporting/enums/report-type.enum';
+import { ReportingType } from '../reporting/enums/reporting-type.enum';
 
 @Injectable()
 export class PenaltyService {
@@ -12,7 +12,7 @@ export class PenaltyService {
   async impose(
     userId: mongoose.Types.ObjectId,
     duration: moment.Duration,
-    reasons: ReportType[],
+    reasons: ReportingType[],
   ): Promise<Restriction> {
     const period = moment.utc().add(duration);
     const restriction = new Restriction(period.toDate(), reasons);

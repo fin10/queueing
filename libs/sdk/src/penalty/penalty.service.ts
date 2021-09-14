@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import _ from 'underscore';
 import { User } from '../user/schemas/user.schema';
 import { ReportingService } from '../reporting/reporting.service';
-import { ReportType } from '../reporting/enums/report-type.enum';
+import { ReportingType } from '../reporting/enums/reporting-type.enum';
 
 @Injectable()
 export class PenaltyService {
@@ -20,7 +20,7 @@ export class PenaltyService {
 
     return _.pairs(penalties).map(([type, { count, term }]) => {
       return {
-        type: type as ReportType,
+        type: type as ReportingType,
         count,
         term,
       };

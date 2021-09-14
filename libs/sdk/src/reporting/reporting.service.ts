@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import _ from 'underscore';
 import mongoose, { Model } from 'mongoose';
 import { User } from '../user/schemas/user.schema';
-import { ReportType } from './enums/report-type.enum';
+import { ReportingType } from './enums/reporting-type.enum';
 import LocalizationService from '../localization/localization.service';
 import { Locale } from '../localization/enums/locale.enum';
 import { Reporting, ReportingDocument } from './schemas/reporting.schema';
@@ -20,7 +20,7 @@ export class ReportingService {
     reporter: User,
     targetId: mongoose.Types.ObjectId,
     targetUserId: mongoose.Types.ObjectId,
-    type: ReportType,
+    type: ReportingType,
   ) {
     await this.report(reporter._id, ReportingTargetType.ARTICLE, targetId, targetUserId, type);
   }
@@ -29,7 +29,7 @@ export class ReportingService {
     reporter: User,
     targetId: mongoose.Types.ObjectId,
     targetUserId: mongoose.Types.ObjectId,
-    type: ReportType,
+    type: ReportingType,
   ) {
     await this.report(reporter._id, ReportingTargetType.COMMENT, targetId, targetUserId, type);
   }
@@ -45,7 +45,7 @@ export class ReportingService {
   }
 
   getReportTypes(locale: Locale) {
-    return _.values(ReportType).map((type) => ({
+    return _.values(ReportingType).map((type) => ({
       code: type,
       text: this.localization.enum(locale).reportType(type),
     }));
@@ -56,7 +56,7 @@ export class ReportingService {
     targetType: ReportingTargetType,
     targetId: mongoose.Types.ObjectId,
     targetUserId: mongoose.Types.ObjectId,
-    type: ReportType,
+    type: ReportingType,
   ) {
     await this.model.create({ reporterId, targetType, targetId, targetUserId, type });
   }

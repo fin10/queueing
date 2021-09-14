@@ -1,5 +1,5 @@
-import { ReportType } from '../reporting/enums/report-type.enum';
+import { ReportingType } from '../reporting/enums/reporting-type.enum';
 
 export class Restriction {
-  constructor(readonly period: Date, readonly reasons: ReportType[]) {}
+  constructor(readonly period: Date, readonly reasons: ReportingType[]) {}
 }
