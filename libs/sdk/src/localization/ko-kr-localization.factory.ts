@@ -12,7 +12,7 @@ export class KoKrLocalizationFactory implements MessageFactory, EnumFactory {
     return message;
   }
 
-  reportType(type: ReportingType): string {
+  reportingType(type: ReportingType): string {
     switch (type) {
       case ReportingType.RUDE:
         return '욕설, 비속어, 인신공격, 혐오 발언 사용';

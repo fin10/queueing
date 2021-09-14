@@ -47,7 +47,7 @@ export class ReportingService {
   getReportTypes(locale: Locale) {
     return _.values(ReportingType).map((type) => ({
       code: type,
-      text: this.localization.enum(locale).reportType(type),
+      text: this.localization.enum(locale).reportingType(type),
     }));
   }
 
